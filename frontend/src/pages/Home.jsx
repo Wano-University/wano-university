@@ -3,7 +3,7 @@ import smimg from '@/assets/wanoportrait.png';
 
 export default function Home() {
   return (
-    <div className="w-full h-screen overflow-hidden">
+    <div className="fixed inset-0 -z-10 w-screen h-screen">
       <img
         src={lgimg}
         alt="Wano University"

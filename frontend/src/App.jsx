@@ -1,10 +1,11 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
+import Navbar from './components/Navbar';
 
 function RootLayout() {
   return (
     <div className="relative flex min-h-screen flex-col">
-      {/* <Navbar /> */}
+      <Navbar />
       <main className="flex-1">
         <Outlet />
       </main>
