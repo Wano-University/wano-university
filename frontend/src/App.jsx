@@ -1,5 +1,6 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
+import CreateAccount from './pages/CreateAccount';
 import Navbar from './components/Navbar';
 
 function RootLayout() {
@@ -18,6 +19,7 @@ export default function App() {
     <Routes>
       <Route element={<RootLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/createacc" element={<CreateAccount />} />
       </Route>
     </Routes>
   );
