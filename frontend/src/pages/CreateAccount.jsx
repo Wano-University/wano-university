@@ -21,7 +21,7 @@ export default function CreateAccount() {
         <h2 className="text-3xl md:text-4xl font-bold mt-2">Register Account</h2>
       </div>
 
-      <Card className="max-w-4xl mx-auto p-8 shadow-sm border-border/50 hover:shadow-md transition-all mt-16">
+      <Card className="max-w-4xl mx-auto p-8 shadow-lg border-border hover:shadow-xl transition-all mt-16">
         <form onSubmit={registerUser} className="w-full">
 
           <FieldSet className="w-full space-y-6">
@@ -34,11 +34,11 @@ export default function CreateAccount() {
                     id="type"
                     name="type"
                     placeholder="Select account type..."
-                    required
+                    required className="bg-white"
                   />
                   <ComboboxContent>
                     <ComboboxEmpty>No items found.</ComboboxEmpty>
-                    <ComboboxList>
+                    <ComboboxList className="bg-white">
                       {(item) => (
                         <ComboboxItem key={item} value={item}>
                           {item}

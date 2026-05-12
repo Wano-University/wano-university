@@ -6,6 +6,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react"
+import { ModeToggle } from "./ModeToggle";
 
 export default function Navbar() {
 
@@ -16,8 +17,9 @@ export default function Navbar() {
       </Link>
 
       <div className="hidden md:flex gap-8">
-        <Link to="/">Home</Link>
+        <Link to="/home">Home</Link>
         <Link to="/createacc">Create Account</Link>
+        <ModeToggle></ModeToggle>
       </div>
 
       <div className="md:hidden flex items-center">

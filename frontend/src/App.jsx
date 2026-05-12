@@ -3,15 +3,18 @@ import Landing from './pages/Landing';
 import Home from './pages/Home';
 import CreateAccount from './pages/CreateAccount';
 import Navbar from './components/Navbar';
+import { ThemeProvider } from './providers/ThemeProvider';
 
 function RootLayout() {
   return (
-    <div className="relative flex min-h-screen flex-col">
-      <Navbar />
-      <main className="flex-1">
-        <Outlet />
-      </main>
-    </div>
+    <ThemeProvider>
+      <div className="relative flex min-h-screen flex-col">
+        <Navbar />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+      </div>
+    </ThemeProvider>
   );
 }
 
