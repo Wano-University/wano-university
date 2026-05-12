@@ -15,7 +15,7 @@ export default function CreateAccount() {
   };
 
   return (
-    <section id="contact" className="py-24 max-w-7xl mx-auto px-6">
+    <section id="create" className="py-24 max-w-7xl mx-auto px-6">
 
       <div className="mb-10 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mt-2">Register Account</h2>
@@ -75,7 +75,7 @@ export default function CreateAccount() {
               </Field>
 
               <Field className="col-span-2">
-                <FieldLabel htmlFor="login">Email:</FieldLabel>
+                <FieldLabel htmlFor="login">Login:</FieldLabel>
                 <Input name="login" id="login" placeholder="Login" type="login" required />
               </Field>
 

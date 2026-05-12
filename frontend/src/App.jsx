@@ -1,4 +1,5 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
+import Landing from './pages/Landing';
 import Home from './pages/Home';
 import CreateAccount from './pages/CreateAccount';
 import Navbar from './components/Navbar';
@@ -18,8 +19,9 @@ export default function App() {
   return (
     <Routes>
       <Route element={<RootLayout />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
+        <Route path="/home" element={<Home />} />
       </Route>
     </Routes>
   );
