@@ -6,7 +6,6 @@ datasource db {
   provider = "postgresql"
 }
 
-// --- ENUMS ---
 enum UserType {
   STUDENT
   PROFESSOR
@@ -63,8 +62,6 @@ enum TicketStatus {
   CANCELED
 }
 
-// --- MODELS ---
-
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -77,8 +74,7 @@ model User {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  // Relations
-  permissions  Permission[]  // Implicit Many-to-Many
+  permissions  Permission[]
   reservations Reservation[]
   accesses     Access[]
   purchases    Purchase[]
@@ -88,8 +84,7 @@ model Permission {
   id          Int    @id @default(autoincrement())
   description String @unique
 
-  // Relations
-  users       User[] // Implicit Many-to-Many
+  users       User[]
 }
 
 model Resource {
@@ -100,7 +95,6 @@ model Resource {
   isAvailable Boolean      @default(true)
   createdAt   DateTime     @default(now())
 
-  // Relations
   sensors      Sensor[]
   reservations Reservation[]
   accesses     Access[]
@@ -113,7 +107,6 @@ model MobilityResource {
   location   String?
   status     MobilityStatus @default(FREE)
 
-  // Relations
   sensors      Sensor[]
   reservations Reservation[]
 }
@@ -126,7 +119,6 @@ model Sensor {
   alertLimit         Float?
   isActive           Boolean    @default(true)
 
-  // Relations
   resource         Resource?         @relation(fields: [resourceId], references: [id])
   mobilityResource MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
   readings         SensorReading[]
@@ -162,15 +154,11 @@ model Reservation {
   status             ReservationStatus @default(ACTIVE)
   createdAt          DateTime          @default(now())
 
-  // Relations
   user             User              @relation(fields: [userId], references: [id])
   resource         Resource?         @relation(fields: [resourceId], references: [id])
   mobilityResource MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
   accesses         Access[]
 
-  // Note: Prisma does not support database-level CHECK constraints directly in the schema.
-  // The logic enforcing that a reservation has either a resourceId OR a mobilityResourceId
-  // must be handled in your Express controller.
 }
 
 model Access {
@@ -181,7 +169,6 @@ model Access {
   accessType    AccessType
   timestamp     DateTime   @default(now())
 
-  // Relations
   user        User         @relation(fields: [userId], references: [id])
   resource    Resource     @relation(fields: [resourceId], references: [id])
   reservation Reservation? @relation(fields: [reservationId], references: [id], onDelete: SetNull)
@@ -191,7 +178,6 @@ model Menu {
   id            Int      @id @default(autoincrement())
   availableDate DateTime @unique @db.Date
 
-  // Relations
   dishes Dish[]
 }
 
@@ -201,7 +187,6 @@ model Dish {
   name     String
   dishType DishType
 
-  // Relations
   menu    Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
   tickets Ticket[]
 }
@@ -212,7 +197,6 @@ model Purchase {
   purchaseDate  DateTime @default(now())
   paymentMethod String?
 
-  // Relations
   user    User     @relation(fields: [userId], references: [id])
   tickets Ticket[]
 }
@@ -224,7 +208,6 @@ model Ticket {
   scheduledDate DateTime     @db.Date
   status        TicketStatus @default(ACTIVE)
 
-  // Relations
   purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
   dish     Dish     @relation(fields: [dishId], references: [id])
 }
