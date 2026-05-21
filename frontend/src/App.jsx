@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import CreateAccount from './pages/CreateAccount';
 import Navbar from './components/Navbar';
 import { ThemeProvider } from './providers/ThemeProvider';
+import LoginPage from './pages/LoginPage';
 
 function RootLayout() {
   return (
@@ -25,6 +26,8 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/login" element={<LoginPage/>} />
+
       </Route>
     </Routes>
   );
