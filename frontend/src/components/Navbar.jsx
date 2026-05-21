@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react"
 import { ModeToggle } from "./ModeToggle";
+import { Button } from "./ui/button";
 
 export default function Navbar() {
 

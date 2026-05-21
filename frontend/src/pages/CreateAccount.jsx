@@ -79,6 +79,11 @@ export default function CreateAccount() {
                 <Input name="login" id="login" placeholder="Login" type="login" required />
               </Field>
 
+              <Field className="col-span-2">
+                <FieldLabel htmlFor="password">Password:</FieldLabel>
+                <Input name="password" id="password" placeholder="Password" type="password" required />
+              </Field>
+
             </FieldGroup>
           </FieldSet>
 
