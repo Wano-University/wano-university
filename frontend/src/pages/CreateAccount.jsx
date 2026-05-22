@@ -4,68 +4,31 @@ import { FieldSet, FieldGroup, Field, FieldLabel } from '../components/ui/field'
 import { Combobox, ComboboxInput, ComboboxContent, ComboboxEmpty, ComboboxList, ComboboxItem } from '../components/ui/combobox';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
-import { registerUser as registerUserAPI } from '../lib/auth';
 
 const types = ["Admin", "Student", "Professor", "Staff"];
 
 export default function CreateAccount() {
   const [status, setStatus] = useState('idle');
-  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleRegister = async (e) => {
+  const registerUser = (e) => {
     e.preventDefault();
-    setStatus('loading');
-    setErrorMsg('');
-
-    const formData = new FormData(e.target);
-    const formValues = Object.fromEntries(formData);
-
-    if (!formValues.type) {
-      setErrorMsg('You must select an account type to proceed.');
-      setStatus('error');
-      return;
-    }
-
-    const payload = {
-      name: `${formValues.name} ${formValues.surname}`.trim(),
-      address: formValues.address,
-      nif: formValues.nif,
-      email: formValues.email,
-      login: formValues.login,
-      password: formValues.password,
-      type: formValues.type.toUpperCase()
-    };
-
-    try {
-      await registerUserAPI(payload);
-
-      setStatus('success');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 800);
-
-    } catch (error) {
-      console.error(error);
-      setStatus('error');
-      setErrorMsg(error.message);
-      setTimeout(() => setStatus('idle'), 3000);
-    }
   };
 
   return (
     <section id="create" className="py-24 max-w-7xl mx-auto px-6">
+
       <div className="mb-10 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mt-2">Register Account</h2>
       </div>
 
       <Card className="max-w-4xl mx-auto p-8 shadow-lg border-border hover:shadow-xl transition-all mt-16">
-        <form onSubmit={handleRegister} className="w-full">
+        <form onSubmit={registerUser} className="w-full">
+
           <FieldSet className="w-full space-y-6">
             <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
               <Field className="col-span-2">
                 <FieldLabel htmlFor="type">Account Type:</FieldLabel>
-                {/* REVERTED TO YOUR EXACT ORIGINAL CODE */}
                 <Combobox items={types}>
                   <ComboboxInput
                     id="type"
@@ -113,7 +76,7 @@ export default function CreateAccount() {
 
               <Field className="col-span-2">
                 <FieldLabel htmlFor="login">Login:</FieldLabel>
-                <Input name="login" id="login" placeholder="Login" type="text" required />
+                <Input name="login" id="login" placeholder="Login" type="login" required />
               </Field>
 
               <Field className="col-span-2">
@@ -123,12 +86,6 @@ export default function CreateAccount() {
 
             </FieldGroup>
           </FieldSet>
-
-          {errorMsg && (
-            <div className="mt-4 text-red-600 font-medium text-sm">
-              {errorMsg}
-            </div>
-          )}
 
           <div className="flex items-center justify-center md:justify-start gap-2 mt-3">
             <Button type="reset" className="mt-4 cursor-pointer bg-purple-900 text-white">
@@ -147,6 +104,7 @@ export default function CreateAccount() {
               {status === 'idle' && 'Register'}
             </Button>
           </div>
+
         </form>
       </Card>
     </section>
