@@ -3,6 +3,8 @@ import ply.yacc as yacc
 
 t_ignore = " \t"
 
+variables = dict()
+
 reserved = {
     "if": "IF",
     "then": "THEN",
