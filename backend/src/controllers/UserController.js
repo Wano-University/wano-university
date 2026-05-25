@@ -2,10 +2,21 @@ import bcrypt from 'bcrypt';
 import prisma from '../config/db.js';
 import jwt from 'jsonwebtoken';
 
+const isValidPassword = (password) => {
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return passwordRegex.test(password);
+};
+
 export const registerUser = async (req, res) => {
   try {
 
     const { name, address, nif, email, login, password, type } = req.body;
+
+    if (!isValidPassword(password)) {
+      return res.status(400).json({
+        error: "Password requires 8+ characters, 1 uppercase, 1 lowercase, 1 number, and 1 special character."
+      });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -67,3 +78,17 @@ export const login = async (req, res) => {
     res.status(500).json({ error: "An error occurred during login." });
   }
 };
+
+export const changePassword = async (req, res) => {
+  try {
+
+  } catch (error) {
+
+  }
+}
+
+
+
+
+
+

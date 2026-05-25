@@ -20,6 +20,7 @@ export default function Navbar() {
       <div className="hidden md:flex gap-8">
         <Link to="/home">Home</Link>
         <Link to="/createacc">Create Account</Link>
+        <Link to="/login">Login</Link>
         <ModeToggle></ModeToggle>
       </div>
 
