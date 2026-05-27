@@ -26,7 +26,7 @@ export default function Cafeteria() {
   const menuData = {
     meals: {
       Monday: {
-        title: "Pirate King's Meal",
+        title: "Pirate King's Meat",
         subtitle: "Captain's Grand Feast",
         desc: "A massive, slow-roasted bone-in cut glazed in a sticky, savory sauce—bold, messy, and made for a true pirate feast.",
         image: "/MondayMeal.png", 
@@ -113,15 +113,15 @@ export default function Cafeteria() {
           </div>
           <div>
             <h4 className="text-2xl font-bold text-primary tracking-tight">Grand Line Refectory Menu</h4>
-            <h2 className="text-xs text-muted-foreground">Check the plates of the week!</h2>
+            <h2 className="text-xs text-muted-foreground">Configure plates of the week.</h2>
           </div>
         </div>
 
         <div className="flex justify-end">
           <button 
-            onClick={() => navigate('/menuconfig')}
+            onClick={() => navigate('/cafeteria')}
             className="text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-full hover:shadow-xl hover:bg-primary/20 hover:border-primary/30"
-          > Edit menu
+          > Finish Editing
           </button>
         </div>
 
@@ -149,35 +149,10 @@ export default function Cafeteria() {
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
         
-        {/* Left thingy */}
-        <Card className={`md:col-span-3 p-8 border transition-all duration-300 shadow-xl rounded-[32px] flex flex-col md:flex-row items-center gap-8 ${currentDish.color || 'bg-card text-card-foreground border-border'}`}>
-          
-          {/* Pic*/}
-          <div className="w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl border-4 border-primary/20 flex-shrink-0 bg-muted/30 backdrop-blur-sm transition-transform duration-500 hover:rotate-12 flex items-center justify-center p-2">
-            <img 
-              src={currentDish.image} 
-              alt={currentDish.title}
-              className="w-full h-full object-contain rounded-full"
-            />
-          </div>
 
-          {/* Meal desc */}
-          <div className="space-y-3 text-center md:text-left flex-1">
-            <span className="text-xs uppercase font-extrabold tracking-widest bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20 inline-block">
-              {selectedDay} {activeTab === 'meals' ? 'Meal' : 'Dessert'}!
-            </span>
-            <div>
-              <h2 className="text-3xl font-black tracking-tight text-card-foreground">{currentDish.title}</h2>
-              <p className="text-sm font-medium text-muted-foreground italic mt-0.5">{currentDish.subtitle}</p>
-            </div>
-            <p className="text-sm font-medium leading-relaxed text-muted-foreground pt-2 border-t border-border">
-              {currentDish.desc}
-            </p>
-          </div>
-        </Card>
 
         {/* Right thingy*/}
-        <div className="md:col-span-2 flex flex-col gap-3">
+        <div className="md:col-span-5 flex flex-col gap-3">
           {Object.keys(menuData[activeTab]).map((day) => {
             const dayDish = menuData[activeTab][day];
             const isSelected = selectedDay === day;
@@ -216,12 +191,7 @@ export default function Cafeteria() {
               </div>
             );
           })}
-
-          <button className="w-full mt-2 py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-[0.99] cursor-pointer">
-            BUY TICKETS
-          </button>
         </div>
-
       </div>
     </section>
   );

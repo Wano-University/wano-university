@@ -50,7 +50,7 @@ export default function Home() {
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
             <Terminal className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="text-lg font-bold mb-3">System-Specific Language</h3>
+          <h3 className="text-lg font-bold mb-3">Terminal</h3>
           <p className="text-muted-foreground leading-relaxed text-sm">
             Learn our System-Specific language in order to perform complex tasks efficiently
           </p>
