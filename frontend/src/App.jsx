@@ -2,6 +2,9 @@ import { Routes, Route, Outlet } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Home from './pages/Home';
 import CreateAccount from './pages/CreateAccount';
+import TemperatureDashboard from './pages/TemperatureDashboard';
+import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
+import AirQualityDashboard from './pages/AirQualityDashboard';
 import Navbar from './components/Navbar';
 import { ThemeProvider } from './providers/ThemeProvider';
 
@@ -25,6 +28,9 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/TemperatureDashboard" element={<TemperatureDashboard />} />
+        <Route path="/EnergyConsumptionDashboard" element={<EnergyConsumptionDashboard />} />
+        <Route path="/AirQualityDashboard" element={<AirQualityDashboard />} />
       </Route>
     </Routes>
   );
