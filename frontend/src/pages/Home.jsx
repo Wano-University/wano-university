@@ -46,7 +46,7 @@ export default function Home() {
             Reserve a parking space for your personal vehicle or reserve one of our sustainable options
           </p>
         </Card>
-        <Card className="col-span-2 row-span-2 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
+        <Card className="col-span-1 row-span-1 md:col-span-2 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
             <Terminal className="w-6 h-6 text-primary" />
           </div>

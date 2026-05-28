@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from "@/components/ui/card";
+import { CarFront } from "lucide-react"
 import { Utensils } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
@@ -186,7 +186,7 @@ export default function Cafeteria() {
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md hidden sm:inline-block ${
                   isSelected ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted text-muted-foreground'
                 }`}>
-                  {dayDish.subtitle.split(' ')[0]}
+                  <CarFront className="w-6 h-6 text-primary" />
                 </span>
               </div>
             );
