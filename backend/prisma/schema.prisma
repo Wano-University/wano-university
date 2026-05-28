@@ -49,13 +49,6 @@ enum AccessType {
   EXIT
 }
 
-enum DishType {
-  MEAT
-  FISH
-  VEGETARIAN
-  DIET
-}
-
 enum TicketStatus {
   ACTIVE
   USED

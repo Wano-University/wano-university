@@ -16,11 +16,26 @@ export const createDish = async (req, res) => {
   }
 };
 
+export const setDish = async (req, res) => {
+  try{
+    const {id} = req.params;
+    const {isActive} = req.params;
+
+    const updatedDish = await prisma.dish.update({
+      where: { id: parseInt(id) },
+      data: { isActive }
+    });
+    res.status(200).json(updatedDish);
+  } catch (error) {
+    res.status(400).json({ error: "Failed to set as active." });
+  }
+};
+
 export const getAllDishes = async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany();
     res.status(200).json(dishes);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch master catalog." });
+    res.status(500).json({ error: "Failed to fetch catalog." });
   }
 };
