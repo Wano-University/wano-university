@@ -5,6 +5,9 @@ import Login from './pages/Login';
 import CreateAccount from './pages/CreateAccount';
 import Navbar from './components/Navbar';
 import { ThemeProvider } from './providers/ThemeProvider';
+import InteractiveMap from './pages/InteractiveMap';
+import Cafeteria from './pages/Cafeteria';
+import MenuConfig from './pages/MenuConfig';
 
 function RootLayout() {
   return (
@@ -26,6 +29,9 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/map" element={<InteractiveMap />} />
+        <Route path="/cafeteria" element={<Cafeteria />}/>
+        <Route path="/menuconfig" element={<MenuConfig/>}/>
         <Route path="/login" element={<Login />} />
       </Route>
     </Routes>

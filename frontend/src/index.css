@@ -55,6 +55,16 @@
   --shadow-2xl: 1px 1px 2px 0px hsl(240 100% 30.9804% / 0.38);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
+  --nika-color: oklch(0.65 0.22 340);    
+  --surgeon-color: oklch(0.60 0.16 220);   
+  --fire-color: oklch(0.65 0.24 45);     
+  --ohara-color: oklch(0.55 0.14 280);     
+  --tanuki-color: oklch(0.68 0.19 140);
+  --meat-color: oklch(0.60 0.20 28);      
+  --swordsman-color: oklch(0.62 0.16 155); 
+  --chef-color: oklch(0.58 0.15 250);     
+  --navigator-color: oklch(0.66 0.21 70);  
+  --ramen-color: oklch(0.55 0.15 300);
 }
 
 .dark {
@@ -108,6 +118,16 @@
   --shadow-lg: 1px 1px 10px 0px hsl(257.8824 100% 50% / 0.44), 1px 4px 6px -1px hsl(257.8824 100% 50% / 0.44);
   --shadow-xl: 1px 1px 10px 0px hsl(257.8824 100% 50% / 0.44), 1px 8px 10px -1px hsl(257.8824 100% 50% / 0.44);
   --shadow-2xl: 1px 1px 10px 0px hsl(257.8824 100% 50% / 1.10);
+  --nika-color: oklch(0.48 0.16 340);      
+  --surgeon-color: oklch(0.45 0.12 220);   
+  --fire-color: oklch(0.48 0.18 45);       
+  --ohara-color: oklch(0.42 0.10 280);     
+  --tanuki-color: oklch(0.48 0.13 140);
+  --meat-color: oklch(0.46 0.15 28);       
+  --swordsman-color: oklch(0.45 0.11 155); 
+  --chef-color: oklch(0.44 0.12 250);     
+  --navigator-color: oklch(0.48 0.15 70);  
+  --ramen-color: oklch(0.42 0.11 300);
 }
 
 @theme inline {
@@ -161,6 +181,17 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  --color-nika: var(--nika-color);
+  --color-surgeon: var(--surgeon-color);
+  --color-fire: var(--fire-color);
+  --color-ohara: var(--ohara-color);
+  --color-tanuki: var(--tanuki-color);
+  --color-meat: var(--meat-color);
+  --color-swordsman: var(--swordsman-color);
+  --color-chef: var(--chef-color);
+  --color-navigator: var(--navigator-color);
+  --color-ramen: var(--ramen-color);
 }
 
 @layer base {
