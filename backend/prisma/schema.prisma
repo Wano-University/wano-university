@@ -114,6 +114,8 @@ model Sensor {
 
   resource         Resource?         @relation(fields: [resourceId], references: [id])
   mobilityResource MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
+
+  coordinates      Float[]
   readings         SensorReading[]
   alerts           SensorAlert[]
 }

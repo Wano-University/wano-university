@@ -2,10 +2,25 @@ import prisma from '../config/db.js';
 
 export const registerSensor = async (req, res) => {
   try {
-    const { type, resourceId, mobilityResourceId, alertLimit, isActive } = req.body;
+    const { type, resourceId, mobilityResourceId, alertLimit, isActive, coordinates } = req.body;
+
+    const existingSensor = await prisma.sensor.findFirst({
+        where: {
+          coordinates: {
+            equals: coordinates
+          }
+        }
+      });
+
+      if (existingSensor) {
+        return res.status(200).json({
+          message: "A sensor already exists at these exact coordinates.",
+          sensor: existingSensor
+        });
+      }
 
     const sensor = await prisma.sensor.create({
-      data: { type, resourceId, mobilityResourceId, alertLimit, isActive}
+      data: { type, resourceId, mobilityResourceId, alertLimit, isActive, coordinates}
     });
 
     res.status(201).json(sensor);
