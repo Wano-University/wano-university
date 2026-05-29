@@ -36,6 +36,6 @@ export const getAllDishes = async (req, res) => {
     const dishes = await prisma.dish.findMany();
     res.status(200).json(dishes);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch catalog." });
+    res.status(500).json({ error: "Failed to load catalog." });
   }
 };

@@ -7,13 +7,13 @@ export const getActiveMenu = async (req, res) => {
     });
 
     if (!menu) {
-      return res.status(404).json({ message: "No active menu found." });
+      return res.status(404).json({ message: "No active dishes found." });
     }
 
     res.status(200).json(menu.dishes);
   } catch (error) {
     console.error("Error fetching menu:", error);
-    res.status(500).json({ error: "Failed to fetch the menu." });
+    res.status(500).json({ error: "Error loading the menu." });
   }
 };
 
@@ -49,6 +49,6 @@ export const updateActiveMenu = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating menu:", error);
-    res.status(500).json({ error: "Failed to update the active menu." });
+    res.status(500).json({ error: "Failed to update the active dishes." });
   }
 };

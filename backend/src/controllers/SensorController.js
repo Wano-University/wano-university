@@ -2,25 +2,24 @@ import prisma from '../config/db.js';
 
 export const registerSensor = async (req, res) => {
   try {
-    const { type, resourceId, mobilityResourceId, alertLimit, isActive, coordinates } = req.body;
+    const { type, resourceId, mobilityResourceId, alertLimit, isActive, xCoordinates, yCoordinates } = req.body;
 
     const existingSensor = await prisma.sensor.findFirst({
         where: {
-          coordinates: {
-            equals: coordinates
-          }
+          xCoordinates,
+          yCoordinates
         }
       });
 
       if (existingSensor) {
-        return res.status(200).json({
+        return res.status(400).json({
           message: "A sensor already exists at these exact coordinates.",
           sensor: existingSensor
         });
       }
 
     const sensor = await prisma.sensor.create({
-      data: { type, resourceId, mobilityResourceId, alertLimit, isActive, coordinates}
+      data: { type, resourceId, mobilityResourceId, alertLimit, isActive, xCoordinates, yCoordinates}
     });
 
     res.status(201).json(sensor);
@@ -74,7 +73,7 @@ export const getAlerts = async (req, res) =>{
     });
     res.status(200).json(sensors);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch alerts." });
+    res.status(500).json({ error: "Failed to load alerts." });
   }
 };
 
@@ -86,7 +85,7 @@ export const getReadings = async (req, res) =>{
     });
     res.status(200).json(sensors);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch readings." });
+    res.status(500).json({ error: "Failed to load readings." });
   }
 };
 
@@ -97,7 +96,7 @@ export const getAllAlerts = async (req, res) =>{
     });
     res.status(200).json(sensors);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch alerts." });
+    res.status(500).json({ error: "Failed to load alerts." });
   }
 };
 
@@ -108,6 +107,6 @@ export const getAllReadings = async (req, res) =>{
     });
     res.status(200).json(sensors);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch readings." });
+    res.status(500).json({ error: "Failed to load readings." });
   }
 };
