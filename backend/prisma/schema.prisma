@@ -49,19 +49,6 @@ enum AccessType {
   EXIT
 }
 
-enum DishType {
-  MEAT
-  FISH
-  VEGETARIAN
-  DIET
-}
-
-enum TicketStatus {
-  ACTIVE
-  USED
-  CANCELED
-}
-
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -118,9 +105,12 @@ model Sensor {
   mobilityResourceId Int?
   alertLimit         Float?
   isActive           Boolean    @default(true)
+  xCoordinates       Float
+  yCoordinates       Float
 
   resource         Resource?         @relation(fields: [resourceId], references: [id])
   mobilityResource MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
+
   readings         SensorReading[]
   alerts           SensorAlert[]
 }
@@ -175,8 +165,8 @@ model Access {
 }
 
 model Menu {
-  id            Int      @id @default(autoincrement())
-  availableDate DateTime @unique @db.Date
+  id        Int      @id @default(autoincrement())
+  updatedAt DateTime @updatedAt
 
   dishes Dish[]
 }
@@ -184,11 +174,12 @@ model Menu {
 model Dish {
   id       Int      @id @default(autoincrement())
   menuId   Int
-  name     String
-  dishType DishType
-
-  menu    Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  tickets Ticket[]
+  title    String
+  subtitle String
+  desc     String
+  image    String   
+  color    String
+  isActive Boolean
 }
 
 model Purchase {
@@ -212,3 +203,8 @@ model Ticket {
   dish     Dish     @relation(fields: [dishId], references: [id])
 }
 
+enum TicketStatus {
+  ACTIVE
+  USED
+  CANCELED
+}
