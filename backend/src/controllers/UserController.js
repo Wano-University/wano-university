@@ -44,7 +44,7 @@ export const login = async (req, res) => {
 
     const { login, password } = req.body;
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.UindUnique({
       where: { login: login }
     });
 
