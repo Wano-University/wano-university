@@ -49,6 +49,17 @@ enum AccessType {
   EXIT
 }
 
+enum TicketStatus {
+  ACTIVE
+  USED
+  CANCELED
+}
+
+enum DishType {
+  MEAL
+  DESSERT
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -71,7 +82,7 @@ model Permission {
   id          Int    @id @default(autoincrement())
   description String @unique
 
-  users       User[]
+  users User[]
 }
 
 model Resource {
@@ -111,8 +122,8 @@ model Sensor {
   resource         Resource?         @relation(fields: [resourceId], references: [id])
   mobilityResource MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
 
-  readings         SensorReading[]
-  alerts           SensorAlert[]
+  readings SensorReading[]
+  alerts   SensorAlert[]
 }
 
 model SensorReading {
@@ -148,7 +159,6 @@ model Reservation {
   resource         Resource?         @relation(fields: [resourceId], references: [id])
   mobilityResource MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
   accesses         Access[]
-
 }
 
 model Access {
@@ -172,14 +182,18 @@ model Menu {
 }
 
 model Dish {
-  id       Int      @id @default(autoincrement())
-  menuId   Int
+  id       Int     @id @default(autoincrement())
+  menuId   Int?
   title    String
   subtitle String
   desc     String
-  image    String   
+  image    String
   color    String
   isActive Boolean
+
+  dishType DishType @default(MEAL)
+  menu     Menu?    @relation(fields: [menuId], references: [id])
+  tickets  Ticket[]
 }
 
 model Purchase {
@@ -201,10 +215,4 @@ model Ticket {
 
   purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
   dish     Dish     @relation(fields: [dishId], references: [id])
-}
-
-enum TicketStatus {
-  ACTIVE
-  USED
-  CANCELED
 }
