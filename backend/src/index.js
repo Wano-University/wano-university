@@ -5,20 +5,13 @@ import userRoutes from './routes/UserRoutes.js';
 import menuRoutes from './routes/MenuRoutes.js';
 import dishRoutes from './routes/DishRoutes.js';
 import ticketRoutes from './routes/TicketRoutes.js';
+import paymentRoutes from './routes/PaymentRoutes.js';
 import prisma from './config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-process.on('uncaughtException', err => {
-  console.error('UNCAUGHT:', err);
-});
-
-process.on('unhandledRejection', err => {
-  console.error('REJECTION:', err);
-});
 
 dotenv.config();
 
@@ -44,15 +37,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/dishes', dishRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/payments', paymentRoutes);
 
-try {
-  await prisma.$connect();
-  console.log("DATABASE CONNECTED");
-  
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-  });
-} catch (err) {
-  console.error("DATABASE FAILED TO CONNECT. Server not started.", err);
-  process.exit(1);
-}
+app.listen(PORT, () => {
+  console.log('Server is running on http://localhost:${PORT}');
+});
