@@ -1,14 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card } from "@/components/ui/card";
 import { Utensils, X, Loader2, HelpCircle } from "lucide-react";
 import { Link } from 'react-router-dom';
+
 import { getActiveMenu } from '../lib/menu';
+import { createTicketPaymentIntent } from '../lib/payments';
+
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutForm from '../components/CheckoutForm'; // Make sure this file exists!
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+const getWorkdays = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const currentDay = today.getDay();
+  const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
 
-const DAYS_OF_WEEK = [
-  "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-];
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + diffToMonday);
+
+  return Array.from({ length: 5 }).map((_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return d;
+  });
+};
 
 const getImageUrl = (path) => {
   if (!path) return '';
@@ -37,23 +55,26 @@ const getDishThemeStyles = (dish, isSelected) => {
 };
 
 export default function Cafeteria() {
+  const workdays = useMemo(() => getWorkdays(), []);
+
   const [activeTab, setActiveTab] = useState('meals');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
   const [menuData, setMenuData] = useState({ meals: {}, desserts: {} });
   const [isLoading, setIsLoading] = useState(true);
 
-  const [selectedDay, setSelectedDay] = useState(() => {
-    const currentDayIndex = new Date().getDay();
-    return currentDayIndex === 0 || currentDayIndex === 6 ? "Monday" : DAYS_OF_WEEK[currentDayIndex];
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    const day = today.getDay();
+    if (day >= 1 && day <= 5) return workdays[day - 1];
+    return workdays[0];
   });
 
   useEffect(() => {
     const fetchMenu = async () => {
       try {
         const data = await getActiveMenu();
-
         const formattedMenu = { meals: {}, desserts: {} };
-        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
         let mealIndex = 0;
         let dessertIndex = 0;
@@ -61,10 +82,13 @@ export default function Cafeteria() {
         if (data && Array.isArray(data)) {
           data.forEach(dish => {
             if (dish.dishType === 'DESSERT' && dessertIndex < 5) {
-              formattedMenu.desserts[days[dessertIndex]] = dish;
+              // Map by exact timestamp string instead of day name
+              const dateKey = workdays[dessertIndex].toISOString();
+              formattedMenu.desserts[dateKey] = dish;
               dessertIndex++;
             } else if (dish.dishType !== 'DESSERT' && mealIndex < 5) {
-              formattedMenu.meals[days[mealIndex]] = dish;
+              const dateKey = workdays[mealIndex].toISOString();
+              formattedMenu.meals[dateKey] = dish;
               mealIndex++;
             }
           });
@@ -79,9 +103,12 @@ export default function Cafeteria() {
     };
 
     fetchMenu();
-  }, []);
+  }, [workdays]);
 
-  const currentDish = menuData[activeTab]?.[selectedDay];
+  const currentDishKey = selectedDate.toISOString();
+  const currentDish = menuData[activeTab]?.[currentDishKey];
+
+  const selectedDayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(selectedDate);
 
   const displayDish = currentDish || {
     title: "No Dish Scheduled",
@@ -124,25 +151,28 @@ export default function Cafeteria() {
 
         <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
           <button
-            onClick={() => { setActiveTab('meals'); setSelectedDay(DAYS_OF_WEEK[new Date().getDay()]); }}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals'
-              }`}
-          > Meals
+            onClick={() => {
+              setActiveTab('meals');
+              const today = new Date().getDay();
+              setSelectedDate((today >= 1 && today <= 5) ? workdays[today - 1] : workdays[0]);
+            }}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            Meals
           </button>
           <button
-            onClick={() => { setActiveTab('desserts'); }}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'
-              }`}
-          > Desserts
+            onClick={() => setActiveTab('desserts')}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            Desserts
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
 
-        {/* Left thingy */}
-        <Card className={`md:col-span-3 p-8 border transition-all duration-300 shadow-xl rounded-4xl flex flex-col md:flex-row items-center gap-8 ${`${displayDish.color} hover:shadow-md`
-          }`}>
+        {/* Selected Dish View */}
+        <Card className={`md:col-span-3 p-8 border transition-all duration-300 shadow-xl rounded-4xl flex flex-col md:flex-row items-center gap-8 ${displayDish.color} hover:shadow-md`}>
           <div
             onClick={() => displayDish.image && setIsModalOpen(true)}
             className={`w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl border-4 border-${displayDish.color} shrink-0 bg-background backdrop-blur-sm transition-transform duration-500 flex items-center justify-center p-2 ${displayDish.image ? 'hover:rotate-12 cursor-pointer' : ''}`}
@@ -160,7 +190,7 @@ export default function Cafeteria() {
 
           <div className="space-y-3 text-center md:text-left flex-1">
             <span className="text-xs uppercase font-extrabold tracking-widest bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20 inline-block">
-              {selectedDay} {activeTab === 'meals' ? 'Meal' : 'Dessert'}!
+              {selectedDayName} {activeTab === 'meals' ? 'Meal' : 'Dessert'}!
             </span>
             <div>
               <h2 className="text-3xl font-black tracking-tight text-foreground">{displayDish.title}</h2>
@@ -172,20 +202,22 @@ export default function Cafeteria() {
           </div>
         </Card>
 
-        {/* Right thingy */}
+        {/* Days Navigation List */}
         <div className="md:col-span-2 flex flex-col gap-3">
-          {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => {
-            const dayDish = menuData[activeTab]?.[day];
-            const isSelected = selectedDay === day;
+          {workdays.map((dateObj) => {
+            const dateKey = dateObj.toISOString();
+            const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(dateObj);
+
+            const dayDish = menuData[activeTab]?.[dateKey];
+            const isSelected = selectedDate.toISOString() === dateKey;
             const isEmpty = !dayDish;
 
             const displayTitle = dayDish ? dayDish.title : "Empty Slot";
-            const displaySubtitle = dayDish ? dayDish.subtitle : "TBD";
 
             return (
               <div
-                key={day}
-                onMouseEnter={() => setSelectedDay(day)}
+                key={dateKey}
+                onMouseEnter={() => setSelectedDate(dateObj)}
                 className={`p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-center justify-between gap-4 ${isEmpty
                   ? 'border-dashed border-border bg-muted/20 text-muted-foreground'
                   : getDishThemeStyles(dayDish, isSelected)
@@ -205,21 +237,13 @@ export default function Cafeteria() {
                   </div>
                   <div className="overflow-hidden">
                     <span className={`text-xs font-bold block ${isSelected ? 'text-inherit opacity-80' : 'text-primary'}`}>
-                      {day}
+                      {dayName}
                     </span>
                     <strong className="text-sm block truncate tracking-tight text-inherit">
                       {displayTitle}
                     </strong>
                   </div>
                 </div>
-
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md hidden sm:inline-block ${isSelected
-                  ? 'bg-primary-foreground/20 text-primary-foreground'
-                  : isEmpty
-                    ? 'bg-transparent text-muted-foreground'
-                    : 'bg-muted text-muted-foreground'
-                  }`}>
-                </span>
               </div>
             );
           })}
@@ -231,48 +255,50 @@ export default function Cafeteria() {
           >
             {displayDish.image ? 'BUY TICKETS' : 'NOT AVAILABLE'}
           </button>
-        </div >
-      </div >
+        </div>
+      </div>
 
-      {/* Ticket purchase */}
-      {
-        isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-muted-foreground/40 backdrop-blur-sm p-4">
-            <div className="bg-card text-card-foreground w-full max-w-md p-6 rounded-3xl shadow-2xl relative border-2 border-border">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      {/* Checkout Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
+          <div className="bg-card text-card-foreground w-full max-w-md p-6 rounded-3xl shadow-2xl relative border border-border">
+            <button
+              onClick={() => {
+                setIsModalOpen(false);
+                setClientSecret('');
+              }}
+              className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
-              <div className="text-center space-y-4 pt-4">
-                <div className={`mx-auto w-24 h-24 rounded-full overflow-hidden border-4 border-${displayDish.color} hover:shadow-md bg-primary-foreground p-1 flex items-center justify-center`}
-                >
-                  {displayDish.image && (
-                    <img
-                      src={getImageUrl(displayDish.image)}
-                      alt={displayDish.title}
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-2xl font-black tracking-tight text-foreground">{displayDish.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Confirm your ticket for {selectedDay}'s {activeTab === 'meals' ? 'meal' : 'dessert'}.</p>
-                </div>
-
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="w-full py-3 mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-[0.99]"
-                >
-                  Confirm Purchase
-                </button>
-              </div>
+            <div className="text-center space-y-4 pt-4 mb-6">
+              <h3 className="text-2xl font-black tracking-tight text-foreground">{displayDish.title}</h3>
+              <p className="text-sm text-muted-foreground">Ticket for {selectedDayName}'s {activeTab === 'meals' ? 'meal' : 'dessert'}</p>
             </div>
+
+            {!clientSecret ? (
+              <button
+                onClick={async () => {
+                  try {
+                    const data = await createTicketPaymentIntent(displayDish.id, selectedDate.toISOString(), 5);
+                    setClientSecret(data.clientSecret);
+                  } catch (error) {
+                    console.error("Payment initialization failed:", error);
+                  }
+                }}
+                className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-[0.99]"
+              >
+                Confirm Details & Proceed to Payment
+              </button>
+            ) : (
+              <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
+                <CheckoutForm clientSecret={clientSecret} />
+              </Elements>
+            )}
           </div>
-        )
-      }
-    </section >
+        </div>
+      )}
+    </section>
   );
 }
