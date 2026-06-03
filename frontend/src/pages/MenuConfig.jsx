@@ -19,6 +19,7 @@ const THEME_OPTIONS = [
   { id: 'ramen', label: 'Light purple' }
 ];
 
+
 const EMPTY_SLOT = { 
   title: "Empty Slot", 
   subtitle: "Click the pencil to assign a dish", 

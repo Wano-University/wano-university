@@ -108,7 +108,7 @@ export default function Cafeteria() {
             <Utensils className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-bold text-primary tracking-tight">Grand Line Refectory Menu</h4>
+            <h4 className="text-2xl font-bold text-primary tracking-tight">Grand Line Cafeteria Menu</h4>
             <h2 className="text-xs text-muted-foreground">Check the plates of the week!</h2>
           </div>
         </div>
@@ -252,7 +252,8 @@ export default function Cafeteria() {
             </button>
             
             <div className="text-center space-y-4 pt-4">
-              <div className="mx-auto w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20 bg-primary-foreground p-1 flex items-center justify-center">
+              <div className={`mx-auto w-24 h-24 rounded-full overflow-hidden border-4 border-${displayDish.color} hover:shadow-md bg-primary-foreground p-1 flex items-center justify-center`}
+              >
                 {displayDish.image && (
                   <img 
                     src={getImageUrl(displayDish.image)} 

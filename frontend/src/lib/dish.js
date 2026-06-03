@@ -36,12 +36,12 @@ export const setDish = async (id, isActive) => {
 
 export const getDishesByType = async (type) => {
   const response = await fetch(`${API_URL}/api/dishes/type/${type}`);
-  
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error || `Failed to load ${type} (${response.status})`);
   }
-  
+
   return response.json();
 };
 
