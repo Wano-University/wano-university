@@ -25,6 +25,9 @@ CREATE TYPE "TicketStatus" AS ENUM ('ACTIVE', 'USED', 'CANCELED');
 -- CreateEnum
 CREATE TYPE "DishType" AS ENUM ('MEAL', 'DESSERT');
 
+-- CreateEnum
+CREATE TYPE "Floor" AS ENUM ('FLOOR1', 'FLOOR2');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -76,6 +79,8 @@ CREATE TABLE "MobilityResource" (
 CREATE TABLE "Sensor" (
     "id" SERIAL NOT NULL,
     "type" "SensorType" NOT NULL,
+    "space" TEXT NOT NULL,
+    "floor" "Floor",
     "resourceId" INTEGER,
     "mobilityResourceId" INTEGER,
     "alertLimit" DOUBLE PRECISION,

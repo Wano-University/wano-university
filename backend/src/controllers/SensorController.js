@@ -2,7 +2,7 @@ import prisma from '../config/db.js';
 
 export const registerSensor = async (req, res) => {
   try {
-    const { type, resourceId, mobilityResourceId, alertLimit, isActive, xCoordinates, yCoordinates } = req.body;
+    const { type, floor, space, resourceId, mobilityResourceId, alertLimit, isActive, xCoordinates, yCoordinates } = req.body;
 
     const existingSensor = await prisma.sensor.findFirst({
         where: {
@@ -19,7 +19,7 @@ export const registerSensor = async (req, res) => {
       }
 
     const sensor = await prisma.sensor.create({
-      data: { type, resourceId, mobilityResourceId, alertLimit, isActive, xCoordinates, yCoordinates}
+      data: { type, floor, space, resourceId, mobilityResourceId, alertLimit, isActive, xCoordinates, yCoordinates}
     });
 
     res.status(201).json(sensor);
@@ -29,10 +29,21 @@ export const registerSensor = async (req, res) => {
   }
 };
 
+export const getSensorsByfloor = async (req, res) =>{
+  try {
+    const { floor } = req.params;
+    const sensors = await prisma.sensor.findMany({
+      where: {floor: floor }});
+    res.status(200).json(sensors);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch sensors by floor." });
+  }
+}
+
 export const sensorStatus = async (req, res) => {
   try{
     const {id} = req.params;
-    const {isActive} = req.params;
+    const {isActive} = req.body;
 
     const updatedSensor = await prisma.sensor.update({
       where: { id: parseInt(id) },
@@ -65,8 +76,9 @@ export const getSensorsByType = async (req, res) => {
   }
 };
 
-export const getAlerts = async (req, res) =>{
-    try {
+export const getAlerts = async (req, res) => {
+  try {
+    const { id } = req.query; 
     const sensors = await prisma.sensor.findMany({
       where: { id: parseInt(id) },
       include: { alerts: true}
@@ -79,6 +91,7 @@ export const getAlerts = async (req, res) =>{
 
 export const getReadings = async (req, res) =>{
     try {
+    const { id } = req.query;
     const sensors = await prisma.sensor.findMany({
       where: { id: parseInt(id) },
       include: { readings: true}

@@ -60,6 +60,11 @@ enum DishType {
   DESSERT
 }
 
+enum Floor{
+  FLOOR1
+  FLOOR2
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -112,6 +117,8 @@ model MobilityResource {
 model Sensor {
   id                 Int        @id @default(autoincrement())
   type               SensorType
+  space              String
+  floor              Floor?
   resourceId         Int?
   mobilityResourceId Int?
   alertLimit         Float?
