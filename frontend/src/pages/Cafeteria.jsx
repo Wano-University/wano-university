@@ -70,6 +70,7 @@ export default function Cafeteria() {
     return workdays[0];
   });
 
+
   useEffect(() => {
     const fetchMenu = async () => {
       try {
@@ -117,6 +118,20 @@ export default function Cafeteria() {
     image: null,
     color: "bg-muted/20 border-dashed border-border text-muted-foreground"
   };
+
+  useEffect(() => {
+    if (isModalOpen && displayDish?.id) {
+      const initPayment = async () => {
+        try {
+          const data = await createTicketPaymentIntent(displayDish.id, selectedDate.toISOString(), 5.00);
+          setClientSecret(data.clientSecret);
+        } catch (error) {
+          console.error("Payment initialization failed:", error);
+        }
+      };
+      initPayment();
+    }
+  }, [isModalOpen, displayDish, selectedDate]);
 
   if (isLoading) {
     return (
@@ -217,7 +232,7 @@ export default function Cafeteria() {
             return (
               <div
                 key={dateKey}
-                onMouseEnter={() => setSelectedDate(dateObj)}
+                onClick={() => setSelectedDate(dateObj)}
                 className={`p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-center justify-between gap-4 ${isEmpty
                   ? 'border-dashed border-border bg-muted/20 text-muted-foreground'
                   : getDishThemeStyles(dayDish, isSelected)
@@ -275,25 +290,20 @@ export default function Cafeteria() {
             <div className="text-center space-y-4 pt-4 mb-6">
               <h3 className="text-2xl font-black tracking-tight text-foreground">{displayDish.title}</h3>
               <p className="text-sm text-muted-foreground">Ticket for {selectedDayName}'s {activeTab === 'meals' ? 'meal' : 'dessert'}</p>
+              <p className="text-sm text-muted-foreground">5.00€</p>
             </div>
 
             {!clientSecret ? (
-              <button
-                onClick={async () => {
-                  try {
-                    const data = await createTicketPaymentIntent(displayDish.id, selectedDate.toISOString(), 5);
-                    setClientSecret(data.clientSecret);
-                  } catch (error) {
-                    console.error("Payment initialization failed:", error);
-                  }
-                }}
-                className="w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-[0.99]"
-              >
-                Confirm Details & Proceed to Payment
-              </button>
+              <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground font-medium animate-pulse">
+                  Generating secure checkout...
+                </p>
+              </div>
             ) : (
               <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
-                <CheckoutForm clientSecret={clientSecret} />
+                {/* Hardcoded 5€ passed here */}
+                <CheckoutForm clientSecret={clientSecret} amount={5.00} />
               </Elements>
             )}
           </div>
