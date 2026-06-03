@@ -1,15 +1,27 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const getAllDishes = async () => {
-  const response = await fetch(`${API_URL}/api/dishes`);
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/dishes`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Failed to load catalog.');
   return data;
 };
 
 export const createDish = async (formData) => {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api/dishes`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+
     body: formData,
   });
 
@@ -22,10 +34,13 @@ export const createDish = async (formData) => {
 };
 
 export const setDish = async (id, isActive) => {
-
+  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api/dishes/${id}`, {
-    method: 'PATCH', 
-    headers: { 'Content-Type': 'application/json' },
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
     body: JSON.stringify({ isActive })
   });
 
@@ -35,7 +50,13 @@ export const setDish = async (id, isActive) => {
 };
 
 export const getDishesByType = async (type) => {
-  const response = await fetch(`${API_URL}/api/dishes/type/${type}`);
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/dishes/type/${type}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -46,8 +67,13 @@ export const getDishesByType = async (type) => {
 };
 
 export const updateDishAPI = async (id, formData) => {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api/dishes/${id}`, {
     method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
     body: formData,
   });
   const data = await response.json();
@@ -56,8 +82,13 @@ export const updateDishAPI = async (id, formData) => {
 };
 
 export const deleteDishAPI = async (id) => {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api/dishes/${id}`, {
     method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Failed to delete dish.');
