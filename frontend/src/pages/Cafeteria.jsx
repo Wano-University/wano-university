@@ -4,13 +4,13 @@ import { Utensils, X } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 const DAYS_OF_WEEK = [
-  "Friday",    
-  "Monday",    
-  "Tuesday",   
-  "Wednesday", 
-  "Thursday",  
-  "Friday",    
-  "Friday"     
+  "Friday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Friday"
 ];
 
 export default function Cafeteria() {
@@ -29,7 +29,7 @@ export default function Cafeteria() {
         title: "Pirate King's Meal",
         subtitle: "Captain's Grand Feast",
         desc: "A massive, slow-roasted bone-in cut glazed in a sticky, savory sauce—bold, messy, and made for a true pirate feast.",
-        image: "/MondayMeal.png", 
+        image: "/MondayMeal.png",
         color: "text-meat border-meat bg-meat/5"
       },
       Tuesday: {
@@ -58,7 +58,7 @@ export default function Cafeteria() {
         subtitle: "Archaeologist's Ink",
         desc: "Dark squid ink broth with tender seafood and earthy notes—mysterious, refined, and steeped in hidden history.",
         image: "/FridayMeal.jpg",
-        color:"text-ramen border-ramen bg-ramen/5"
+        color: "text-ramen border-ramen bg-ramen/5"
       }
     },
     desserts: {
@@ -116,7 +116,7 @@ export default function Cafeteria() {
         </div>
 
         <div className="flex justify-end">
-          <Link 
+          <Link
             to="/menuconfig"
             className="text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-full hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 inline-block"
           >
@@ -127,37 +127,35 @@ export default function Cafeteria() {
         <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
           <button
             onClick={() => { setActiveTab('meals'); setSelectedDay(DAYS_OF_WEEK[new Date().getDay()]); }}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
-              activeTab === 'meals' 
-                ? 'bg-card text-primary shadow-sm' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals'
+              ? 'bg-card text-primary shadow-sm'
+              : 'text-muted-foreground hover:text-foreground'
+              }`}
           > Meals
           </button>
           <button
             onClick={() => { setActiveTab('desserts'); setSelectedDay(DAYS_OF_WEEK[new Date().getDay()]); }}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
-              activeTab === 'desserts' 
-                ? 'bg-card text-primary shadow-sm' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts'
+              ? 'bg-card text-primary shadow-sm'
+              : 'text-muted-foreground hover:text-foreground'
+              }`}
           > Desserts
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        
+
         {/* Left thingy */}
         <Card className={`md:col-span-3 p-8 border transition-all duration-300 shadow-xl rounded-[32px] flex flex-col md:flex-row items-center gap-8 ${currentDish.color || 'bg-card text-card-foreground border-border'}`}>
-          
+
           {/* Pic */}
-          <div 
+          <div
             onClick={() => setIsModalOpen(true)}
             className="w-56 h-56 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl border-4 border-primary/20 flex-shrink-0 bg-muted/30 backdrop-blur-sm transition-transform duration-500 hover:rotate-12 flex items-center justify-center p-2 cursor-pointer"
           >
-            <img 
-              src={currentDish.image} 
+            <img
+              src={currentDish.image}
               alt={currentDish.title}
               className="w-full h-full object-contain rounded-full"
             />
@@ -188,17 +186,16 @@ export default function Cafeteria() {
               <div
                 key={day}
                 onMouseEnter={() => setSelectedDay(day)}
-                className={`p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 flex items-center justify-between gap-4 ${
-                  isSelected
-                    ? 'bg-primary text-primary-foreground border-primary shadow-lg scale-[1.02] translate-x-1'
-                    : 'bg-card text-card-foreground border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30'
-                }`}
+                className={`p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 flex items-center justify-between gap-4 ${isSelected
+                  ? 'bg-primary text-primary-foreground border-primary shadow-lg scale-[1.02] translate-x-1'
+                  : 'bg-card text-card-foreground border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30'
+                  }`}
               >
                 <div className="flex items-center gap-3 overflow-hidden">
                   <div className="w-11 h-11 rounded-full overflow-hidden border border-border bg-muted flex-shrink-0 flex items-center justify-center p-0.5 bg-white">
-                    <img 
-                      src={dayDish.image} 
-                      alt="" 
+                    <img
+                      src={dayDish.image}
+                      alt=""
                       className="w-full h-full object-contain rounded-full"
                     />
                   </div>
@@ -209,17 +206,16 @@ export default function Cafeteria() {
                     <strong className="text-sm block truncate tracking-tight">{dayDish.title}</strong>
                   </div>
                 </div>
-                
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md hidden sm:inline-block ${
-                  isSelected ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}>
+
+                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md hidden sm:inline-block ${isSelected ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted text-muted-foreground'
+                  }`}>
                   {dayDish.subtitle.split(' ')[0]}
                 </span>
               </div>
             );
           })}
 
-          <button 
+          <button
             onClick={() => setIsModalOpen(true)}
             className="w-full mt-2 py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-[0.99] cursor-pointer"
           >
@@ -232,17 +228,17 @@ export default function Cafeteria() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="bg-card text-card-foreground w-full max-w-md p-6 rounded-3xl shadow-2xl relative border-2">
-            <button 
+            <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
-            
+
             <div className="text-center space-y-4 pt-4">
               <div className="mx-auto w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20 bg-muted/30 p-1 flex items-center justify-center">
-                <img 
-                  src={currentDish.image} 
+                <img
+                  src={currentDish.image}
                   alt={currentDish.title}
                   className="w-full h-full object-contain rounded-full"
                 />
@@ -251,8 +247,8 @@ export default function Cafeteria() {
                 <h3 className="text-2xl font-black tracking-tight">{currentDish.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">Confirm your ticket for {selectedDay}'s {activeTab === 'meals' ? 'meal' : 'dessert'}.</p>
               </div>
-              
-              <button 
+
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="w-full py-3 mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-[0.99]"
               >
