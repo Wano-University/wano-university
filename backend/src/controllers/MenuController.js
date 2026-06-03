@@ -21,8 +21,8 @@ export const updateActiveMenu = async (req, res) => {
   try {
     const { dishIds } = req.body; 
 
-    if (!dishIds || dishIds.length > 5) {
-      return res.status(400).json({ error: "A menu can only feature up to 5 dishes." });
+    if (!dishIds || dishIds.length > 10) {
+      return res.status(400).json({ error: "A menu can only feature up to 10 dishes." });
     }
 
     let menu = await prisma.menu.findFirst();

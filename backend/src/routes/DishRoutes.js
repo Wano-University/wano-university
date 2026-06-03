@@ -1,10 +1,35 @@
 import { Router } from 'express';
-import { createDish, getAllDishes, setDish } from '../controllers/DishController.js';
+import multer from 'multer';
+import path from 'path';
+import { createDish, getAllDishes, setDish, getDishesByType, updateDish, deleteDish } from '../controllers/DishController.js';
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'src/assets'); 
+  },
+  filename: function (req, file, cb) {
+    const title = req.body.title || 'dish';
+    const slugifiedTitle = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');  
+      
+    const ext = path.extname(file.originalname);
+    
+
+    cb(null, `${slugifiedTitle}${ext}`);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const router = Router();
 
-router.post('/createDish', createDish);
-router.get('/getDishes', getAllDishes);
-router.patch('/setDish', setDish)
+router.get('/', getAllDishes);
+router.get('/type/:type', getDishesByType);
+router.post('/', upload.single('image'), createDish); 
+router.patch('/:id', setDish);
+router.put('/:id', upload.single('image'), updateDish); 
+router.delete('/:id', deleteDish);
 
 export default router;

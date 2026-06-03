@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "UserType" AS ENUM ('STUDENT', 'PROFESSOR', 'ADMINISTRATOR', 'STAFF');
+CREATE TYPE "UserType" AS ENUM ('STUDENT', 'PROFESSOR', 'ADMIN', 'STAFF');
 
 -- CreateEnum
 CREATE TYPE "ResourceType" AS ENUM ('ROOM', 'LABORATORY', 'EQUIPMENT');
@@ -20,10 +20,10 @@ CREATE TYPE "ReservationStatus" AS ENUM ('ACTIVE', 'COMPLETED', 'CANCELED');
 CREATE TYPE "AccessType" AS ENUM ('ENTRY', 'EXIT');
 
 -- CreateEnum
-CREATE TYPE "DishType" AS ENUM ('MEAT', 'FISH', 'VEGETARIAN', 'DIET');
+CREATE TYPE "TicketStatus" AS ENUM ('ACTIVE', 'USED', 'CANCELED');
 
 -- CreateEnum
-CREATE TYPE "TicketStatus" AS ENUM ('ACTIVE', 'USED', 'CANCELED');
+CREATE TYPE "DishType" AS ENUM ('MEAL', 'DESSERT');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -80,6 +80,8 @@ CREATE TABLE "Sensor" (
     "mobilityResourceId" INTEGER,
     "alertLimit" DOUBLE PRECISION,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "xCoordinates" DOUBLE PRECISION NOT NULL,
+    "yCoordinates" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "Sensor_pkey" PRIMARY KEY ("id")
 );
@@ -134,7 +136,7 @@ CREATE TABLE "Access" (
 -- CreateTable
 CREATE TABLE "Menu" (
     "id" SERIAL NOT NULL,
-    "availableDate" DATE NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Menu_pkey" PRIMARY KEY ("id")
 );
@@ -142,9 +144,14 @@ CREATE TABLE "Menu" (
 -- CreateTable
 CREATE TABLE "Dish" (
     "id" SERIAL NOT NULL,
-    "menuId" INTEGER NOT NULL,
-    "name" TEXT NOT NULL,
-    "dishType" "DishType" NOT NULL,
+    "menuId" INTEGER,
+    "title" TEXT NOT NULL,
+    "subtitle" TEXT NOT NULL,
+    "desc" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "isActive" BOOLEAN NOT NULL,
+    "dishType" "DishType" NOT NULL DEFAULT 'MEAL',
 
     CONSTRAINT "Dish_pkey" PRIMARY KEY ("id")
 );
@@ -194,9 +201,6 @@ CREATE UNIQUE INDEX "Permission_description_key" ON "Permission"("description");
 CREATE UNIQUE INDEX "MobilityResource_identifier_key" ON "MobilityResource"("identifier");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Menu_availableDate_key" ON "Menu"("availableDate");
-
--- CreateIndex
 CREATE INDEX "_PermissionToUser_B_index" ON "_PermissionToUser"("B");
 
 -- AddForeignKey
@@ -230,7 +234,7 @@ ALTER TABLE "Access" ADD CONSTRAINT "Access_resourceId_fkey" FOREIGN KEY ("resou
 ALTER TABLE "Access" ADD CONSTRAINT "Access_reservationId_fkey" FOREIGN KEY ("reservationId") REFERENCES "Reservation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Dish" ADD CONSTRAINT "Dish_menuId_fkey" FOREIGN KEY ("menuId") REFERENCES "Menu"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Dish" ADD CONSTRAINT "Dish_menuId_fkey" FOREIGN KEY ("menuId") REFERENCES "Menu"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Purchase" ADD CONSTRAINT "Purchase_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
