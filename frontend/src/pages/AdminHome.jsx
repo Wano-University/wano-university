@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card"
 import { MonitorSmartphone, Utensils, CarFront, Terminal, LayoutDashboard, Target } from "lucide-react"
 import { getTodaysMeal } from "@/lib/menu"
 import { getImageUrl } from "@/lib/utils"
+import { Link } from "react-router-dom"
 
 export default function AdminHome() {
   const [todayDish, setTodayDish] = useState(null);
