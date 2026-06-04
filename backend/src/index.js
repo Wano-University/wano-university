@@ -1,5 +1,9 @@
-import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config()
+
+
+import express from 'express';
+
 import cors from 'cors';
 import userRoutes from './routes/UserRoutes.js';
 import menuRoutes from './routes/MenuRoutes.js';
@@ -9,11 +13,9 @@ import paymentRoutes from './routes/PaymentRoutes.js';
 import prisma from './config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,6 +41,15 @@ app.use('/api/dishes', dishRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/payments', paymentRoutes);
 
-app.listen(PORT, () => {
-  console.log('Server is running on http://localhost:${PORT}');
+app.listen(PORT, async () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log("ENV PORT:", process.env.PORT);
+ try {
+    await prisma.$connect();
+const result = await prisma.$queryRaw`SELECT current_database()`;
+console.log(result);
+    console.log('✅ Database connected successfully');
+  } catch (err) {
+    console.error('❌ Database connection failed:', err.message);
+  }
 });

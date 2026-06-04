@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import prisma from '../config/db.js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRETE_KEY)
 
 export const createPaymentIntent = async (req, res) => {
   try {
