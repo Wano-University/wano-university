@@ -1,9 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config()
-
-
 import express from 'express';
-
 import cors from 'cors';
 import userRoutes from './routes/UserRoutes.js';
 import menuRoutes from './routes/MenuRoutes.js';
@@ -48,8 +43,8 @@ app.listen(PORT, async () => {
     await prisma.$connect();
 const result = await prisma.$queryRaw`SELECT current_database()`;
 console.log(result);
-    console.log('✅ Database connected successfully');
+    console.log(' Database connected successfully');
   } catch (err) {
-    console.error('❌ Database connection failed:', err.message);
+    console.error(' Database connection failed:', err.message);
   }
 });
