@@ -26,7 +26,7 @@ CREATE TYPE "TicketStatus" AS ENUM ('ACTIVE', 'USED', 'CANCELED');
 CREATE TYPE "DishType" AS ENUM ('MEAL', 'DESSERT');
 
 -- CreateEnum
-CREATE TYPE "Floor" AS ENUM ('FLOOR1', 'FLOOR2');
+CREATE TYPE "Floor" AS ENUM ('FLOOR_1', 'FLOOR_2');
 
 -- CreateTable
 CREATE TABLE "User" (

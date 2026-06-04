@@ -5,6 +5,7 @@ import userRoutes from './routes/UserRoutes.js';
 import menuRoutes from './routes/MenuRoutes.js';
 import dishRoutes from './routes/DishRoutes.js';
 import ticketRoutes from './routes/TicketRoutes.js';
+import sensorRoutes from './routes/SensorRoutes.js';
 import prisma from './config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -44,7 +45,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/dishes', dishRoutes);
 app.use('/api/tickets', ticketRoutes);
-
+app.use('/api/sensors', sensorRoutes);
 try {
   await prisma.$connect();
   console.log("DATABASE CONNECTED");

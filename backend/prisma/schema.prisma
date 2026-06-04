@@ -61,8 +61,8 @@ enum DishType {
 }
 
 enum Floor{
-  FLOOR1
-  FLOOR2
+  FLOOR_1
+  FLOOR_2
 }
 
 model User {
