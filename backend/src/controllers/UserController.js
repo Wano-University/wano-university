@@ -42,7 +42,7 @@ export const registerUser = async (req, res) => {
 export const login = async (req, res) => {
   try {
 
-    const { login, password } = req.body;
+    const { login, password, rememberMe } = req.body;
 
     const user = await prisma.user.findUnique({
       where: { login: login }
@@ -58,12 +58,14 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials." });
     }
 
+    const tokenDuration = rememberMe ? '7d' : '8h';
+
     const { password: _, ...userWithoutPassword } = user;
 
     const token = jwt.sign(
       { userId: user.id, role: user.type },
       process.env.JWT_SECRET,
-      { expiresIn: '8h' }
+      { expiresIn: tokenDuration }
     );
 
     res.status(200).json({

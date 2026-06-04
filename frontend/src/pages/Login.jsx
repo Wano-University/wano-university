@@ -24,7 +24,8 @@ export default function Login() {
 
     const credentials = {
       login: formValues.login,
-      password: formValues.password
+      password: formValues.password,
+      rememberMe: rememberMe
     };
 
     try {
