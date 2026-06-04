@@ -130,11 +130,10 @@ export default function MenuConfig() {
       const uniqueAssignedIds = [...new Set(assignedIds)];
 
       await updateActiveMenu(uniqueAssignedIds, schedule);
-      alert("Menu schedule successfully updated for the week!");
     } catch (error) {
       console.error(error);
-      alert("Failed to save menu schedule to the database.");
     } finally {
+      alert
       setIsSaving(false);
     }
   };

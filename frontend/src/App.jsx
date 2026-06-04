@@ -12,6 +12,7 @@ import HomeRedirection from './components/HomeRedirection';
 import StaffHome from './pages/StaffHome';
 import StudentHome from './pages/StudentHome';
 import AdminHome from './pages/AdminHome';
+import ForgotPassword from './pages/ForgotPassword';
 
 function RootLayout() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/changepw" element={<ForgotPassword />} />
 
         <Route path="/home" element={<HomeRedirection />} />
 
