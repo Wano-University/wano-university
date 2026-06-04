@@ -8,6 +8,7 @@ import { ThemeProvider } from './providers/ThemeProvider';
 import InteractiveMap from './pages/InteractiveMap';
 import Cafeteria from './pages/Cafeteria';
 import MenuConfig from './pages/MenuConfig';
+import Spaces from './pages/Spaces';
 
 function RootLayout() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/cafeteria" element={<Cafeteria />}/>
         <Route path="/menuconfig" element={<MenuConfig/>}/>
         <Route path="/login" element={<Login />} />
+        <Route path="/spaces" element={<Spaces />} />
       </Route>
     </Routes>
   );

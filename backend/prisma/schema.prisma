@@ -98,7 +98,7 @@ model Resource {
   isAvailable Boolean      @default(true)
   createdAt   DateTime     @default(now())
 
-  sensors      Sensor[]
+  sensor       Sensor?      
   reservations Reservation[]
   accesses     Access[]
 }
@@ -110,7 +110,7 @@ model MobilityResource {
   location   String?
   status     MobilityStatus @default(FREE)
 
-  sensors      Sensor[]
+  sensor       Sensor?
   reservations Reservation[]
 }
 
@@ -119,10 +119,11 @@ model Sensor {
   type               SensorType
   space              String
   floor              Floor?
-  resourceId         Int?
-  mobilityResourceId Int?
+  resourceId         Int?       @unique 
+  mobilityResourceId Int?       @unique 
   alertLimit         Float?
   isActive           Boolean    @default(true)
+  isOccupied         Boolean    @default(true)
   xCoordinates       Float
   yCoordinates       Float
 
