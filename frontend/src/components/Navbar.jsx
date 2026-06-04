@@ -5,137 +5,132 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, Terminal } from "lucide-react";
 import { ModeToggle } from "./ModeToggle";
 import { Button } from "./ui/button";
-import { logoutUser } from "../lib/auth";
+import UserAvatar from "./UserAvatar";
+
+const desktopLinkStyle = "text-base font-medium text-muted-foreground hover:text-primary hover:scale-105 px-3 py-2 transition-all duration-200 inline-block";
+const mobileLinkStyle = "block w-full px-4 py-3 text-lg font-medium text-muted-foreground hover:text-primary hover:scale-[1.02] transition-all duration-200 origin-left";
 
 export default function Navbar() {
   const storedUser = localStorage.getItem('user');
   const user = storedUser ? JSON.parse(storedUser) : null;
 
   return (
-    <nav className="flex items-center justify-between px-16 py-4 border-b sticky top-0 bg-background/25 backdrop-blur-sm z-50">
+    <nav className="flex items-center justify-between px-6 lg:px-16 py-4 border-b sticky top-0 bg-background/50 backdrop-blur-md z-50">
       <Link to={user ? "/home" : "/"}>
-        <span className="font-bold text-xl">Wano University</span>
+        <span className="font-bold text-xl hover:opacity-80 transition-opacity">Wano University</span>
       </Link>
 
       {/* Desktop Menu */}
-      <div className="hidden md:flex items-center gap-8">
-        <Link to="/home" className="hover:text-primary transition-colors">Home</Link>
+      <div className="hidden lg:flex items-center gap-4">
 
-        {/* Not Logged In */}
         {!user && (
           <>
-            <Link to="/createacc" className="hover:text-primary transition-colors">Create Account</Link>
-            <Link to="/login" className="hover:text-primary transition-colors">Login</Link>
+            <Link to="/createacc" className={desktopLinkStyle}>Create Account</Link>
+            <Link to="/login" className={desktopLinkStyle}>Login</Link>
           </>
         )}
 
-        {/* Admin Only */}
         {user?.type === 'ADMIN' && (
           <>
-            <Link to="/admin/dashboard" className="hover:text-primary transition-colors">Admin Panel</Link>
-            <Link to="/admin/users" className="hover:text-primary transition-colors">Manage Users</Link>
+            <Link to="/map" className={desktopLinkStyle}>Spaces</Link>
+            <Link to="/parking" className={desktopLinkStyle}>Mobility</Link>
+            <Link to="/sensors" className={desktopLinkStyle}>Sensors</Link>
+            <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
+            <Link to="/admin/dashboard" className={desktopLinkStyle}>Dashboards</Link>
+            <Link to="/admin/users" className={desktopLinkStyle}>User Management</Link>
           </>
         )}
 
-        {/* Staff Only */}
         {user?.type === 'STAFF' && (
           <>
-            <Link to="/staff/courses" className="hover:text-primary transition-colors">Manage Courses</Link>
-            <Link to="/staff/grades" className="hover:text-primary transition-colors">Upload Grades</Link>
+            <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
+            <Link to="/sensors" className={desktopLinkStyle}>Sensors</Link>
+            <Link to="/sensors/temperature" className={desktopLinkStyle}>Temperature</Link>
+            <Link to="/sensors/air-quality" className={desktopLinkStyle}>Air Quality</Link>
           </>
         )}
 
-        {/* 3. Student Only */}
-        {user?.type === 'STUDENT' && (
+        {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
           <>
-            <Link to="/student/schedule" className="hover:text-primary transition-colors">My Schedule</Link>
-            <Link to="/student/grades" className="hover:text-primary transition-colors">My Grades</Link>
+            <Link to="/map" className={desktopLinkStyle}>Spaces</Link>
+            <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
+            <Link to="/parking" className={desktopLinkStyle}>Mobility</Link>
           </>
         )}
 
-        {/* Any Logged In User */}
+        {/* Desktop UI Tools */}
         {user && (
-          <Button variant="ghost" onClick={logoutUser}>
-            Logout ({user.login})
+          <div className="flex items-center gap-3 border-l border-border pl-6 ml-2">
+            <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200 cursor-pointer" title="Open Terminal">
+              <Terminal className="h-5 w-5" />
+            </Button>
+            <ModeToggle />
+            <UserAvatar user={user} />
+          </div>
+        )}
+
+        {!user && <ModeToggle />}
+      </div>
+
+      {/* Mobile Menu */}
+      <div className="lg:hidden flex items-center gap-2">
+        {user && (
+          <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200" title="Open Terminal">
+            <Terminal className="h-5 w-5" />
           </Button>
         )}
 
         <ModeToggle />
-      </div>
 
-      {/* Mobile Menu */}
-      <div className="md:hidden flex items-center gap-4">
-        <ModeToggle />
+        {user && <UserAvatar user={user} />}
+
         <Sheet>
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <SheetTrigger asChild>
-            <button className="p-2 -mr-2 text-foreground/80 hover:text-foreground">
+            <Button variant="ghost" size="icon" className="rounded-full text-foreground/80 hover:text-foreground cursor-pointer">
               <Menu className="h-6 w-6" />
               <span className="sr-only">Open menu</span>
-            </button>
+            </Button>
           </SheetTrigger>
 
-          <SheetContent side="right" className="flex flex-col gap-6 pt-16 px-6">
-            <Link to="/home" className="text-lg font-medium hover:text-primary transition-colors">
-              Home
-            </Link>
+          <SheetContent side="right" className="flex flex-col gap-2 pt-16 px-4 overflow-y-auto">
 
-            {/* Not Logged In */}
             {!user && (
               <>
-                <Link to="/createacc" className="text-lg font-medium hover:text-primary transition-colors">
-                  Create Account
-                </Link>
-                <Link to="/login" className="text-lg font-medium hover:text-primary transition-colors">
-                  Login
-                </Link>
+                <Link to="/createacc" className={mobileLinkStyle}>Create Account</Link>
+                <Link to="/login" className={mobileLinkStyle}>Login</Link>
               </>
             )}
 
-            {/* Admin Only */}
             {user?.type === 'ADMIN' && (
               <>
-                <Link to="/admin/dashboard" className="text-lg font-medium hover:text-primary transition-colors">
-                  Admin Panel
-                </Link>
-                <Link to="/admin/users" className="text-lg font-medium hover:text-primary transition-colors">
-                  Manage Users
-                </Link>
+                <Link to="/map" className={mobileLinkStyle}>Spaces</Link>
+                <Link to="/parking" className={mobileLinkStyle}>Mobility</Link>
+                <Link to="/sensors" className={mobileLinkStyle}>Sensors</Link>
+                <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
+                <Link to="/admin/dashboard" className={mobileLinkStyle}>Dashboards</Link>
+                <Link to="/admin/users" className={mobileLinkStyle}>User Management</Link>
               </>
             )}
 
-            {/* Staff Only */}
             {user?.type === 'STAFF' && (
               <>
-                <Link to="/staff/courses" className="text-lg font-medium hover:text-primary transition-colors">
-                  Manage Courses
-                </Link>
-                <Link to="/staff/grades" className="text-lg font-medium hover:text-primary transition-colors">
-                  Upload Grades
-                </Link>
+                <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
+                <Link to="/sensors" className={mobileLinkStyle}>Sensors</Link>
+                <Link to="/sensors/temperature" className={mobileLinkStyle}>Temperature</Link>
+                <Link to="/sensors/air-quality" className={mobileLinkStyle}>Air Quality</Link>
               </>
             )}
 
-            {/* 3. Student Only */}
-            {user?.type === 'STUDENT' && (
+            {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
               <>
-                <Link to="/student/schedule" className="text-lg font-medium hover:text-primary transition-colors">
-                  My Schedule
-                </Link>
-                <Link to="/student/grades" className="text-lg font-medium hover:text-primary transition-colors">
-                  My Grades
-                </Link>
+                <Link to="/map" className={mobileLinkStyle}>Spaces</Link>
+                <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
+                <Link to="/parking" className={mobileLinkStyle}>Mobility</Link>
               </>
-            )}
-
-            {/* Any Logged In User */}
-            {user && (
-              <Button onClick={logoutUser} className="w-full mt-4">
-                Logout ({user.login})
-              </Button>
             )}
           </SheetContent>
         </Sheet>
