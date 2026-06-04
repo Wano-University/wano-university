@@ -10,7 +10,10 @@ export const getActiveMenu = async (req, res) => {
       return res.status(404).json({ message: "No active dishes found." });
     }
 
-    res.status(200).json(menu.dishes);
+    res.status(200).json({
+      schedule: menu.schedule || {},
+      dishes: menu.dishes
+    });
   } catch (error) {
     console.error("Error fetching menu:", error);
     res.status(500).json({ error: "Error loading the menu." });
@@ -19,7 +22,7 @@ export const getActiveMenu = async (req, res) => {
 
 export const updateActiveMenu = async (req, res) => {
   try {
-    const { dishIds } = req.body; 
+    const { dishIds, schedule } = req.body;
 
     if (!dishIds || dishIds.length > 10) {
       return res.status(400).json({ error: "A menu can only feature up to 10 dishes." });
@@ -36,19 +39,22 @@ export const updateActiveMenu = async (req, res) => {
     const updatedMenu = await prisma.menu.update({
       where: { id: menu.id },
       data: {
+        schedule: schedule,
         dishes: {
-          set: connectedDishes 
+          set: connectedDishes
         }
       },
       include: { dishes: true }
     });
 
-    res.status(200).json({ 
-      message: "Menu successfully updated for the week!", 
-      dishes: updatedMenu.dishes 
+    res.status(200).json({
+      message: "Menu successfully updated for the week!",
+      dishes: updatedMenu.dishes,
+      schedule: updatedMenu.schedule
     });
   } catch (error) {
     console.error("Error updating menu:", error);
     res.status(500).json({ error: "Failed to update the active dishes." });
   }
 };
+

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pencil, Utensils, Plus, PlusCircle, Image as ImageIcon, Palette, FileText, Type, Check, X, HelpCircle, Trash2, Save } from "lucide-react";
 import { Link } from 'react-router-dom';
-import { getAllDishes, createDish, updateDishAPI, deleteDishAPI } from '../lib/dish'; 
+import { getAllDishes, createDish, updateDishAPI, deleteDishAPI } from '../lib/dish';
 import { getActiveMenu, updateActiveMenu } from '../lib/menu';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -20,12 +20,12 @@ const THEME_OPTIONS = [
 ];
 
 
-const EMPTY_SLOT = { 
-  title: "Empty Slot", 
-  subtitle: "Click the pencil to assign a dish", 
-  image: "", 
+const EMPTY_SLOT = {
+  title: "Empty Slot",
+  subtitle: "Click the pencil to assign a dish",
+  image: "",
   color: "text-muted-foreground border-dashed border-border bg-muted/10",
-  isEmpty: true 
+  isEmpty: true
 };
 
 const INITIAL_MENU_DATA = {
@@ -50,7 +50,7 @@ export default function MenuConfig() {
   const [menuData, setMenuData] = useState(INITIAL_MENU_DATA);
   const [dishPool, setDishPool] = useState({ meals: {}, desserts: {} });
   const [editingDay, setEditingDay] = useState(null);
-  const [dishModalState, setDishModalState] = useState(false); 
+  const [dishModalState, setDishModalState] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -61,28 +61,29 @@ export default function MenuConfig() {
     try {
       const catalogData = await getAllDishes();
       const sortedPool = { meals: {}, desserts: {} };
-      
+
       catalogData.forEach(dish => {
         const category = dish.dishType === 'DESSERT' ? 'desserts' : 'meals';
         sortedPool[category][dish.id] = dish;
       });
       setDishPool(sortedPool);
 
-      const activeMenu = await getActiveMenu();
-      if (activeMenu && activeMenu.length > 0) {
+      const activeMenuData = await getActiveMenu();
+      if (activeMenuData && activeMenuData.schedule && activeMenuData.dishes) {
         let loadedMenuData = JSON.parse(JSON.stringify(INITIAL_MENU_DATA));
         const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-        
-        let mealIndex = 0;
-        let dessertIndex = 0;
 
-        activeMenu.forEach(dish => {
-          if (dish.dishType === 'DESSERT' && dessertIndex < 5) {
-            loadedMenuData.desserts[days[dessertIndex]] = { ...dish, isEmpty: false };
-            dessertIndex++;
-          } else if (dish.dishType !== 'DESSERT' && mealIndex < 5) {
-            loadedMenuData.meals[days[mealIndex]] = { ...dish, isEmpty: false };
-            mealIndex++;
+        days.forEach(day => {
+          const dayIds = activeMenuData.schedule[day];
+          if (dayIds) {
+            if (dayIds.mealId) {
+              const mealDish = activeMenuData.dishes.find(d => d.id === dayIds.mealId);
+              if (mealDish) loadedMenuData.meals[day] = { ...mealDish, isEmpty: false };
+            }
+            if (dayIds.dessertId) {
+              const dessertDish = activeMenuData.dishes.find(d => d.id === dayIds.dessertId);
+              if (dessertDish) loadedMenuData.desserts[day] = { ...dessertDish, isEmpty: false };
+            }
           }
         });
         setMenuData(loadedMenuData);
@@ -107,15 +108,28 @@ export default function MenuConfig() {
     setIsSaving(true);
     try {
       const assignedIds = [];
-      ['meals', 'desserts'].forEach(category => {
-        Object.values(menuData[category]).forEach(slot => {
-          if (!slot.isEmpty && slot.id) {
-            assignedIds.push(slot.id);
-          }
-        });
+      const schedule = {};
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+      days.forEach(day => {
+        schedule[day] = { mealId: null, dessertId: null };
+
+        const meal = menuData.meals[day];
+        if (!meal.isEmpty && meal.id) {
+          assignedIds.push(meal.id);
+          schedule[day].mealId = meal.id;
+        }
+
+        const dessert = menuData.desserts[day];
+        if (!dessert.isEmpty && dessert.id) {
+          assignedIds.push(dessert.id);
+          schedule[day].dessertId = dessert.id;
+        }
       });
 
-      await updateActiveMenu(assignedIds);
+      const uniqueAssignedIds = [...new Set(assignedIds)];
+
+      await updateActiveMenu(uniqueAssignedIds, schedule);
       alert("Menu schedule successfully updated for the week!");
     } catch (error) {
       console.error(error);
@@ -143,9 +157,9 @@ export default function MenuConfig() {
           [savedDish.id]: savedDish
         }
       }));
-      
+
       setDishModalState(false);
-      await loadData(); 
+      await loadData();
     } catch (error) {
       console.error("Failed to save dish:", error);
       alert("Failed to save dish to database.");
@@ -153,17 +167,17 @@ export default function MenuConfig() {
   };
 
   const handleDeleteDish = async (e, id) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     if (!window.confirm("Are you sure you want to completely remove this dish from the database?")) return;
 
     try {
       await deleteDishAPI(id);
-      
+
       const updatedPool = { ...dishPool };
       delete updatedPool[activeTab][id];
       setDishPool(updatedPool);
-      
-      await loadData(); 
+
+      await loadData();
     } catch (error) {
       console.error("Failed to delete dish:", error);
       alert("Failed to delete dish.");
@@ -183,16 +197,16 @@ export default function MenuConfig() {
           </div>
         </div>
 
-      {/* Admin buttons */}
+        {/* Admin buttons */}
         <div className="flex justify-end gap-3">
-          <button 
+          <button
             onClick={handleSaveMenuSchedule}
             disabled={isSaving}
             className="text-xs font-bold uppercase tracking-widest bg-secondary text-secondary-foreground px-6 py-2.5 rounded-full hover:shadow-xl transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <Save className="w-4 h-4" /> {isSaving ? 'Saving...' : 'Save Schedule'}
           </button>
-          <Link 
+          <Link
             to="/cafeteria"
             className="text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-6 py-2.5 rounded-full hover:shadow-xl hover:bg-primary/90 transition-all inline-block"
           >
@@ -200,24 +214,24 @@ export default function MenuConfig() {
           </Link>
         </div>
 
-      {/* Change between tabs */}
+        {/* Change between tabs */}
         <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
           <button
             onClick={() => setActiveTab('meals')}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-          > 
+          >
             Meals
           </button>
           <button
             onClick={() => setActiveTab('desserts')}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-          > 
+          >
             Desserts
           </button>
         </div>
       </div>
 
-    {/* Dish set up */}
+      {/* Dish set up */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
         <div className="md:col-span-5 flex flex-col gap-3">
           {Object.keys(menuData[activeTab]).map((day) => {
@@ -227,29 +241,27 @@ export default function MenuConfig() {
             return (
               <div
                 key={day}
-                className={`p-3.5 rounded-2xl border flex items-center justify-between gap-4 transition-shadow ${
-                  isSlotEmpty 
-                    ? 'border-dashed border-border bg-muted/20 text-muted-foreground' 
-                    : `${dayDish.color} hover:shadow-md`
-                }`}
+                className={`p-3.5 rounded-2xl border flex items-center justify-between gap-4 transition-shadow ${isSlotEmpty
+                  ? 'border-dashed border-border bg-muted/20 text-muted-foreground'
+                  : `${dayDish.color} hover:shadow-md`
+                  }`}
               >
                 <div className="flex items-center gap-3 overflow-hidden">
-                  <div className={`w-11 h-11 rounded-full overflow-hidden border shrink-0 flex items-center justify-center p-0.5 ${
-                    isSlotEmpty ? 'border-dashed border-muted-foreground/30 bg-muted/40' : 'border-current bg-primary-foreground'
-                  }`}>
+                  <div className={`w-11 h-11 rounded-full overflow-hidden border shrink-0 flex items-center justify-center p-0.5 ${isSlotEmpty ? 'border-dashed border-muted-foreground/30 bg-muted/40' : 'border-current bg-primary-foreground'
+                    }`}>
                     {dayDish.image ? (
                       <img src={`${API_URL}${dayDish.image}`} alt="" className="w-full h-full object-cover rounded-full" />
                     ) : (
                       <HelpCircle className="w-5 h-5 text-muted-foreground opacity-50" />
                     )}
                   </div>
-                  
+
                   <div className="overflow-hidden">
                     <span className="text-xs font-bold block text-muted-foreground">{day}</span>
                     <strong className="text-sm block truncate tracking-tight text-foreground">{dayDish.title}</strong>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={() => setEditingDay(day)}
                   className="p-2 rounded-xl transition-all cursor-pointer bg-primary-foreground/80 border border-border text-muted-foreground hover:text-foreground hover:shadow-sm hover:scale-105 active:scale-95"
@@ -272,8 +284,8 @@ export default function MenuConfig() {
                 <h3 className="text-xl font-black tracking-tight">Select Dish for {editingDay}</h3>
                 <p className="text-xs text-muted-foreground">Choose an alternative dish from the registered {activeTab} collection.</p>
               </div>
-              
-              <button 
+
+              <button
                 onClick={() => setDishModalState(null)}
                 className="text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-3 py-2 rounded-xl hover:bg-primary/90 transition-all flex items-center gap-1 cursor-pointer"
               >
@@ -295,7 +307,7 @@ export default function MenuConfig() {
                 </div>
               </div>
 
-            {/* Selects dish */}
+              {/* Selects dish */}
               {Object.keys(dishPool[activeTab] || {}).map((poolKey) => {
                 const catalogItem = dishPool[activeTab][poolKey];
                 return (
@@ -315,14 +327,14 @@ export default function MenuConfig() {
                     </div>
 
                     <div className="flex gap-1.5 shrink-0">
-                      <button 
+                      <button
                         onClick={(e) => { e.stopPropagation(); setDishModalState(catalogItem); }}
                         className="p-1.5 bg-background text-muted-foreground rounded-lg hover:text-primary border border-border transition-colors cursor-pointer"
                         title="Edit dish."
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
-                      <button 
+                      <button
                         onClick={(e) => handleDeleteDish(e, catalogItem.id)}
                         className="p-1.5 bg-background text-muted-foreground rounded-lg hover:text-destructive border border-border transition-colors cursor-pointer"
                         title="Delete dish permanently."
@@ -333,7 +345,7 @@ export default function MenuConfig() {
                   </div>
                 );
               })}
-              
+
               {Object.keys(dishPool[activeTab] || {}).length === 0 && (
                 <div className="text-center py-8 text-sm text-muted-foreground">
                   No {activeTab} in inventory. Click "New Dish" to add one!
@@ -353,9 +365,9 @@ export default function MenuConfig() {
 
       {dishModalState !== false && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-4">
-          <DishForm 
-            onClose={() => setDishModalState(false)} 
-            onSave={handleSaveDish} 
+          <DishForm
+            onClose={() => setDishModalState(false)}
+            onSave={handleSaveDish}
             activeTab={activeTab}
             initialData={dishModalState !== null ? dishModalState : null}
           />
