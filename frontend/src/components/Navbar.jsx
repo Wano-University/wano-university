@@ -5,10 +5,11 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, Terminal } from "lucide-react";
+import { Menu, Terminal as TerminalIcon } from "lucide-react";
 import { ModeToggle } from "./ModeToggle";
 import { Button } from "./ui/button";
 import UserAvatar from "./UserAvatar";
+import { useTerminal } from "./TerminalPopup";
 
 const desktopLinkStyle = "text-base font-medium text-muted-foreground hover:text-primary hover:scale-105 px-3 py-2 transition-all duration-200 inline-block";
 const mobileLinkStyle = "block w-full px-4 py-3 text-lg font-medium text-muted-foreground hover:text-primary hover:scale-[1.02] transition-all duration-200 origin-left";
@@ -16,6 +17,8 @@ const mobileLinkStyle = "block w-full px-4 py-3 text-lg font-medium text-muted-f
 export default function Navbar() {
   const storedUser = localStorage.getItem('user');
   const user = storedUser ? JSON.parse(storedUser) : null;
+
+  const { openTerminal } = useTerminal();
 
   return (
     <nav className="flex items-center justify-between px-6 lg:px-16 py-4 border-b sticky top-0 bg-background/50 backdrop-blur-md z-50">
@@ -64,8 +67,14 @@ export default function Navbar() {
         {/* Desktop UI Tools */}
         {user && (
           <div className="flex items-center gap-3 border-l border-border pl-6 ml-2">
-            <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200 cursor-pointer" title="Open Terminal">
-              <Terminal className="h-5 w-5" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200 cursor-pointer"
+              title="Open Terminal"
+              onClick={openTerminal}
+            >
+              <TerminalIcon className="h-5 w-5" />
             </Button>
             <ModeToggle />
             <UserAvatar user={user} />
@@ -78,8 +87,14 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div className="lg:hidden flex items-center gap-2">
         {user && (
-          <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200" title="Open Terminal">
-            <Terminal className="h-5 w-5" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200"
+            title="Open Terminal"
+            onClick={openTerminal}
+          >
+            <TerminalIcon className="h-5 w-5" />
           </Button>
         )}
 
