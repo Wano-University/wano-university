@@ -10,7 +10,6 @@ import mobilityResourceRoutes from './routes/MobilityResourceRoutes.js';
 import resourceRoutes from './routes/ResourceRoutes.js';
 import reservationRoutes from './routes/ReservationRoutes.js';
 import paymentRoutes from './routes/PaymentRoutes.js';
-import prisma from './config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -27,16 +26,6 @@ app.use(express.json());
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-app.use((req, res, next) => {
-  console.log(req.method, req.url);
-  next();
-});
-
-app.get('/test', (req, res) => {
-  console.log('TEST HIT');
-  res.send('working');
-});
-
 app.use('/api/users', userRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/dishes', dishRoutes);
@@ -47,6 +36,7 @@ app.use('/api/resources', resourceRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/payments', paymentRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Backend is securely running and listening on port ${PORT}`);
+
 });

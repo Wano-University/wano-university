@@ -11,8 +11,8 @@ export default function HomeRedirection() {
       return <Navigate to="/admin" replace />;
     case 'STAFF':
       return <Navigate to="/staff" replace />;
-    case 'PROFESSOR':
-      return <Navigate to="/professor" replace />;
+    case 'TEACHER':
+      return <Navigate to="/student" replace />;
     case 'STUDENT':
     default:
       return <Navigate to="/student" replace />;
