@@ -18,6 +18,7 @@ import ChangePassword from './pages/ChangePassword';
 import MyTickets from './pages/MyTickets';
 import ValidateTicket from './pages/ValidateTicket';
 import NotFound from './components/NotFound';
+import Footer from './components/Footer';
 
 function RootLayout() {
   return (
@@ -27,6 +28,7 @@ function RootLayout() {
         <main className="flex-1">
           <Outlet />
         </main>
+        <Footer />
       </div>
     </ThemeProvider>
   );
