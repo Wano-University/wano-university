@@ -78,7 +78,7 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div className="lg:hidden flex items-center gap-2">
         {user && (
-          <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200" title="Open Terminal">
+          <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200 cursor-pointer" title="Open Terminal">
             <Terminal className="h-5 w-5" />
           </Button>
         )}

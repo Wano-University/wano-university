@@ -2,8 +2,22 @@ import React from 'react';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function Unauthorized() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        navigate(-1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
+
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-6 bg-background">
       <Card className="max-w-md w-full p-8 text-center space-y-6 border-destructive/20 shadow-2xl shadow-destructive/10">
