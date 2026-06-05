@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { registerSensor, sensorStatus, getSensorsByfloor, getAllSensors, getSensorsByType, getAlerts,  getReadings, getAllAlerts,  getAllReadings} from '../controllers/SensorController.js';
+import { registerSensor, sensorStatus, getSensorsByfloor, getAllSensors, getSensorsByType, getAlerts,  getReadings, getAllAlerts,  getAllReadings, getAllActiveSensors, getAllActiveSensorsByFloor, getAllActiveSensorsByType} from '../controllers/SensorController.js';
 import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
 const router = Router();
 
-router.get('/',verifyToken, requireRole(['ADMIN','STAFF']), getAllSensors);
+router.get('/',verifyToken, requireRole(['ADMIN']), getAllSensors);
 router.post('/',verifyToken, requireRole(['ADMIN']), registerSensor);
 
 router.get('/floor/:floor',verifyToken,requireRole(['ADMIN','STAFF']), getSensorsByfloor);
@@ -16,5 +16,9 @@ router.get('/data/readings',verifyToken,requireRole(['ADMIN','STAFF']), getAllRe
 router.patch('/:id', verifyToken,requireRole(['ADMIN']), sensorStatus);
 router.get('/:id/alerts',verifyToken,requireRole(['ADMIN','STAFF']), getAlerts);
 router.get('/:id/readings',verifyToken,requireRole(['ADMIN','STAFF']), getReadings);
+
+router.get('/',verifyToken, requireRole(['STAFF']), getAllActiveSensors);
+router.get('/floor/:floor',verifyToken, requireRole(['STAFF']), getAllActiveSensorsByFloor);
+router.get('/type/:type',verifyToken, requireRole(['STAFF']), getAllActiveSensorsByType);
 
 export default router;

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getResources, registerResource, getResourcesByFloor, resourceStatus, getResourcesByType, getReservations, getAccesses, getAllReservations, getAllAccesses } from '../controllers/ResourceController.js';
+import { getResources, registerResource, getResourcesByFloor, resourceStatus, getResourcesByType, getReservations, getAccesses, getAllReservations, getAllAccesses, updateResource, deleteResource } from '../controllers/ResourceController.js';
 import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
 const router = Router();
@@ -16,5 +16,8 @@ router.get('/accesses/all', getAllAccesses);
 router.patch('/:id/status', verifyToken, requireRole(['ADMIN']), resourceStatus);
 router.get('/:id/reservations', getReservations);
 router.get('/:id/accesses', getAccesses);
+
+router.put('/:id', verifyToken, requireRole(['ADMIN']), updateResource);
+router.delete('/:id', verifyToken, requireRole(['ADMIN']), deleteResource);
 
 export default router;

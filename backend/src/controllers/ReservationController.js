@@ -33,7 +33,7 @@ export const createReservation = async (req, res) => {
 
     const reservation = await prisma.reservation.create({
       data: {
-        userId: loggedInUserId, // Use the verified ID from the token
+        userId: loggedInUserId, 
         resourceId: resourceId ? parseInt(resourceId) : null,
         mobilityResourceId: mobilityResourceId ? parseInt(mobilityResourceId) : null,
         startTime: new Date(startTime),
@@ -45,7 +45,6 @@ export const createReservation = async (req, res) => {
     res.status(201).json(reservation);
   } catch (error) {
     console.error("Error creating reservation:", error);
-    // Send the actual Prisma error message to the frontend!
     res.status(400).json({ error: error.message || "Failed to create reservation." });
   }
 };

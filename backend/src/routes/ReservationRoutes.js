@@ -4,9 +4,8 @@ import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
 const router = Router();
 
-// Add verifyToken to the routes that need protection!
 router.get('/', verifyToken, getAllReservationsList); 
-router.post('/', verifyToken, createReservation); // <-- This fixes your error!
+router.post('/', verifyToken, createReservation); 
 
 router.get('/user/:userId', verifyToken, getReservationsByUser);
 router.patch('/:id', verifyToken, updateReservationStatus);

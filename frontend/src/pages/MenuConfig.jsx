@@ -19,8 +19,6 @@ const THEME_OPTIONS = [
   { id: 'ramen', label: 'Light purple' }
 ];
 
-// This tells the Tailwind scanner to compile these classes, 
-// even though we assemble them dynamically later.
 const TAILWIND_GENERATION_SAFELIST = [
   'text-nika', 'border-nika', 'bg-nika/5',
   'text-surgeon', 'border-surgeon', 'bg-surgeon/5',

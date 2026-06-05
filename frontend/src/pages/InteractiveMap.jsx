@@ -381,7 +381,7 @@ export default function InteractiveMap() {
                 onClick={() => setSelectedTypeFilter('ALL')}
                 className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground border-foreground text-primary-foreground' : 'bg-muted-foreground/10 border-primary-foreground text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                <span>All Active Sensors</span>
+                <span>All Sensors</span>
                 <span className="px-2 py-0.5 rounded bg-primary-foreground/80 text-muted-foreground text-[10px] font-bold">
                   {sensors.filter(s => (s.floor || 'FLOOR_1') === currentFloor).length}
                 </span>
@@ -415,16 +415,6 @@ export default function InteractiveMap() {
               >
                 <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? {color: 'primary-foreground'} : {color: 'var(--surgeon-color)'}} />
                 <span>Air Quality</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('OCCUPANCY')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'OCCUPANCY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-                style={selectedTypeFilter === 'OCCUPANCY' ? { backgroundColor: 'var(--swordsman-color)' } : {}}
-              >
-                <Users size={16} style={selectedTypeFilter === 'OCCUPANCY' ? {color: 'primary-foreground'} : {color: 'var(--swordsman-color)'}} />
-                <span>Occupancy</span>
               </button>
             </div>
           </div>
