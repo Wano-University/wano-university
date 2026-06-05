@@ -41,3 +41,26 @@ export const createPaymentIntent = async (req, res) => {
     res.status(500).json({ error: "Failed to initialize payment." });
   }
 };
+
+export const confirmPayment = async (req, res) => {
+  try {
+    const { intentId } = req.body;
+
+    const paymentIntent = await stripe.paymentIntents.retrieve(intentId);
+
+    if (paymentIntent.status !== 'succeeded') {
+      return res.status(400).json({ error: "Payment not successful." });
+    }
+
+    const updatedPurchase = await prisma.purchase.update({
+      where: { stripeIntentId: intentId },
+      data: { status: 'PAID' }
+    });
+
+    res.status(200).json({ message: "Purchase confirmed!", purchase: updatedPurchase });
+
+  } catch (error) {
+    console.error("Confirmation Error:", error);
+    res.status(500).json({ error: "Failed to confirm payment in database." });
+  }
+};

@@ -184,6 +184,7 @@ model Menu {
   id        Int      @id @default(autoincrement())
   updatedAt DateTime @updatedAt
 
+  schedule Json? @default("{}")
   dishes Dish[]
 }
 

@@ -4,7 +4,7 @@ export const getTicketsByUser = async (req, res) => {
   try {
     const { userId } = req.body;
     const tickets = await prisma.ticket.findMany({
-      where: { purchase: { userId: parseInt(userId) } },
+      where: { purchase: { userId: parseInt(userId), status: 'PAID' } },
       include: { dish: true, purchase: true }
     });
     res.status(200).json(tickets);
@@ -16,7 +16,7 @@ export const getTicketsByUser = async (req, res) => {
 export const updateTicketStatus = async (req, res) => {
   try {
     const { id } = req.body;
-    const { status } = req.body; 
+    const { status } = req.body;
 
     const updatedTicket = await prisma.ticket.update({
       where: { id: parseInt(id) },

@@ -29,7 +29,7 @@ export default function UserAvatar({ user }) {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.login}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user.type}</p>
+            <p className="text-xs leading-none text-muted-foreground">{user.type.charAt(0) + user.type.substring(1).toLowerCase()}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
