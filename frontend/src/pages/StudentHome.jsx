@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { MonitorSmartphone } from "lucide-react"
 import { Utensils } from "lucide-react"
