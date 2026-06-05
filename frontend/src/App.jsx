@@ -17,19 +17,25 @@ import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
 import MyTickets from './pages/MyTickets';
 import ValidateTicket from './pages/ValidateTicket';
+
+import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
 import NotFound from './components/NotFound';
 import Footer from './components/Footer';
 
 function RootLayout() {
   return (
     <ThemeProvider>
-      <div className="relative flex min-h-screen flex-col bg-background">
-        <Navbar />
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
+}
+
+enum UserType {      <TerminalProvider>
+        <div className="relative flex min-h-screen flex-col bg-background">
+          <Navbar />
+          <TerminalPopup />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+        </div>
+      </TerminalProvider>
     </ThemeProvider>
   );
 }
@@ -38,20 +44,15 @@ export default function App() {
   return (
     <Routes>
       <Route element={<RootLayout />}>
-
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
         <Route path="/changepw" element={<ForgotPassword />} />
-
         <Route path="/spaces" element={<Spaces />} />
-
         <Route path="/home" element={<HomeRedirection />} />
-
         <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
         <Route path="/tickets" element={<ProtectedRoute> <MyTickets /> </ProtectedRoute>} />
         <Route path="/changepassword" element={<ProtectedRoute> <ChangePassword /> </ProtectedRoute>} />
-
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminHome /> </ProtectedRoute>} />
         <Route path="/staff" element={<ProtectedRoute allowedRoles={['STAFF']}> <StaffHome /> </ProtectedRoute>} />
         <Route path="/validate-ticket/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateTicket /> </ProtectedRoute>} />

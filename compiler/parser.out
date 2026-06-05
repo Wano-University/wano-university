@@ -1,0 +1,714 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    ADDRESS
+    ELSE
+    IF
+    THEN
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> ID ASSIGN value
+Rule 2     statement -> instruction
+Rule 3     value -> NUMBER
+Rule 4     value -> FLOAT
+Rule 5     value -> DATE
+Rule 6     value -> HOUR
+Rule 7     value -> WEEKDAY
+Rule 8     value -> DISHTYPE
+Rule 9     value -> SENSORTYPE
+Rule 10    value -> ID
+Rule 11    number_or_var -> NUMBER
+Rule 12    number_or_var -> ID
+Rule 13    float_or_var -> FLOAT
+Rule 14    float_or_var -> NUMBER
+Rule 15    float_or_var -> ID
+Rule 16    date_or_var -> DATE
+Rule 17    date_or_var -> ID
+Rule 18    hour_or_var -> HOUR
+Rule 19    hour_or_var -> ID
+Rule 20    dishtype_or_var -> DISHTYPE
+Rule 21    dishtype_or_var -> ID
+Rule 22    sensortype_or_var -> SENSORTYPE
+Rule 23    sensortype_or_var -> ID
+Rule 24    instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var
+Rule 25    instruction -> CANCEL EQUIPMENT COLON number_or_var
+Rule 26    instruction -> BUY MEAL COLON dishtype_or_var COMMA date_or_var
+Rule 27    instruction -> CANCEL MEAL COLON number_or_var
+Rule 28    instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+Rule 29    instruction -> REGISTER EQUIPMENT COLON ID COMMA number_or_var
+Rule 30    instruction -> REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var
+Rule 31    action -> RENT
+Rule 32    action -> BUY
+Rule 33    action -> REGISTER
+Rule 34    action -> CANCEL
+
+Terminals, with rules where they appear
+
+ADDRESS              : 
+ASSIGN               : 1
+BUY                  : 26 32
+CANCEL               : 25 27 34
+COLON                : 24 25 26 27 28 29 30
+COMMA                : 24 24 24 26 28 28 28 28 28 28 29 30 30
+DATE                 : 5 16
+DISHTYPE             : 8 20
+ELSE                 : 
+EMAIL                : 28
+EQUIPMENT            : 24 25 29 30
+FLOAT                : 4 13
+HOUR                 : 6 18
+ID                   : 1 10 12 15 17 19 21 23 28 29
+IF                   : 
+MEAL                 : 26 27
+NIF                  : 28
+NUMBER               : 3 11 14
+PASSWORD             : 28
+REGISTER             : 28 29 30 33
+RENT                 : 24 31
+SENSORTYPE           : 9 22
+STRING               : 28 28
+THEN                 : 
+USER                 : 28
+USERTYPE             : 28
+WEEKDAY              : 7
+error                : 
+
+Nonterminals, with rules where they appear
+
+action               : 
+date_or_var          : 24 26
+dishtype_or_var      : 26
+float_or_var         : 30
+hour_or_var          : 24 24
+instruction          : 2
+number_or_var        : 24 25 27 29 30
+sensortype_or_var    : 30
+statement            : 0
+value                : 1
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . ID ASSIGN value
+    (2) statement -> . instruction
+    (24) instruction -> . RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var
+    (25) instruction -> . CANCEL EQUIPMENT COLON number_or_var
+    (26) instruction -> . BUY MEAL COLON dishtype_or_var COMMA date_or_var
+    (27) instruction -> . CANCEL MEAL COLON number_or_var
+    (28) instruction -> . REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+    (29) instruction -> . REGISTER EQUIPMENT COLON ID COMMA number_or_var
+    (30) instruction -> . REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var
+
+    ID              shift and go to state 2
+    RENT            shift and go to state 4
+    CANCEL          shift and go to state 5
+    BUY             shift and go to state 6
+    REGISTER        shift and go to state 7
+
+    statement                      shift and go to state 1
+    instruction                    shift and go to state 3
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (1) statement -> ID . ASSIGN value
+
+    ASSIGN          shift and go to state 8
+
+
+state 3
+
+    (2) statement -> instruction .
+
+    $end            reduce using rule 2 (statement -> instruction .)
+
+
+state 4
+
+    (24) instruction -> RENT . EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var
+
+    EQUIPMENT       shift and go to state 9
+
+
+state 5
+
+    (25) instruction -> CANCEL . EQUIPMENT COLON number_or_var
+    (27) instruction -> CANCEL . MEAL COLON number_or_var
+
+    EQUIPMENT       shift and go to state 10
+    MEAL            shift and go to state 11
+
+
+state 6
+
+    (26) instruction -> BUY . MEAL COLON dishtype_or_var COMMA date_or_var
+
+    MEAL            shift and go to state 12
+
+
+state 7
+
+    (28) instruction -> REGISTER . USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+    (29) instruction -> REGISTER . EQUIPMENT COLON ID COMMA number_or_var
+    (30) instruction -> REGISTER . EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var
+
+    USER            shift and go to state 13
+    EQUIPMENT       shift and go to state 14
+
+
+state 8
+
+    (1) statement -> ID ASSIGN . value
+    (3) value -> . NUMBER
+    (4) value -> . FLOAT
+    (5) value -> . DATE
+    (6) value -> . HOUR
+    (7) value -> . WEEKDAY
+    (8) value -> . DISHTYPE
+    (9) value -> . SENSORTYPE
+    (10) value -> . ID
+
+    NUMBER          shift and go to state 17
+    FLOAT           shift and go to state 18
+    DATE            shift and go to state 19
+    HOUR            shift and go to state 20
+    WEEKDAY         shift and go to state 21
+    DISHTYPE        shift and go to state 22
+    SENSORTYPE      shift and go to state 23
+    ID              shift and go to state 15
+
+    value                          shift and go to state 16
+
+state 9
+
+    (24) instruction -> RENT EQUIPMENT . COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var
+
+    COLON           shift and go to state 24
+
+
+state 10
+
+    (25) instruction -> CANCEL EQUIPMENT . COLON number_or_var
+
+    COLON           shift and go to state 25
+
+
+state 11
+
+    (27) instruction -> CANCEL MEAL . COLON number_or_var
+
+    COLON           shift and go to state 26
+
+
+state 12
+
+    (26) instruction -> BUY MEAL . COLON dishtype_or_var COMMA date_or_var
+
+    COLON           shift and go to state 27
+
+
+state 13
+
+    (28) instruction -> REGISTER USER . COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    COLON           shift and go to state 28
+
+
+state 14
+
+    (29) instruction -> REGISTER EQUIPMENT . COLON ID COMMA number_or_var
+    (30) instruction -> REGISTER EQUIPMENT . COLON sensortype_or_var COMMA number_or_var COMMA float_or_var
+
+    COLON           shift and go to state 29
+
+
+state 15
+
+    (10) value -> ID .
+
+    $end            reduce using rule 10 (value -> ID .)
+
+
+state 16
+
+    (1) statement -> ID ASSIGN value .
+
+    $end            reduce using rule 1 (statement -> ID ASSIGN value .)
+
+
+state 17
+
+    (3) value -> NUMBER .
+
+    $end            reduce using rule 3 (value -> NUMBER .)
+
+
+state 18
+
+    (4) value -> FLOAT .
+
+    $end            reduce using rule 4 (value -> FLOAT .)
+
+
+state 19
+
+    (5) value -> DATE .
+
+    $end            reduce using rule 5 (value -> DATE .)
+
+
+state 20
+
+    (6) value -> HOUR .
+
+    $end            reduce using rule 6 (value -> HOUR .)
+
+
+state 21
+
+    (7) value -> WEEKDAY .
+
+    $end            reduce using rule 7 (value -> WEEKDAY .)
+
+
+state 22
+
+    (8) value -> DISHTYPE .
+
+    $end            reduce using rule 8 (value -> DISHTYPE .)
+
+
+state 23
+
+    (9) value -> SENSORTYPE .
+
+    $end            reduce using rule 9 (value -> SENSORTYPE .)
+
+
+state 24
+
+    (24) instruction -> RENT EQUIPMENT COLON . number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var
+    (11) number_or_var -> . NUMBER
+    (12) number_or_var -> . ID
+
+    NUMBER          shift and go to state 31
+    ID              shift and go to state 32
+
+    number_or_var                  shift and go to state 30
+
+state 25
+
+    (25) instruction -> CANCEL EQUIPMENT COLON . number_or_var
+    (11) number_or_var -> . NUMBER
+    (12) number_or_var -> . ID
+
+    NUMBER          shift and go to state 31
+    ID              shift and go to state 32
+
+    number_or_var                  shift and go to state 33
+
+state 26
+
+    (27) instruction -> CANCEL MEAL COLON . number_or_var
+    (11) number_or_var -> . NUMBER
+    (12) number_or_var -> . ID
+
+    NUMBER          shift and go to state 31
+    ID              shift and go to state 32
+
+    number_or_var                  shift and go to state 34
+
+state 27
+
+    (26) instruction -> BUY MEAL COLON . dishtype_or_var COMMA date_or_var
+    (20) dishtype_or_var -> . DISHTYPE
+    (21) dishtype_or_var -> . ID
+
+    DISHTYPE        shift and go to state 36
+    ID              shift and go to state 37
+
+    dishtype_or_var                shift and go to state 35
+
+state 28
+
+    (28) instruction -> REGISTER USER COLON . STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    STRING          shift and go to state 38
+
+
+state 29
+
+    (29) instruction -> REGISTER EQUIPMENT COLON . ID COMMA number_or_var
+    (30) instruction -> REGISTER EQUIPMENT COLON . sensortype_or_var COMMA number_or_var COMMA float_or_var
+    (22) sensortype_or_var -> . SENSORTYPE
+    (23) sensortype_or_var -> . ID
+
+    ID              shift and go to state 39
+    SENSORTYPE      shift and go to state 41
+
+    sensortype_or_var              shift and go to state 40
+
+state 30
+
+    (24) instruction -> RENT EQUIPMENT COLON number_or_var . COMMA hour_or_var COMMA hour_or_var COMMA date_or_var
+
+    COMMA           shift and go to state 42
+
+
+state 31
+
+    (11) number_or_var -> NUMBER .
+
+    COMMA           reduce using rule 11 (number_or_var -> NUMBER .)
+    $end            reduce using rule 11 (number_or_var -> NUMBER .)
+
+
+state 32
+
+    (12) number_or_var -> ID .
+
+    COMMA           reduce using rule 12 (number_or_var -> ID .)
+    $end            reduce using rule 12 (number_or_var -> ID .)
+
+
+state 33
+
+    (25) instruction -> CANCEL EQUIPMENT COLON number_or_var .
+
+    $end            reduce using rule 25 (instruction -> CANCEL EQUIPMENT COLON number_or_var .)
+
+
+state 34
+
+    (27) instruction -> CANCEL MEAL COLON number_or_var .
+
+    $end            reduce using rule 27 (instruction -> CANCEL MEAL COLON number_or_var .)
+
+
+state 35
+
+    (26) instruction -> BUY MEAL COLON dishtype_or_var . COMMA date_or_var
+
+    COMMA           shift and go to state 43
+
+
+state 36
+
+    (20) dishtype_or_var -> DISHTYPE .
+
+    COMMA           reduce using rule 20 (dishtype_or_var -> DISHTYPE .)
+
+
+state 37
+
+    (21) dishtype_or_var -> ID .
+
+    COMMA           reduce using rule 21 (dishtype_or_var -> ID .)
+
+
+state 38
+
+    (28) instruction -> REGISTER USER COLON STRING . COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    COMMA           shift and go to state 44
+
+
+state 39
+
+    (29) instruction -> REGISTER EQUIPMENT COLON ID . COMMA number_or_var
+    (23) sensortype_or_var -> ID .
+
+  ! shift/reduce conflict for COMMA resolved as shift
+    COMMA           shift and go to state 45
+
+  ! COMMA           [ reduce using rule 23 (sensortype_or_var -> ID .) ]
+
+
+state 40
+
+    (30) instruction -> REGISTER EQUIPMENT COLON sensortype_or_var . COMMA number_or_var COMMA float_or_var
+
+    COMMA           shift and go to state 46
+
+
+state 41
+
+    (22) sensortype_or_var -> SENSORTYPE .
+
+    COMMA           reduce using rule 22 (sensortype_or_var -> SENSORTYPE .)
+
+
+state 42
+
+    (24) instruction -> RENT EQUIPMENT COLON number_or_var COMMA . hour_or_var COMMA hour_or_var COMMA date_or_var
+    (18) hour_or_var -> . HOUR
+    (19) hour_or_var -> . ID
+
+    HOUR            shift and go to state 48
+    ID              shift and go to state 49
+
+    hour_or_var                    shift and go to state 47
+
+state 43
+
+    (26) instruction -> BUY MEAL COLON dishtype_or_var COMMA . date_or_var
+    (16) date_or_var -> . DATE
+    (17) date_or_var -> . ID
+
+    DATE            shift and go to state 51
+    ID              shift and go to state 52
+
+    date_or_var                    shift and go to state 50
+
+state 44
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA . STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    STRING          shift and go to state 53
+
+
+state 45
+
+    (29) instruction -> REGISTER EQUIPMENT COLON ID COMMA . number_or_var
+    (11) number_or_var -> . NUMBER
+    (12) number_or_var -> . ID
+
+    NUMBER          shift and go to state 31
+    ID              shift and go to state 32
+
+    number_or_var                  shift and go to state 54
+
+state 46
+
+    (30) instruction -> REGISTER EQUIPMENT COLON sensortype_or_var COMMA . number_or_var COMMA float_or_var
+    (11) number_or_var -> . NUMBER
+    (12) number_or_var -> . ID
+
+    NUMBER          shift and go to state 31
+    ID              shift and go to state 32
+
+    number_or_var                  shift and go to state 55
+
+state 47
+
+    (24) instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var . COMMA hour_or_var COMMA date_or_var
+
+    COMMA           shift and go to state 56
+
+
+state 48
+
+    (18) hour_or_var -> HOUR .
+
+    COMMA           reduce using rule 18 (hour_or_var -> HOUR .)
+
+
+state 49
+
+    (19) hour_or_var -> ID .
+
+    COMMA           reduce using rule 19 (hour_or_var -> ID .)
+
+
+state 50
+
+    (26) instruction -> BUY MEAL COLON dishtype_or_var COMMA date_or_var .
+
+    $end            reduce using rule 26 (instruction -> BUY MEAL COLON dishtype_or_var COMMA date_or_var .)
+
+
+state 51
+
+    (16) date_or_var -> DATE .
+
+    $end            reduce using rule 16 (date_or_var -> DATE .)
+
+
+state 52
+
+    (17) date_or_var -> ID .
+
+    $end            reduce using rule 17 (date_or_var -> ID .)
+
+
+state 53
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING . COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    COMMA           shift and go to state 57
+
+
+state 54
+
+    (29) instruction -> REGISTER EQUIPMENT COLON ID COMMA number_or_var .
+
+    $end            reduce using rule 29 (instruction -> REGISTER EQUIPMENT COLON ID COMMA number_or_var .)
+
+
+state 55
+
+    (30) instruction -> REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var . COMMA float_or_var
+
+    COMMA           shift and go to state 58
+
+
+state 56
+
+    (24) instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA . hour_or_var COMMA date_or_var
+    (18) hour_or_var -> . HOUR
+    (19) hour_or_var -> . ID
+
+    HOUR            shift and go to state 48
+    ID              shift and go to state 49
+
+    hour_or_var                    shift and go to state 59
+
+state 57
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA . NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    NIF             shift and go to state 60
+
+
+state 58
+
+    (30) instruction -> REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA . float_or_var
+    (13) float_or_var -> . FLOAT
+    (14) float_or_var -> . NUMBER
+    (15) float_or_var -> . ID
+
+    FLOAT           shift and go to state 62
+    NUMBER          shift and go to state 63
+    ID              shift and go to state 64
+
+    float_or_var                   shift and go to state 61
+
+state 59
+
+    (24) instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var . COMMA date_or_var
+
+    COMMA           shift and go to state 65
+
+
+state 60
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF . COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    COMMA           shift and go to state 66
+
+
+state 61
+
+    (30) instruction -> REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var .
+
+    $end            reduce using rule 30 (instruction -> REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var .)
+
+
+state 62
+
+    (13) float_or_var -> FLOAT .
+
+    $end            reduce using rule 13 (float_or_var -> FLOAT .)
+
+
+state 63
+
+    (14) float_or_var -> NUMBER .
+
+    $end            reduce using rule 14 (float_or_var -> NUMBER .)
+
+
+state 64
+
+    (15) float_or_var -> ID .
+
+    $end            reduce using rule 15 (float_or_var -> ID .)
+
+
+state 65
+
+    (24) instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA . date_or_var
+    (16) date_or_var -> . DATE
+    (17) date_or_var -> . ID
+
+    DATE            shift and go to state 51
+    ID              shift and go to state 52
+
+    date_or_var                    shift and go to state 67
+
+state 66
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA . EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    EMAIL           shift and go to state 68
+
+
+state 67
+
+    (24) instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var .
+
+    $end            reduce using rule 24 (instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var .)
+
+
+state 68
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL . COMMA ID COMMA PASSWORD COMMA USERTYPE
+
+    COMMA           shift and go to state 69
+
+
+state 69
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA . ID COMMA PASSWORD COMMA USERTYPE
+
+    ID              shift and go to state 70
+
+
+state 70
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID . COMMA PASSWORD COMMA USERTYPE
+
+    COMMA           shift and go to state 71
+
+
+state 71
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA . PASSWORD COMMA USERTYPE
+
+    PASSWORD        shift and go to state 72
+
+
+state 72
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD . COMMA USERTYPE
+
+    COMMA           shift and go to state 73
+
+
+state 73
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA . USERTYPE
+
+    USERTYPE        shift and go to state 74
+
+
+state 74
+
+    (28) instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE .
+
+    $end            reduce using rule 28 (instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for COMMA in state 39 resolved as shift
