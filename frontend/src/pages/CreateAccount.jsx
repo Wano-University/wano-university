@@ -9,6 +9,7 @@ import { registerUser as registerUserAPI } from '../lib/auth';
 const types = ["Admin", "Student", "Professor", "Staff"];
 
 export default function CreateAccount() {
+
   const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -65,7 +66,6 @@ export default function CreateAccount() {
 
               <Field className="col-span-2">
                 <FieldLabel htmlFor="type">Account Type:</FieldLabel>
-                {/* REVERTED TO YOUR EXACT ORIGINAL CODE */}
                 <Combobox items={types}>
                   <ComboboxInput
                     id="type"

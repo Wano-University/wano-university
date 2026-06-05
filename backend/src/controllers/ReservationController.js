@@ -14,11 +14,26 @@ export const getAllReservationsList = async (req, res) => {
 
 export const createReservation = async (req, res) => {
   try {
-    const { userId, resourceId, mobilityResourceId, startTime, endTime, status } = req.body;
+    const loggedInUserId = req.user.userId;
+    const { resourceId, mobilityResourceId, startTime, endTime, status } = req.body;
+
+    const existingReservation = await prisma.reservation.findFirst({
+        where: {
+          startTime: new Date(startTime),
+          endTime: new Date(endTime)
+        }
+      });
+
+      if (existingReservation) {
+        return res.status(400).json({
+          message: "A reservation already exists for these time slots.",
+          reservation: existingReservation
+        });
+      }
 
     const reservation = await prisma.reservation.create({
       data: {
-        userId,
+        userId: loggedInUserId, // Use the verified ID from the token
         resourceId: resourceId ? parseInt(resourceId) : null,
         mobilityResourceId: mobilityResourceId ? parseInt(mobilityResourceId) : null,
         startTime: new Date(startTime),
@@ -30,7 +45,8 @@ export const createReservation = async (req, res) => {
     res.status(201).json(reservation);
   } catch (error) {
     console.error("Error creating reservation:", error);
-    res.status(400).json({ error: "Failed to create reservation." });
+    // Send the actual Prisma error message to the frontend!
+    res.status(400).json({ error: error.message || "Failed to create reservation." });
   }
 };
 

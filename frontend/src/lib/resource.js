@@ -1,122 +1,116 @@
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export const registerResource = async (resourceData) => {
+// Helper to get token
+const getHeaders = () => {
   const token = localStorage.getItem('token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}` })
+  };
+};
+
+// 1. Register Resource
+export const registerResource = async (resourceData) => {
   const response = await fetch(`${API_URL}/api/resources`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: getHeaders(),
     body: JSON.stringify(resourceData),
   });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.message || data.error || 'Failed to register resource.');
+  if (!response.ok) throw new Error(data.error || 'Failed to register resource.');
   return data;
 };
 
-export const getAllResources = async () => {
-  const token = localStorage.getItem('token');
+// 2. Get Resources By Floor
+export const getResourcesByFloor = async (floorEnum) => {
+  const response = await fetch(
+    `${API_URL}/api/resources/floor/${floorEnum}`,
+    { headers: getHeaders() }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.error("BACKEND RESPONSE:", data);
+
+    throw new Error(
+      data.details ||
+      data.error ||
+      'Failed to fetch resources by floor.'
+    );
+  }
+
+  return data;
+};
+
+// 3. Get Reservations by Resource ID
+export const getResourceReservations = async (resourceId) => {
+  const response = await fetch(`${API_URL}/api/resources/${resourceId}/reservations`, {
+    headers: getHeaders(),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to fetch resource reservations.');
+  return data;
+};
+
+// 4. Get Accesses by Resource ID
+export const getResourceAccesses = async (resourceId) => {
+  const response = await fetch(`${API_URL}/api/resources/${resourceId}/accesses`, {
+    headers: getHeaders(),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to fetch resource accesses.');
+  return data;
+};
+
+// 5. Get All Resources
+export const getResources = async () => {
   const response = await fetch(`${API_URL}/api/resources`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: getHeaders(),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Failed to fetch resources.');
   return data;
 };
 
-export const getResourcesByFloor = async (floor) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/api/resources/floor/${floor}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+// 6. Update Resource Status
+export const updateResourceStatus = async (resourceId, isAvailable) => {
+  const response = await fetch(`${API_URL}/api/resources/${resourceId}/status`, {
+    method: 'PATCH', // or PUT depending on your route setup
+    headers: getHeaders(),
+    body: JSON.stringify({ isAvailable }),
   });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Failed to fetch resources by floor.');
+  if (!response.ok) throw new Error(data.error || 'Failed to update resource status.');
   return data;
 };
 
+// 7. Get Resources By Type
 export const getResourcesByType = async (type) => {
-  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api/resources/type/${type}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: getHeaders(),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Failed to fetch resources by type.');
   return data;
 };
 
-export const updateResourceStatus = async (id, isAvailable) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/api/resources/${id}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify({ isAvailable }),
+// 8. Get All Reservations Data
+export const getAllReservations = async () => {
+  const response = await fetch(`${API_URL}/api/resources/reservations/all`, {
+    headers: getHeaders(),
   });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Failed to update resource availability.');
+  if (!response.ok) throw new Error(data.error || 'Failed to fetch all reservations.');
   return data;
 };
 
-export const getResourceReservations = async (id) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/api/resources/${id}/reservations`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+// 9. Get All Accesses Data
+export const getAllAccesses = async () => {
+  const response = await fetch(`${API_URL}/api/resources/accesses/all`, {
+    headers: getHeaders(),
   });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Failed to load reservations for this resource.');
-  return data;
-};
-
-export const getResourceAccesses = async (id) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/api/resources/${id}/accesses`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Failed to load accesses for this resource.');
-  return data;
-};
-
-export const getAllResourcesReservations = async () => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/api/resources/data/reservations`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Failed to load all reservations data.');
-  return data;
-};
-
-export const getAllResourcesAccesses = async () => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/api/resources/data/accesses`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Failed to load all accesses data.');
+  if (!response.ok) throw new Error(data.error || 'Failed to fetch all accesses.');
   return data;
 };

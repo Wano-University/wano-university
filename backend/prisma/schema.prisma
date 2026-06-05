@@ -55,6 +55,12 @@ enum TicketStatus {
   CANCELED
 }
 
+enum PurchaseStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
 enum DishType {
   MEAL
   DESSERT
@@ -94,9 +100,12 @@ model Resource {
   id          Int          @id @default(autoincrement())
   type        ResourceType
   name        String
+  floor       Floor
   capacity    Int          @default(1)
   isAvailable Boolean      @default(true)
   createdAt   DateTime     @default(now())
+  xCoordinates Float?
+  yCoordinates Float?
 
   sensor       Sensor?      
   reservations Reservation[]
@@ -205,10 +214,12 @@ model Dish {
 }
 
 model Purchase {
-  id            Int      @id @default(autoincrement())
-  userId        Int
-  purchaseDate  DateTime @default(now())
-  paymentMethod String?
+  id                  Int            @id @default(autoincrement())
+  userId              Int
+  purchaseDate        DateTime       @default(now())
+  paymentMethod       String?
+  stripeIntentId      String?        @unique
+  status              PurchaseStatus @default(PENDING)
 
   user    User     @relation(fields: [userId], references: [id])
   tickets Ticket[]

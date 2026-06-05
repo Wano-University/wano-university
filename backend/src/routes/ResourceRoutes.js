@@ -1,18 +1,19 @@
 import { Router } from 'express';
-import { getResources, registerResource, getResourcesByfloor, resourceStatus, getResourcesByType, getReservations, getAccesses, getAllReservations, getAllAccesses } from '../controllers/resourceController.js';
+import { getResources, registerResource, getResourcesByFloor, resourceStatus, getResourcesByType, getReservations, getAccesses, getAllReservations, getAllAccesses } from '../controllers/ResourceController.js';
+import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
 const router = Router();
 
 router.get('/', getResources);
-router.post('/', registerResource);
+router.post('/', verifyToken, requireRole(['ADMIN']), registerResource);
 
-router.get('/floor/:floor', getResourcesByfloor);
+router.get('/floor/:floor', getResourcesByFloor);
 router.get('/type/:type', getResourcesByType);
 
-router.get('/data/reservations', getAllReservations);
-router.get('/data/accesses', getAllAccesses);
+router.get('/reservations/all', getAllReservations);
+router.get('/accesses/all', getAllAccesses);
 
-router.patch('/:id', resourceStatus);
+router.patch('/:id/status', verifyToken, requireRole(['ADMIN']), resourceStatus);
 router.get('/:id/reservations', getReservations);
 router.get('/:id/accesses', getAccesses);
 

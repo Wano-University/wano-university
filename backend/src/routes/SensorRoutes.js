@@ -1,19 +1,20 @@
 import { Router } from 'express';
 import { registerSensor, sensorStatus, getSensorsByfloor, getAllSensors, getSensorsByType, getAlerts,  getReadings, getAllAlerts,  getAllReadings} from '../controllers/SensorController.js';
+import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
 const router = Router();
 
-router.get('/', getAllSensors);
-router.post('/', registerSensor);
+router.get('/',verifyToken, requireRole(['ADMIN','STAFF']), getAllSensors);
+router.post('/',verifyToken, requireRole(['ADMIN']), registerSensor);
 
-router.get('/floor/:floor', getSensorsByfloor);
-router.get('/type/:type', getSensorsByType);
+router.get('/floor/:floor',verifyToken,requireRole(['ADMIN','STAFF']), getSensorsByfloor);
+router.get('/type/:type',verifyToken, requireRole(['ADMIN','STAFF']), getSensorsByType);
 
-router.get('/data/alerts', getAllAlerts);
-router.get('/data/readings', getAllReadings);
+router.get('/data/alerts',verifyToken,requireRole(['ADMIN','STAFF']), getAllAlerts);
+router.get('/data/readings',verifyToken,requireRole(['ADMIN','STAFF']), getAllReadings);
 
-router.patch('/:id', sensorStatus);
-router.get('/:id/alerts', getAlerts);
-router.get('/:id/readings', getReadings);
+router.patch('/:id', verifyToken,requireRole(['ADMIN']), sensorStatus);
+router.get('/:id/alerts',verifyToken,requireRole(['ADMIN','STAFF']), getAlerts);
+router.get('/:id/readings',verifyToken,requireRole(['ADMIN','STAFF']), getReadings);
 
 export default router;

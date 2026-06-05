@@ -1,211 +1,282 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, ImageOverlay, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, ImageOverlay, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {Thermometer, Zap, Wind, Users, Layers, Wrench, Settings, Filter, Power, AlertTriangle } from 'lucide-react';
-import { getSensorsByFloor, registerSensor, updateSensorStatus} from '../lib/sensor.js'; 
+import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Calendar as CalendarIcon, Users, ShieldAlert, Clock } from 'lucide-react';
+
+// Import your services
+import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js'; 
+import { createReservation } from '../lib/reservation.js'; 
 
 const bounds = [[0, 0], [1100, 2000]];
 
-const getSensorIcon = (type, isActive) => {
-  let colorVar = 'var(--foreground)';
-  let iconHtml = '';
-  const activeClass = isActive ? '' : 'opacity-40 grayscale';
+const HARDCODED_SPACES = [
+  { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM'},
+  { hcId: 'F1_R2', floor: 'FLOOR_1', x: 151, y: 576, defaultType: 'ROOM' },
+  { hcId: 'F1_R3', floor: 'FLOOR_1', x: 800, y: 400, defaultType: 'ROOM' },
+  { hcId: 'F1_R4', floor: 'FLOOR_1', x: 284, y: 400, defaultType: 'ROOM' },
+  { hcId: 'F1_R5', floor: 'FLOOR_1', x: 725, y: 128, defaultType: 'ROOM' },
+  { hcId: 'F1_R6', floor: 'FLOOR_1', x: 338, y: 148, defaultType: 'ROOM' },
+  { hcId: 'F1_R7', floor: 'FLOOR_1', x: 1490, y: 266, defaultType: 'ROOM' },
+  { hcId: 'F1_R8', floor: 'FLOOR_1', x: 1798, y: 146, defaultType: 'ROOM' },
+  { hcId: 'F1_R9', floor: 'FLOOR_1', x: 1486, y: 792, defaultType: 'ROOM' },
+  { hcId: 'F1_R10', floor: 'FLOOR_1', x: 1832, y: 536, defaultType: 'ROOM' },
+
+  { hcId: 'F2_R1', floor: 'FLOOR_2', x: 1544, y: 782, defaultType: 'ROOM' },
+  { hcId: 'F2_R2', floor: 'FLOOR_2', x: 1836, y: 532, defaultType: 'ROOM' },
+  { hcId: 'F2_R3', floor: 'FLOOR_2', x: 1650, y: 346, defaultType: 'ROOM' },
+  { hcId: 'F2_R4', floor: 'FLOOR_2', x: 1774, y: 174, defaultType: 'ROOM' },
+  { hcId: 'F2_R5', floor: 'FLOOR_2', x: 1364, y: 172, defaultType:'ROOM' },
+  { hcId: 'F2_R6', floor: 'FLOOR_2', x: 729, y: 170, defaultType: 'ROOM' },
+  { hcId: 'F2_R7', floor: 'FLOOR_2', x: 329, y: 176, defaultType: 'ROOM' },
+  { hcId: 'F2_R8', floor: 'FLOOR_2', x: 291, y: 420, defaultType: 'ROOM' },
+  { hcId: 'F2_R9', floor: 'FLOOR_2', x: 185, y: 582, defaultType: 'ROOM' },
+  { hcId: 'F2_R10', floor: 'FLOOR_2', x: 562, y: 640, defaultType: 'ROOM' },
+  { hcId: 'F2_R11', floor: 'FLOOR_2', x: 693, y: 736, defaultType: 'ROOM' },
+  { hcId: 'F2_R12', floor: 'FLOOR_2', x: 375, y: 784, defaultType: 'ROOM' },
+  { hcId: 'F2_R13', floor: 'FLOOR_2', x: 591, y: 898, defaultType: 'ROOM' },
+];
+
+const getResourceIcon = (type, isAvailable, isRegistered) => {
+  let colorVar = isRegistered ? 'var(--foreground)' : 'var(--muted-foreground)'; 
+  
+  const statusClass = isRegistered 
+    ? (isAvailable ? '' : 'opacity-40 grayscale border-dashed')
+    : 'opacity-80 border-dashed animate-pulse';
 
   switch (type) {
-    case 'TEMPERATURE':
-      colorVar = 'var(--fire-color)';
-      iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg>`;
-      break;
-    case 'ENERGY_CONSUMPTION':
-      colorVar = 'var(--nika-color)';
-      iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
-      break;
-    case 'AIR_QUALITY':
-      colorVar = 'var(--surgeon-color)';
-      iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
-      break;
-    case 'OCCUPANCY':
-      colorVar = 'var(--swordsman-color)';
-      iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
-      break;
+    case 'ROOM':
+      colorVar = isRegistered ? '#3b82f6' : colorVar;
+      return L.divIcon({
+        className: 'custom-resource-icon',
+        html: `<div class="flex items-center justify-center w-9 h-9 rounded-xl border-2 border-primary-foreground shadow-lg transition-all ${statusClass}" style="background-color: ${colorVar}; color: var(--primary-foreground);"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>`,
+        iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -16]
+      });
+    case 'LABORATORY':
+      colorVar = isRegistered ? '#10b981' : colorVar;
+      return L.divIcon({
+        className: 'custom-resource-icon',
+        html: `<div class="flex items-center justify-center w-9 h-9 rounded-xl border-2 border-primary-foreground shadow-lg transition-all ${statusClass}" style="background-color: ${colorVar}; color: var(--primary-foreground);"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14 10V2z"/><path d="M6 2h12"/><path d="M8 14h7"/></svg></div>`,
+        iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -16]
+      });
     default:
-      break;
+      return null;
   }
-
-  return L.divIcon({
-    className: 'custom-sensor-icon',
-    html: `
-      <div class="flex items-center justify-center w-8 h-8 rounded-full border-2 border-primary-foreground shadow-md transition-all ${activeClass}" style="background-color: ${colorVar}; color: background;">
-        ${iconHtml}
-      </div>
-    `,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-    popupAnchor: [0, -14]
-  });
 };
 
-// Invisible component that bridges Leaflet coordinates to React pixel state
-function MapTracker({ clickedCoords, setPixelCoords }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!clickedCoords) return;
-
-    const updatePosition = () => {
-      const point = map.latLngToContainerPoint([clickedCoords.y, clickedCoords.x]);
-      setPixelCoords({ x: point.x, y: point.y });
-    };
-
-    updatePosition(); 
-    map.on('zoom', updatePosition);
-    map.on('move', updatePosition);
-
-    return () => {
-      map.off('zoom', updatePosition);
-      map.off('move', updatePosition);
-    };
-  }, [map, clickedCoords, setPixelCoords]);
-
-  return null;
-}
+const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit }) => (
+  <form onSubmit={(e) => onSubmit(e, space.id)} className="space-y-3 pt-3 border-t border-muted mt-2">
+    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+      <CalendarIcon size={14} /> Schedule reservation
+    </h4>
+    <div className="space-y-2">
+      <div>
+        <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Target Date</label>
+        <input 
+          type="date" 
+          required 
+          value={bookingForm.date} 
+          onChange={(e) => setBookingForm({...bookingForm, date: e.target.value})} 
+          className="w-full text-xs p-2 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:chef transition-all text-foreground" 
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Start time</label>
+          <div className="relative">
+            <Clock size={12} className="absolute left-2 top-2.5 text-muted-foreground/80" />
+            <input 
+              type="time" 
+              required 
+              value={bookingForm.startTime} 
+              onChange={(e) => setBookingForm({...bookingForm, startTime: e.target.value})} 
+              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:bg-muted-foreground/20 transition-all text-foreground" 
+            />
+          </div>
+        </div>
+        <div>
+          <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">End time</label>
+          <div className="relative">
+            <Clock size={12} className="absolute left-2 top-2.5 text-muted-foreground/80" />
+            <input 
+              type="time" 
+              required 
+              value={bookingForm.endTime} 
+              onChange={(e) => setBookingForm({...bookingForm, endTime: e.target.value})} 
+              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:bg-muted-foreground/20 transition-all text-foreground" 
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <button 
+      type="submit" 
+      disabled={!space.isAvailable} 
+      className="w-full mt-3 bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+    >
+      {space.isAvailable ? 'Confirm reservation' : 'Space Unavailable'}
+    </button>
+  </form>
+);
 
 export default function InteractiveMap() {
-  const [sensors, setSensors] = useState([]);
-  const [filteredSensors, setFilteredSensors] = useState([]);
+  const [resources, setResources] = useState([]);
+  const [displayLayout, setDisplayLayout] = useState([]);
   const [currentFloor, setCurrentFloor] = useState('FLOOR_1');
   const [selectedTypeFilter, setSelectedTypeFilter] = useState('ALL');
+  const [isAdminMode, setIsAdminMode] = useState(false);
   
-  const [clickedCoords, setClickedCoords] = useState(null);
-  const [pixelCoords, setPixelCoords] = useState(null);
-  const [isRegistering, setIsRegistering] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    type: 'TEMPERATURE',
-    space: '',
-    alertLimit: ''
-  });
+  const [resourceForm, setResourceForm] = useState({ type: 'ROOM', name: '', capacity: '30' });
+  const [bookingForm, setBookingForm] = useState({ date: '', startTime: '', endTime: '', userId: '1' });
+  const [activeResourceReservations, setActiveResourceReservations] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const fetchSensors = async () => {
+  const fetchResources = async () => {
     try {
-      const data = await getSensorsByFloor(currentFloor);
-      setSensors(data || []);
+      setErrorMessage('');
+      const data = await getResourcesByFloor(currentFloor);
+      const mapRelevantResources = (data || []).filter(r => r.type !== 'EQUIPMENT');
+      setResources(mapRelevantResources);
     } catch (error) {
-      console.error("Failed to load sensors from database:", error);
-      setSensors([]); 
+      console.error("Failed to load resources:", error);
+      setErrorMessage(error.message);
+      setResources([]); 
     }
   };
 
   useEffect(() => {
-    fetchSensors();
+    fetchResources();
   }, [currentFloor]);
 
   useEffect(() => {
-    let result = sensors.filter(s => (s.floor || 'FLOOR_1') === currentFloor);
-    if (selectedTypeFilter !== 'ALL') {
-      result = result.filter(s => s.type === selectedTypeFilter);
-    }
-    setFilteredSensors(result);
-  }, [sensors, currentFloor, selectedTypeFilter]);
-
-  const handleToggleActive = async (id, currentStatus) => {
-    try {
-      await updateSensorStatus(id, !currentStatus);
-      setSensors(sensors.map(s => s.id === id ? { ...s, isActive: !currentStatus } : s));
-    } catch (err) {
-      console.error("Backend update failed:", err);
-      alert("Failed to sync with the database.");
-    }
-  };
-
-  const closeForm = () => {
-    setIsRegistering(false);
-    setClickedCoords(null);
-    setPixelCoords(null);
-  };
-
-  const handleRegisterSensor = async (e) => {
-    e.preventDefault();
+    const activeFloorHardcoded = HARDCODED_SPACES.filter(s => s.floor === currentFloor);
     
-    const newSensorPayload = {
-      type: formData.type,
-      floor: currentFloor,
-      space: formData.space,
-      alertLimit: parseFloat(formData.alertLimit) || 0,
-      isActive: true,
-      xCoordinates: clickedCoords.x,
-      yCoordinates: clickedCoords.y,
-    };
+    let combined = activeFloorHardcoded.map(hcSpace => {
+      const dbMatch = resources.find(r => 
+        Math.abs(r.xCoordinates - hcSpace.x) < 20 && 
+        Math.abs(r.yCoordinates - hcSpace.y) < 20
+      );
 
-    try {
-      const savedSensor = await registerSensor(newSensorPayload);
-      setSensors([...sensors, savedSensor]);
-      
-      closeForm();
-      setFormData({ type: 'TEMPERATURE', space: '', alertLimit: '' });
-    } catch (err) {
-      console.error("Sensor registration failed:", err);
-      alert("Failed to save sensor to the database.");
+      return {
+        ...hcSpace,
+        isRegistered: !!dbMatch,
+        dbData: dbMatch || null,
+        displayType: dbMatch ? dbMatch.type : hcSpace.defaultType 
+      };
+    });
+
+    if (selectedTypeFilter !== 'ALL') {
+      combined = combined.filter(space => space.displayType === selectedTypeFilter);
+    }
+
+    setDisplayLayout(combined);
+  }, [resources, currentFloor, selectedTypeFilter]);
+
+  const handleMarkerClick = async (space) => {
+    setResourceForm({ type: space.defaultType, name: '', capacity: '30' });
+    setBookingForm({ date: '', startTime: '', endTime: '', userId: '1' });
+    setErrorMessage('');
+    
+    if (space.isRegistered && space.dbData) {
+      try {
+        const resList = await getResourceReservations(space.dbData.id);
+        setActiveResourceReservations(resList || []);
+      } catch (err) {
+        console.error("Could not fetch active bookings:", err);
+      }
     }
   };
 
-  function MapEventsHandler() {
-    useMapEvents({
-      click(e) {
-        const clickedX = Math.round(e.latlng.lng);
-        const clickedY = Math.round(e.latlng.lat);
-        
-        const existingNode = sensors.find(s => 
-          Math.abs(s.xCoordinates - clickedX) < 25 && 
-          Math.abs(s.yCoordinates - clickedY) < 25 &&
-          (s.floor || 'FLOOR_1') === currentFloor
-        );
+  const handleRegisterResource = async (e, space) => {
+    e.preventDefault();
+    setErrorMessage('');
 
-        if (!existingNode) {
-          setClickedCoords({ x: clickedX, y: clickedY });
-          setIsRegistering(true);
-        } else {
-          closeForm();
-        }
-      },
+    try {
+      const savedResource = await registerResource({
+        type: resourceForm.type,
+        name: resourceForm.name,
+        capacity: parseInt(resourceForm.capacity) || 1,
+        isAvailable: true,
+        floor: currentFloor, 
+        xCoordinates: space.x,
+        yCoordinates: space.y
+      });
+      
+      setResources([...resources, savedResource]); 
+      alert("Space activated successfully!");
+    } catch (err) {
+      setErrorMessage(err.message || "Failed to save resource.");
+    }
+  };
+
+  const handleCreateReservation = async (e, resourceId) => {
+    e.preventDefault();
+    setErrorMessage('');
+    
+    const targetStart = new Date(`${bookingForm.date}T${bookingForm.startTime}:00`);
+    const targetEnd = new Date(`${bookingForm.date}T${bookingForm.endTime}:00`);
+
+    if (targetStart >= targetEnd) {
+      setErrorMessage("Error: End time must occur after the start time.");
+      return;
+    }
+
+    const hasOverlap = activeResourceReservations.some(booking => {
+      if (booking.status === 'CANCELED') return false;
+      const existingStart = new Date(booking.startTime);
+      const existingEnd = new Date(booking.endTime);
+      return targetStart < existingEnd && targetEnd > existingStart;
     });
-    return null;
-  }
+
+    if (hasOverlap) {
+      setErrorMessage("Can't finish reservation. This room is already reserved for the set time.");
+      return;
+    }
+
+    try {
+      await createReservation({
+        userId: parseInt(bookingForm.userId),
+        resourceId: resourceId,
+        startTime: targetStart.toISOString(),
+        endTime: targetEnd.toISOString(),
+        status: 'ACTIVE'
+      });
+      alert("Reservation created successfully!");
+      handleMarkerClick({ isRegistered: true, dbData: { id: resourceId } });
+    } catch (err) {
+      setErrorMessage(err.message || "Failed to create reservation.");
+    }
+  };
 
   return (
     <section className="py-12 max-w-400 mx-auto px-6 space-y-6">
-      
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-primary-foreground">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">Wano University Spaces Map</h1>
           <p className="text-sm text-muted-foreground/80">
-            Review real-time resource distribution and floor occupancy baselines.
+            {isAdminMode 
+              ? "Admin privileges enabled: Space management." 
+              : "Click on icons for information and occupancy details. Make your reservations!"}
           </p>
         </div>
         
         <div className="flex items-center gap-3 mt-4 md:mt-0">
           <button 
-            onClick={() => console.log("Equipments Module")}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
-          >
-            <Wrench size={16} />
-            Equipments Module
-          </button>
-          
-          <button 
-            onClick={() => alert("Admin Panel")}
-            className="flex items-center gap-2 px-4 py-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-sm font-medium rounded-xl transition shadow-sm"
+            onClick={() => setIsAdminMode(!isAdminMode)}
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
+              isAdminMode 
+                ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10" 
+                : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
+            }`}
           >
             <Settings size={16} />
-            Admin Panel
+            {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
           </button>
         </div>
       </div>
 
-    {/* Map container */}
+      {/* Map container */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
         <div className="lg:col-span-8 bg-primary-foreground p-4 rounded-3xl border border-muted-foreground/20 shadow-xl relative overflow-hidden min-h-150 lg:50">
           <div className="relative w-full h-full">
             <MapContainer
@@ -216,226 +287,141 @@ export default function InteractiveMap() {
               style={{ width: '100%', height: '100%', minHeight: '600px', backgroundColor: 'transparent' }}
               className="rounded-2xl z-10 border border-primary-foreground shadow-sm"
             >
-              <ImageOverlay 
-                url={currentFloor === 'FLOOR_1' ? '/floor1.png' : '/floor2.png'} 
-                bounds={bounds} 
-              />
+              <ImageOverlay url={currentFloor === 'FLOOR_1' ? '/floor1.png' : '/floor2.png'} bounds={bounds} />
 
-              <MapEventsHandler />
-              <MapTracker clickedCoords={clickedCoords} setPixelCoords={setPixelCoords} />
-
-              {/* Existing sensors */}
-              {filteredSensors.map((sensor) => (
+              {displayLayout.map((space) => (
                 <Marker 
-                  key={sensor.id} 
-                  position={[sensor.yCoordinates, sensor.xCoordinates]}
-                  icon={getSensorIcon(sensor.type, sensor.isActive)}
+                  key={space.hcId} 
+                  position={[space.y, space.x]}
+                  icon={getResourceIcon(space.displayType, space.dbData?.isAvailable ?? false, space.isRegistered)}
+                  eventHandlers={{ click: () => handleMarkerClick(space) }}
                 >
-                  <Popup>
-                    <div className="p-2 min-w-50 font-sans text-foreground/80">
-                      <div className="flex justify-between items-center border-b pb-1.5 mb-2">
-                        <strong className="block text-sm font-bold text-foreground/80 truncate pr-2">
-                          {sensor.space || `Node #${sensor.id}`}
-                        </strong>
-                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${sensor.isActive ? 'bg-primary-foreground text-swordsman/80' : 'bg-primary-foreground text-muted-foreground'}`}>
-                          {sensor.isActive ? 'ACTIVE' : 'INACTIVE'}
-                        </span>
-                      </div>
-
-                      <div className="text-xs space-y-1.5">
-                        <p><span className="font-semibold text-muted-foreground">Class Type:</span> {sensor.type}</p>
-                        <p><span className="font-semibold text-muted-foreground">Alert Threshold:</span> {sensor.alertLimit}</p>
-                        <p><span className="font-semibold text-muted-foreground">Coordinates:</span> X:{sensor.xCoordinates} | Y:{sensor.yCoordinates}</p>
-                        
-                        <div className="pt-2 flex items-center justify-between border-t border-muted-foreground/20 mt-2">
-                          <span className="text-[11px] text-muted-foreground">Toggle Operations State:</span>
-                          <button
-                            type="button"
-                            onClick={() => handleToggleActive(sensor.id, sensor.isActive)}
-                            className={`p-1 rounded transition-colors ${sensor.isActive ? 'text-swordsman/80 hover:bg-swordsman/20' : 'text-muted-foreground hover:bg-primary-foreground/20'}`}
-                          >
-                            <Power size={16} />
-                          </button>
+                  <Popup maxWidth={320}>
+                    <div className="p-1 min-w-[280px] text-foreground/80 font-sans">
+                      
+                      {errorMessage && (
+                        <div className="mb-3 p-2 bg-meat/20 border-meat/50 text-meat hover:bg-meat/10 text-xs rounded border flex items-start gap-1.5">
+                          <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                          <span>{errorMessage}</span>
                         </div>
-                      </div>
+                      )}
+
+                      {space.isRegistered && space.dbData ? (
+                        <>
+                          <div className="flex justify-between items-center border-b border-muted pb-2 mb-3">
+                            <div>
+                              <strong className="block text-sm font-bold text-foreground">{space.dbData.name}</strong>
+                              <span className="text-[11px] text-muted-foreground/80 capitalize">{space.dbData.type.toLowerCase()}</span>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${space.dbData.isAvailable ? 'text-swordsman/80 hover:bg-swordsman/20' : 'text-muted-foreground hover:bg-primary-foreground/20'}`}>
+                              {space.dbData.isAvailable ? 'OPERATIONAL' : 'MAINTENANCE'}
+                            </span>
+                          </div>
+
+                          <div className="text-xs space-y-1 mb-2 bg-background p-2 rounded-lg border border-muted">
+                            <p className="flex justify-between">
+                              <span className="text-muted-foreground">Max Room Capacity:</span> 
+                              <span className="font-semibold flex items-center gap-1 text-foreground"><Users size={12}/>{space.dbData.capacity} seats</span>
+                            </p>
+                          </div>
+
+                          {/* RENDER FORMS CONDITIONALLY BASED ON ADMIN MODE */}
+                          {!isAdminMode ? (
+                            <ReservationForm 
+                              space={space.dbData} 
+                              bookingForm={bookingForm} 
+                              setBookingForm={setBookingForm} 
+                              onSubmit={handleCreateReservation} 
+                            />
+                          ) : (
+                            <div className="mt-3 pt-3 border-t border-muted space-y-2">
+                              <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                                <ShieldAlert size={14} className="text-amber-500" /> Admin Visualization
+                              </h4>
+                              <div className="bg-background p-2.5 rounded-xl border border-muted">
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                  You are viewing a registered space. Reservation functions are disabled in Admin Panel mode.
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        isAdminMode ? (
+                          <form onSubmit={(e) => handleRegisterResource(e, space)} className="space-y-3">
+                            <div className="border-b border-muted pb-2">
+                              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                                <ShieldAlert size={16} className="text-amber-500"/> Activate Space
+                              </h3>
+                              <span className="text-[10px] text-muted-foreground block mt-0.5">Register this physical space to the system.</span>
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">Space Class</label>
+                              <select value={resourceForm.type} onChange={(e) => setResourceForm({...resourceForm, type: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground">
+                                <option value="ROOM">Room / Lecture Hall</option>
+                                <option value="LABORATORY">Laboratory Space</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">Resource Name</label>
+                              <input type="text" placeholder="e.g. Amphitheater B" value={resourceForm.name} onChange={(e) => setResourceForm({...resourceForm, name: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">Seating Capacity</label>
+                              <input type="number" value={resourceForm.capacity} onChange={(e) => setResourceForm({...resourceForm, capacity: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
+                            </div>
+
+                            <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-sm">
+                              Register & Activate Space
+                            </button>
+                          </form>
+                        ) : (
+                          <div className="text-center py-4 space-y-2">
+                            <ShieldAlert size={24} className="mx-auto text-muted-foreground/50 mb-2"/>
+                            <strong className="block text-sm font-bold text-foreground">Space Unavailable</strong>
+                            <p className="text-xs text-muted-foreground leading-relaxed">This facility location has not yet been registered. Reservations disabled.</p>
+                          </div>
+                        )
+                      )}
                     </div>
                   </Popup>
                 </Marker>
               ))}
             </MapContainer>
-
-            {/* Register sensor*/}
-            {isRegistering && clickedCoords && pixelCoords && (
-              <div 
-                className="absolute bg-primary-foreground shadow-xl rounded-xl border border-muted-foreground/20 z-1000 transition-all duration-100"
-                style={{
-                  left: pixelCoords.x,
-                  top: pixelCoords.y,
-                  transform: 'translate(-50%, -100%)', 
-                  marginTop: '-15px', 
-                }}
-                onClick={(e) => e.stopPropagation()} 
-              >
-                <div className="p-2 w-64">
-                  <form onSubmit={handleRegisterSensor} className="font-sans space-y-3">
-                    <div className="flex justify-between items-start border-b pb-2">
-                      <div>
-                        <h3 className="text-sm font-bold text-foreground/80">New Sensor</h3>
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 bg-background rounded text-muted-foreground block mt-0.5 w-max">
-                          X: {clickedCoords.x} | Y: {clickedCoords.y}
-                        </span>
-                      </div>
-                      <button 
-                        type="button" 
-                        onClick={closeForm}
-                        className="text-muted-foreground hover:text-foreground p-1"
-                      >
-                        ✕
-                      </button>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">Type</label>
-                      <select 
-                        value={formData.type}
-                        onChange={(e) => setFormData({...formData, type: e.target.value})}
-                        className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
-                      >
-                        <option value="TEMPERATURE">Temperature</option>
-                        <option value="ENERGY_CONSUMPTION">Energy consumption</option>
-                        <option value="AIR_QUALITY">Air quality</option>
-                        <option value="OCCUPANCY">Occupancy</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">Location</label>
-                      <input 
-                        type="text" 
-                        value={formData.space}
-                        onChange={(e) => setFormData({...formData, space: e.target.value})}
-                        className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">Trigger limit</label>
-                      <input 
-                        type="number" 
-                        value={formData.alertLimit}
-                        onChange={(e) => setFormData({...formData, alertLimit: e.target.value})}
-                        className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
-                        required
-                      />
-                    </div>
-
-                    <button 
-                      type="submit" 
-                      className="w-full mt-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm"
-                    >
-                      Save to database
-                    </button>
-                  </form>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
-      {/* Floor change */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-primary-foreground p-5 rounded-3xl border border-primary-foreground shadow-sm space-y-3">
+          {/* Level Switcher */}
+          <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Layers size={14} />
-              Floor Navigation
+              <Layers size={14} /> Level Matrix Selection
             </h2>
             <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setCurrentFloor('FLOOR_1')}
-                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-              >
-                Floor 01 
-              </button>
-              <button
-                type="button"
-                onClick={() => setCurrentFloor('FLOOR_2')}
-                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-              >
-                Floor 02 
-              </button>
+              <button onClick={() => setCurrentFloor('FLOOR_1')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-foreground text-primary-foreground shadow-md' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>Floor 01</button>
+              <button onClick={() => setCurrentFloor('FLOOR_2')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-foreground text-primary-foreground shadow-md' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>Floor 02</button>
             </div>
           </div>
 
-        {/* Filter */}
-          <div className="bg-primary-foreground p-5 rounded-3xl border border-primary-foreground shadow-sm space-y-3">
+          {/* Filtering Workspace */}
+          <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Filter size={14} />
-              Filter by type
+              <Filter size={14} /> Filter Layout
             </h2>
-            
             <div className="flex flex-col gap-1.5">
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('ALL')}
-                className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground border-foreground text-primary-foreground' : 'bg-muted-foreground/10 border-primary-foreground text-muted-foreground hover:bg-muted-foreground/20'}`}
-              >
-                <span>All Active Sensors</span>
-                <span className="px-2 py-0.5 rounded bg-primary-foreground/80 text-muted-foreground text-[10px] font-bold">
-                  {sensors.filter(s => (s.floor || 'FLOOR_1') === currentFloor).length}
-                </span>
+              <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
+                <span>Display All Spaces</span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${selectedTypeFilter === 'ALL' ? 'bg-primary-foreground/20 border-primary-foreground/30' : 'bg-muted border-muted-foreground/20'}`}>{displayLayout.length}</span>
               </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('TEMPERATURE')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'TEMPERATURE' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-                style={selectedTypeFilter === 'TEMPERATURE' ? { backgroundColor: 'var(--fire-color)' } : {}}
-              >
-                <Thermometer size={16} style={selectedTypeFilter === 'TEMPERATURE' ? {color: 'primary-foreground'} : {color: 'var(--fire-color)'}} />
-                <span>Temperature</span>
+              <button onClick={() => setSelectedTypeFilter('ROOM')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ROOM' ? 'bg-blue-600 border-blue-600 text-white' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
+                <Home size={16} /> <span>Rooms & Halls</span>
               </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('ENERGY_CONSUMPTION')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ENERGY_CONSUMPTION' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-                style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? { backgroundColor: 'var(--nika-color)' } : {}}
-              >
-                <Zap size={16} style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? {color: 'primary-foreground'} : {color: 'var(--nika-color)'}} />
-                <span>Energy Consumption</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('AIR_QUALITY')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'AIR_QUALITY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-                style={selectedTypeFilter === 'AIR_QUALITY' ? { backgroundColor: 'var(--surgeon-color)' } : {}}
-              >
-                <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? {color: 'primary-foreground'} : {color: 'var(--surgeon-color)'}} />
-                <span>Air Quality</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('OCCUPANCY')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'OCCUPANCY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-                style={selectedTypeFilter === 'OCCUPANCY' ? { backgroundColor: 'var(--swordsman-color)' } : {}}
-              >
-                <Users size={16} style={selectedTypeFilter === 'OCCUPANCY' ? {color: 'primary-foreground'} : {color: 'var(--swordsman-color)'}} />
-                <span>Occupancy</span>
+              <button onClick={() => setSelectedTypeFilter('LABORATORY')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'LABORATORY' ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
+                <FlaskConical size={16} /> <span>Laboratories</span>
               </button>
             </div>
           </div>
-
-          <div className="p-4 bg-muted-foreground/10 border border-muted-foreground/60 text-muted-foreground/60 rounded-2xl flex gap-3 text-xs leading-relaxed">
-            <AlertTriangle className="shrink-0 text-muted-foreground" size={18} />
-            <p>
-              <strong>Deployment Hint:</strong> Click directly anywhere on the map layout to register or visualize sensor data.
-            </p>
-          </div>
-
         </div>
       </div>
     </section>
