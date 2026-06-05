@@ -69,7 +69,7 @@ export default function Login() {
 
         <div className="absolute inset-0 flex items-center justify-center px-6">
           <Card className="w-full p-0 max-w-6xl shadow-lg border-border overflow-hidden">
-            <div className="flex h-[600px]">
+            <div className="flex h-150">
 
               <div className="flex-1 p-10 flex flex-col justify-center items-center md:items-start">
                 <img src={logoimg} alt="Wano University" className="w-20 h-20 mb-6 rounded-full" />

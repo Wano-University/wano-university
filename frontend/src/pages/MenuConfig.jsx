@@ -19,6 +19,20 @@ const THEME_OPTIONS = [
   { id: 'ramen', label: 'Light purple' }
 ];
 
+// This tells the Tailwind scanner to compile these classes, 
+// even though we assemble them dynamically later.
+const TAILWIND_GENERATION_SAFELIST = [
+  'text-nika', 'border-nika', 'bg-nika/5',
+  'text-surgeon', 'border-surgeon', 'bg-surgeon/5',
+  'text-fire', 'border-fire', 'bg-fire/5',
+  'text-ohara', 'border-ohara', 'bg-ohara/5',
+  'text-tanuki', 'border-tanuki', 'bg-tanuki/5',
+  'text-meat', 'border-meat', 'bg-meat/5',
+  'text-swordsman', 'border-swordsman', 'bg-swordsman/5',
+  'text-chef', 'border-chef', 'bg-chef/5',
+  'text-navigator', 'border-navigator', 'bg-navigator/5',
+  'text-ramen', 'border-ramen', 'bg-ramen/5'
+];
 
 const EMPTY_SLOT = {
   title: "Empty Slot",

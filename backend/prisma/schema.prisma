@@ -66,6 +66,11 @@ enum DishType {
   DESSERT
 }
 
+enum Floor{
+  FLOOR_1
+  FLOOR_2
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -95,11 +100,14 @@ model Resource {
   id          Int          @id @default(autoincrement())
   type        ResourceType
   name        String
+  floor       Floor
   capacity    Int          @default(1)
   isAvailable Boolean      @default(true)
   createdAt   DateTime     @default(now())
+  xCoordinates Float?
+  yCoordinates Float?
 
-  sensors      Sensor[]
+  sensor       Sensor?      
   reservations Reservation[]
   accesses     Access[]
 }
@@ -111,17 +119,20 @@ model MobilityResource {
   location   String?
   status     MobilityStatus @default(FREE)
 
-  sensors      Sensor[]
+  sensor       Sensor?
   reservations Reservation[]
 }
 
 model Sensor {
   id                 Int        @id @default(autoincrement())
   type               SensorType
-  resourceId         Int?
-  mobilityResourceId Int?
+  space              String
+  floor              Floor?
+  resourceId         Int?       @unique 
+  mobilityResourceId Int?       @unique 
   alertLimit         Float?
   isActive           Boolean    @default(true)
+  isOccupied         Boolean    @default(true)
   xCoordinates       Float
   yCoordinates       Float
 

@@ -1,10 +1,14 @@
-import express from 'express';
 import dotenv from 'dotenv';
+import express from 'express';
 import cors from 'cors';
 import userRoutes from './routes/UserRoutes.js';
 import menuRoutes from './routes/MenuRoutes.js';
 import dishRoutes from './routes/DishRoutes.js';
 import ticketRoutes from './routes/TicketRoutes.js';
+import sensorRoutes from './routes/SensorRoutes.js';
+import mobilityResourceRoutes from './routes/MobilityResourceRoutes.js';
+import resourceRoutes from './routes/ResourceRoutes.js';
+import reservationRoutes from './routes/ReservationRoutes.js';
 import paymentRoutes from './routes/PaymentRoutes.js';
 import prisma from './config/db.js';
 import path from 'path';
@@ -37,6 +41,10 @@ app.use('/api/users', userRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/dishes', dishRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/sensors', sensorRoutes);
+app.use('/api/mobilityResources', mobilityResourceRoutes);
+app.use('/api/resources', resourceRoutes);
+app.use('/api/reservations', reservationRoutes);
 app.use('/api/payments', paymentRoutes);
 
 app.listen(PORT, () => {

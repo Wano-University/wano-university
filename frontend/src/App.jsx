@@ -8,6 +8,7 @@ import { ThemeProvider } from './providers/ThemeProvider';
 import InteractiveMap from './pages/InteractiveMap';
 import Cafeteria from './pages/Cafeteria';
 import MenuConfig from './pages/MenuConfig';
+import Spaces from './pages/Spaces';
 import HomeRedirection from './components/HomeRedirection';
 import StaffHome from './pages/StaffHome';
 import StudentHome from './pages/StudentHome';
@@ -40,6 +41,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/changepw" element={<ForgotPassword />} />
 
+        <Route path="/spaces" element={<Spaces />} />
+
         <Route path="/home" element={<HomeRedirection />} />
 
         <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
@@ -54,7 +57,6 @@ export default function App() {
 
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
-
       </Route>
     </Routes>
   );
