@@ -19,7 +19,7 @@ const THEME_OPTIONS = [
   { id: 'ramen', label: 'Light purple' }
 ];
 
-// This tells the Tailwind scanner to compile these classes, 
+// This tells the Tailwind scanner to compile these classes,
 // even though we assemble them dynamically later.
 const TAILWIND_GENERATION_SAFELIST = [
   'text-nika', 'border-nika', 'bg-nika/5',
@@ -205,7 +205,7 @@ export default function MenuConfig() {
             <Utensils className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-bold text-primary tracking-tight">Grand Line Refectory Menu</h4>
+            <h4 className="text-2xl font-bold text-primary tracking-tight">Grand Line Cafeteria Menu</h4>
             <h2 className="text-xs text-muted-foreground">Configure plates of the week.</h2>
           </div>
         </div>
@@ -231,13 +231,13 @@ export default function MenuConfig() {
         <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
           <button
             onClick={() => setActiveTab('meals')}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
           >
             Meals
           </button>
           <button
             onClick={() => setActiveTab('desserts')}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
           >
             Desserts
           </button>
@@ -468,7 +468,7 @@ function DishForm({ onClose, onSave, activeTab, initialData }) {
           <label className="text-xs font-bold text-primary flex items-center gap-1.5">
             <ImageIcon className="w-3.5 h-3.5" /> Image upload:
           </label>
-          <input type="file" name="image" accept="image/*" required={!isEditing} className="w-full bg-muted/40 border border-border rounded-xl px-4 py-2 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+          <input type="file" name="image" accept="image/*" required={!isEditing} className="w-full bg-muted/40 border border-border rounded-xl px-4 py-2 text-sm file:mr-4 file:cursor-pointer file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" />
           {isEditing && <p className="text-[10px] text-muted-foreground px-1 mt-1">Leave file blank to preserve your currently active image.</p>}
         </div>
 
@@ -479,19 +479,19 @@ function DishForm({ onClose, onSave, activeTab, initialData }) {
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col gap-1 text-[11px] font-semibold text-muted-foreground">
               Text
-              <select name="selTextColor" defaultValue={currentThemeColors.text} required className="w-full bg-muted/40 border border-border rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-primary text-foreground">
+              <select name="selTextColor" defaultValue={currentThemeColors.text} required className="w-full bg-muted/40 border border-border rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-primary text-foreground cursor-pointer">
                 {THEME_OPTIONS.map(opt => <option key={`text-${opt.id}`} value={opt.id}>{opt.label}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1 text-[11px] font-semibold text-muted-foreground">
               Border
-              <select name="selBorderColor" defaultValue={currentThemeColors.border} required className="w-full bg-muted/40 border border-border rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-primary text-foreground">
+              <select name="selBorderColor" defaultValue={currentThemeColors.border} required className="w-full bg-muted/40 border border-border rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-primary text-foreground cursor-pointer">
                 {THEME_OPTIONS.map(opt => <option key={`border-${opt.id}`} value={opt.id}>{opt.label}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1 text-[11px] font-semibold text-muted-foreground">
               Background
-              <select name="selBgColor" defaultValue={currentThemeColors.bg} required className="w-full bg-muted/40 border border-border rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-primary text-foreground">
+              <select name="selBgColor" defaultValue={currentThemeColors.bg} required className="w-full bg-muted/40 border border-border rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-primary text-foreground cursor-pointer">
                 {THEME_OPTIONS.map(opt => <option key={`bg-${opt.id}`} value={opt.id}>{opt.label}</option>)}
               </select>
             </div>
