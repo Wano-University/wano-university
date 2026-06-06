@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus } from "lucide-react";
 import UserModel from '../components/UserModel';
-import { getAllUsers, updateUserPermissions } from "../lib/users";
+import EditUser from '../components/EditUser';
+import { getAllUsers, updateUserPermissions, updateUserData } from "../lib/users";
 
 export default function AdminUsers() {
   const [utilizadores, setUtilizadores] = useState([]);
-  const [utilizadorSelecionado, setUtilizadorSelecionado] = useState(null);
+  const [utilizadorSelecionado, setUtilizadorSelecionado] = useState(null); // Para Permissões
+  const [userParaEditar, setUserParaEditar] = useState(null); // Para Dados Pessoais
   const [erro, setErro] = useState(null);
+  const navigate = useNavigate();
 
   const carregarUtilizadores = () => {
     getAllUsers()
       .then(data => {
-        // Proteção caso a API não devolva um array puro
         setUtilizadores(Array.isArray(data) ? data : []);
         setErro(null);
       })
@@ -23,9 +27,9 @@ export default function AdminUsers() {
 
   useEffect(() => {
     carregarUtilizadores();
-  }, []); // O array vazio garante que só roda uma vez ao abrir a página
+  }, []);
 
-  const handleSalvarAlteracoes = (id, dadosAtualizados) => {
+  const handleSalvarPermissoes = (id, dadosAtualizados) => {
     updateUserPermissions(id, dadosAtualizados.ativo, dadosAtualizados.novasPermissoes)
       .then(() => {
         carregarUtilizadores();
@@ -34,16 +38,35 @@ export default function AdminUsers() {
       .catch(err => alert(err.message));
   };
 
+  const handleSalvarEdicao = (id, dados) => {
+    updateUserData(id, dados)
+      .then(() => {
+        carregarUtilizadores();
+        setUserParaEditar(null);
+      })
+      .catch(err => alert(err.message));
+  };
+
   return (
     <div className="container mx-auto p-8 max-w-7xl font-sans">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Account & Privilege Management</h1>
-        <p className="text-muted-foreground mt-1">Manage user access levels, active sessions, and system permissions.</p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Account & Privilege Management</h1>
+          <p className="text-muted-foreground mt-1">Manage user access levels, active sessions, and system permissions.</p>
+        </div>
+        
+        <button 
+          onClick={() => navigate('/createacc')}
+          className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 font-medium rounded-lg shadow-sm text-sm flex items-center gap-2 transition-all cursor-pointer"
+        >
+          <Plus className="w-4 h-4" />
+          Create New User
+        </button>
       </div>
       
       {erro && (
         <div className="p-4 mb-4 text-sm bg-destructive/15 text-destructive rounded-lg border border-destructive/20">
-          <span className="font-semibold">Erro de Ligação:</span> {erro}
+          <span className="font-semibold">Erro:</span> {erro}
         </div>
       )}
 
@@ -61,9 +84,7 @@ export default function AdminUsers() {
           <tbody className="divide-y divide-border">
             {utilizadores.length === 0 ? (
               <tr>
-                <td colSpan="5" className="p-8 text-center text-muted-foreground">
-                  No users found.
-                </td>
+                <td colSpan="5" className="p-8 text-center text-muted-foreground">No users found.</td>
               </tr>
             ) : (
               utilizadores.map(user => (
@@ -71,25 +92,25 @@ export default function AdminUsers() {
                   <td className="p-4 font-medium text-foreground">{user.name}</td>
                   <td className="p-4 text-muted-foreground">{user.email}</td>
                   <td className="p-4 text-foreground">
-                    <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">
-                      {user.type}
-                    </code>
+                    <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">{user.type}</code>
                   </td>
                   <td className="p-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                      user.isActive 
-                        ? 'bg-green-500/15 text-green-600' 
-                        : 'bg-destructive/15 text-destructive'
-                    }`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${user.isActive ? 'bg-green-500/15 text-green-600' : 'bg-destructive/15 text-destructive'}`}>
                       {user.isActive ? "Active" : "Suspended"}
                     </span>
                   </td>
-                  <td className="p-4 text-right">
+                  <td className="p-4 text-right flex gap-2 justify-end">
                     <button 
                       onClick={() => setUtilizadorSelecionado(user)}
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 font-medium rounded-lg shadow-sm text-xs"
+                      className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-1 rounded-lg text-xs transition-all"
                     >
-                      Manage
+                      Permissões
+                    </button>
+                    <button 
+                      onClick={() => setUserParaEditar(user)}
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-1 rounded-lg text-xs transition-all"
+                    >
+                      Editar Dados
                     </button>
                   </td>
                 </tr>
@@ -99,11 +120,19 @@ export default function AdminUsers() {
         </table>
       </div>
 
+      {/* Modais */}
       {utilizadorSelecionado && (
         <UserModel 
           user={utilizadorSelecionado} 
           onClose={() => setUtilizadorSelecionado(null)} 
-          onSave={handleSalvarAlteracoes}
+          onSave={handleSalvarPermissoes}
+        />
+      )}
+      {userParaEditar && (
+        <EditUser
+          user={userParaEditar} 
+          onClose={() => setUserParaEditar(null)} 
+          onSave={handleSalvarEdicao}
         />
       )}
     </div>

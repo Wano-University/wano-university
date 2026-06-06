@@ -60,3 +60,18 @@ const response = await fetch(`${API_URL}/api/admin/users/${userId}/permissions`,
     return { success: false };
   }
 };
+
+export const updateUserData = async (userId, data) => {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_URL}/api/admin/users/${userId}/profile`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  
+  if (!response.ok) throw new Error("Erro ao atualizar dados");
+  return await response.json();
+};
