@@ -21,20 +21,24 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminUsers from "./pages/AdminUsers.jsx";
 import Unauthorized from './pages/Unauthorized';
 
+import MyReservations from './pages/MyReservations';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
 import NotFound from './components/NotFound';
 import Footer from './components/Footer';
+import ValidateReservation from './pages/ValidateReservation';
 
 function RootLayout() {
   return (
     <ThemeProvider>
-   <TerminalProvider>
+      <TerminalProvider>
+
         <div className="relative flex min-h-screen flex-col bg-background">
           <Navbar />
           <TerminalPopup />
           <main className="flex-1">
             <Outlet />
           </main>
+          <Footer />
         </div>
       </TerminalProvider>
     </ThemeProvider>
@@ -66,8 +70,11 @@ export default function App() {
         {/* Rotas Staff */}
         <Route path="/staff" element={<ProtectedRoute allowedRoles={['STAFF']}> <StaffHome /> </ProtectedRoute>} />
         <Route path="/validate-ticket/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateTicket /> </ProtectedRoute>} />
-        
-        {/* Rotas Mistas (Admin e Staff) */}
+
+        <Route path="/validate-reservation/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateReservation /> </ProtectedRoute>} />
+        <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <StudentHome /> </ProtectedRoute>} />
+        <Route path="/reservations" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <MyReservations /> </ProtectedRoute>} />
+
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
 
