@@ -2,34 +2,81 @@ import sys
 
 
 # Load environment variables from the .env file (if present)
+from jwt_token import token
 import requests
 import ply.lex as lex
 import ply.yacc as yacc
 from dotenv import load_dotenv
 import os
 
+import jwt_token
+
 load_dotenv()
 
 API_URL=os.getenv('API_URL')
-print('API_URL: ',API_URL)
 
 t_ignore = ' \t'
 
 variables = {}
 
 
+def get_headers():
+    return {
+        "Authorization": f"Bearer {jwt_token.token}",
+        "Content-Type": "application/json"
+    }
 
-jwt_token = "undefined"
-headers = {
-    "Authorization": f"Bearer {jwt_token}",
-    "Content-Type": "application/json"
-}
 reserved = {
     'if':   'IF',
     'then': 'THEN',
     'else': 'ELSE',
 }
+HARDCODED_SPACES = {
+    'F1_R1':  {'floor': 'FLOOR_1', 'x': 477,  'y': 828},
+    'F1_R2':  {'floor': 'FLOOR_1', 'x': 151,  'y': 576},
+    'F1_R3':  {'floor': 'FLOOR_1', 'x': 800,  'y': 400},
+    'F1_R4':  {'floor': 'FLOOR_1', 'x': 284,  'y': 400},
+    'F1_R5':  {'floor': 'FLOOR_1', 'x': 725,  'y': 128},
+    'F1_R6':  {'floor': 'FLOOR_1', 'x': 338,  'y': 148},
+    'F1_R7':  {'floor': 'FLOOR_1', 'x': 1490, 'y': 266},
+    'F1_R8':  {'floor': 'FLOOR_1', 'x': 1798, 'y': 146},
+    'F1_R9':  {'floor': 'FLOOR_1', 'x': 1486, 'y': 792},
+    'F1_R10': {'floor': 'FLOOR_1', 'x': 1832, 'y': 536},
+    'F2_R1':  {'floor': 'FLOOR_2', 'x': 1544, 'y': 782},
+    'F2_R2':  {'floor': 'FLOOR_2', 'x': 1836, 'y': 532},
+    'F2_R3':  {'floor': 'FLOOR_2', 'x': 1650, 'y': 346},
+    'F2_R4':  {'floor': 'FLOOR_2', 'x': 1774, 'y': 174},
+    'F2_R5':  {'floor': 'FLOOR_2', 'x': 1364, 'y': 172},
+    'F2_R6':  {'floor': 'FLOOR_2', 'x': 729,  'y': 170},
+    'F2_R7':  {'floor': 'FLOOR_2', 'x': 329,  'y': 176},
+    'F2_R8':  {'floor': 'FLOOR_2', 'x': 291,  'y': 420},
+    'F2_R9':  {'floor': 'FLOOR_2', 'x': 185,  'y': 582},
+    'F2_R10': {'floor': 'FLOOR_2', 'x': 562,  'y': 640},
+    'F2_R11': {'floor': 'FLOOR_2', 'x': 693,  'y': 736},
+    'F2_R12': {'floor': 'FLOOR_2', 'x': 375,  'y': 784},
+    'F2_R13': {'floor': 'FLOOR_2', 'x': 591,  'y': 898},
+}
 
+def resolve_hcid(hcid: str):
+    key = hcid.upper()
+    if key not in HARDCODED_SPACES:
+        print(f"Semantic error: unknown hcId '{hcid}'")
+        return None
+    return HARDCODED_SPACES[key]
+
+def resources_to_text(resources):
+    lines = []
+
+    for r in resources:
+        status = "available" if r["isAvailable"] else "unavailable"
+
+        lines.append(
+            f"Resource {r['id']}: {r['name']} "
+            f"({r['type']}) — Floor {r['floor']}, "
+            f"capacity {r['capacity']}, currently {status}."
+        )
+
+    return "\n".join(lines)
 tokens = [
     'ID',
     'NUMBER',
@@ -54,7 +101,11 @@ tokens = [
     'USERTYPE',
     'EMAIL',
     'PASSWORD',
-    'ADDRESS'
+    'ADDRESS',
+    'GET',
+    'RESOURCE_TYPE',
+    'RESOURCES',
+    'HCID'
 ] + list(reserved.values())
 
 
@@ -83,6 +134,10 @@ def t_MEAL(t):
     t.value = 'meal'
     return t
 
+def t_HCID(t):
+    r'[Ff][0-9]+_[Rr][0-9]+'
+    t.value = t.value.upper()
+    return t
 
 def t_SENSORTYPE(t):
     r'[Tt]emperature|[Ee]nergy|[Aa]ir[_-]?[Qq]uality|[Oo]ccupancy'
@@ -111,6 +166,11 @@ def t_BUY(t):
 def t_GET(t):
     r'[Gg]et'
     t.value= 'get'
+    return t
+
+def t_RESOURCES(t):
+    r'[Rr]esources'
+    t.value = 'resources'
     return t
 
 def t_REGISTER(t):
@@ -262,24 +322,35 @@ def p_sensortype_or_var(p):
                          | ID'''
     p[0] = resolveVariable(p[1]) if p.slice[1].type == 'ID' else p[1]
 
-
 def p_instruction_rent_resource(p):
     '''instruction : RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var'''
-    resource_id  = p[4]
-    start_hour   = p[6]
-    end_hour     = p[8]
-    date         = p[10]
+    resource_id = p[4]
+    start_hour  = p[6]
+    end_hour    = p[8]
+    date        = p[10]
 
+    start_dt = f"{date}T{start_hour}:00"  # ISO format for new Date() in JS
+    end_dt   = f"{date}T{end_hour}:00"
 
-    start_dt = f"{date} {start_hour}:00"
-    end_dt   = f"{date} {end_hour}:00"
-
-
-    p[0] = {
-        'action': 'rent', 'equipment': p[2],
-        'startTime': start_dt, 'endTime': end_dt,
+    payload = {
+        'resourceId': resource_id,
+        'startTime':  start_dt,
+        'endTime':    end_dt,
+        'status':     'ACTIVE'   # or whatever your default is
+        # userId and mobilityResourceId are handled server-side from the token
     }
 
+    response = requests.post(
+        f"{API_URL}/api/reservations/",
+        json=payload,
+        headers=get_headers()  # token carries userId, Node extracts it
+    )
+
+    data = response.json()
+    if response.status_code == 201:
+        p[0] = "Reservation created successfully"
+    else:
+        p[0] = data.get('error', response.json().get('message'))
 def p_instruction_cancel_resource(p):
     '''instruction : CANCEL EQUIPMENT COLON number_or_var'''
     reservation_id = p[4]
@@ -327,25 +398,58 @@ def p_instruction_register_user(p):
     response = requests.post(
         f"{API_URL}/api/users/register",
         json=p[0],
-        headers=headers
+        headers=get_headers()
     )
     print(response)
 
 def p_instruction_register_resource(p):
-    '''instruction : REGISTER EQUIPMENT COLON ID COMMA number_or_var'''
-    equip_type = p[2]
-    name       = p[4]
-    capacity   = p[6]
+    '''instruction : REGISTER EQUIPMENT COLON ID COMMA number_or_var COMMA number_or_var COMMA number_or_var COMMA number_or_var
+                   | REGISTER EQUIPMENT COLON HCID'''
+    
+    # Short form: register room : F1_R3
+    if len(p) == 5:
+        space = resolve_hcid(p[4])
+        if not space:
+            p[0] = None
+            return
+        resource = {
+            'type': RESOURCE_TYPE.get(p[2]),
+            'name': p[4],
+            'floor': space['floor'],
+            'xCoordinates': space['x'],
+            'yCoordinates': space['y'],
+            'capacity': 0,
+            'isAvailable': True
+        }
+    else:
+        resource = {
+            'type': p[2],
+            'name': p[4],
+            'capacity': p[6],
+            'floor': p[8],
+            'isAvailable': 'true',
+            'xCoordinates': p[10],
+            'yCoordinates': p[12],
+        }
 
-    if equip_type not in RESOURCE_TYPE:
-        print(f"Semantic error: '{equip_type}' is not a registerable resource type")
-        return
+    p[0] = resource
+    response = requests.post(
+        f"{API_URL}/api/resources/",
+        json=resource,
+        headers=get_headers()
+    )
+    print(response.json())
+def p_instruction_get_resources(p):
+    '''instruction : GET RESOURCES'''
+    response = requests.get(
+                f"{API_URL}/api/resources/",
+                headers=get_headers()
+                )
+
+    p[0] = resources_to_text(response.json())
+    print(resources_to_text(response.json()))
 
 
-    p[0] = {
-        'action': 'register', 'equipment': equip_type,
-        'name': name, 'capacity': capacity,
-    }
 
 def p_instruction_register_sensor(p):
     '''instruction : REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var'''
