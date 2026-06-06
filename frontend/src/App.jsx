@@ -22,6 +22,9 @@ import Unauthorized from './pages/Unauthorized';
 import NoPerms from './pages/NoPerms';
 
 import MyReservations from './pages/MyReservations';
+import TemperatureDashboard from './pages/TemperatureDashboard';
+import AirQualityDashboard from './pages/AirQualityDashboard';
+import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
 import NotFound from './components/NotFound';
 import Footer from './components/Footer';
@@ -74,7 +77,9 @@ export default function App() {
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
 
         <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <StudentHome /> </ProtectedRoute>} />
-
+        <Route path="/TemperatureDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <TemperatureDashboard /> </ProtectedRoute>} />
+        <Route path="/AirQualityDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
+        <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/NoPerms" element={<NoPerms />} />
 

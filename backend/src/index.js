@@ -10,6 +10,7 @@ import mobilityResourceRoutes from './routes/MobilityResourceRoutes.js';
 import resourceRoutes from './routes/ResourceRoutes.js';
 import reservationRoutes from './routes/ReservationRoutes.js';
 import paymentRoutes from './routes/PaymentRoutes.js';
+import simulationRoutes from './routes/SimulationRoutes.js'; 
 import path from 'path';
 import { fileURLToPath } from 'url';
 import adminRoutes from './routes/AdminRoutes.js'; // Substitui pelo nome correto do ficheiro se for diferente
@@ -73,6 +74,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use('/api/payments', paymentRoutes);
+
 app.use((req, res, next) => {
   console.log(`Recebido pedido: ${req.method} ${req.url}`);
   next();
@@ -83,7 +85,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/api/dashboard', simulationRoutes);
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend is securely running and listening on port ${PORT}`);
-
 });
