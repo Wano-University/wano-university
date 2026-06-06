@@ -1,7 +1,5 @@
 import sys
-
-
-# Load environment variables from the .env file (if present)
+from datetime import datetime
 from jwt_token import token
 import requests
 import ply.lex as lex
@@ -64,6 +62,26 @@ def resolve_hcid(hcid: str):
         return None
     return HARDCODED_SPACES[key]
 
+def reservations_to_text(reservations):
+    lines = []
+
+    if(len(reservations)<1):
+        lines.append("No reservations")
+    for r in reservations:
+        start = r["startTime"]
+        end = r["endTime"]
+
+        if isinstance(start, datetime):
+            start = start.strftime("%Y-%m-%d %H:%M")
+        if isinstance(end, datetime):
+            end = end.strftime("%Y-%m-%d %H:%M")
+
+        lines.append(
+            f"Reservation {r['id']} — User {r['userId']} "
+            f"({start} → {end}), status {r.get('status', 'ACTIVE')}."
+        )
+
+    return "\n".join(lines)
 def resources_to_text(resources):
     lines = []
 
@@ -105,6 +123,11 @@ tokens = [
     'GET',
     'RESOURCE_TYPE',
     'RESOURCES',
+    'RESERVATIONS',
+    'ACTIVE',
+    'COMPLETED',
+    'CANCELED',
+    'UPDATE',
     'HCID'
 ] + list(reserved.values())
 
@@ -134,6 +157,29 @@ def t_MEAL(t):
     t.value = 'meal'
     return t
 
+def t_ACTIVE(t):
+    r'[Aa]ctive|[Aa]tiva'
+    t.value = 'active'
+    return t 
+def t_COMPLETED(t):
+    r'[Cc](ompleted|ompletada)'
+    t.value = 'completed'
+    return t 
+
+def t_CANCELED(t):
+    r'[Cc](anceled|ancelada)'
+    t.value = 'completed'
+    return t 
+
+def t_UPDATE(t):
+    r'[Uu]pdate|[Aa]lterar'
+    t.value="update"
+    return t
+
+def t_RESERVATIONS(t):
+    r'[Rr]eservations|[Rr]eservas'
+    t.value='reservations'
+    return t
 def t_HCID(t):
     r'[Ff][0-9]+_[Rr][0-9]+'
     t.value = t.value.upper()
@@ -322,6 +368,7 @@ def p_sensortype_or_var(p):
                          | ID'''
     p[0] = resolveVariable(p[1]) if p.slice[1].type == 'ID' else p[1]
 
+#RESERVATIONS
 def p_instruction_rent_resource(p):
     '''instruction : RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var'''
     resource_id = p[4]
@@ -336,8 +383,7 @@ def p_instruction_rent_resource(p):
         'resourceId': resource_id,
         'startTime':  start_dt,
         'endTime':    end_dt,
-        'status':     'ACTIVE'   # or whatever your default is
-        # userId and mobilityResourceId are handled server-side from the token
+        'status':     'ACTIVE'   
     }
 
     response = requests.post(
@@ -351,6 +397,61 @@ def p_instruction_rent_resource(p):
         p[0] = "Reservation created successfully"
     else:
         p[0] = data.get('error', response.json().get('message'))
+
+def p_reservation_status(p):
+    """reservation_status : ACTIVE
+                          | COMPLETED
+                          | CANCELED"""
+
+    mapping = {
+        "active": "ACTIVE",
+        "completed": "COMPLETED",
+        "canceled": "CANCELED",
+    }
+
+    p[0] = mapping[p[1]]
+def p_instruction_get_reservations(p):
+    '''instruction : GET RESERVATIONS'''
+
+    response = requests.get(
+            f"{API_URL}/api/reservations/",
+            headers=get_headers()  # token carries userId, Node extracts it
+        )
+    if(response.status_code == 200):
+        p[0] = reservations_to_text(response.json())
+        return
+    p[0]= "Failed to get Reservations"
+
+def p_instruction_get_reservations_by_user(p):
+    '''instruction : GET RESERVATIONS number_or_var'''
+    response = requests.get(
+            f"{API_URL}/api/reservations/user/{p[3]}",
+            headers=get_headers()  # token carries userId, Node extracts it
+        )
+    if(response.status_code == 200):
+        p[0] = reservations_to_text(response.json())
+
+        return
+    p[0]= "Failed to get Reservations"
+
+def p_instruction_update_reservation(p):
+    '''instruction : UPDATE RESERVATIONS  number_or_var reservation_status'''
+
+    status={
+            'status':p[4].upper()
+            }
+    response = requests.patch(
+            f"{API_URL}/api/reservations/{p[3]}",
+            json=status,
+            headers=get_headers()  # token carries userId, Node extracts it
+        )
+    if(response.status_code == 200):
+        p[0] = "Update successfull" 
+
+        return
+    p[0]= response
+
+
 def p_instruction_cancel_resource(p):
     '''instruction : CANCEL EQUIPMENT COLON number_or_var'''
     reservation_id = p[4]
@@ -449,6 +550,42 @@ def p_instruction_get_resources(p):
     p[0] = resources_to_text(response.json())
     print(resources_to_text(response.json()))
 
+
+
+def p_instruction_get_resources_by_floor(p):
+    '''instruction : GET RESOURCES number_or_var'''
+    if(p[3] > 2):
+        p[0]= "Invalid floor (1 or 2)"
+        return
+    response = requests.get(
+                f"{API_URL}/api/resources/floor/{p[3].upper()}",
+                headers=get_headers()
+                )
+
+    p[0] = resources_to_text(response.json())
+    print(resources_to_text(response.json()))
+
+def p_instruction_get_resources_by_type(p):
+    '''instruction : GET RESOURCES EQUIPMENT'''
+
+    resource_type = RESOURCE_TYPE.get(p[3])
+
+    if not resource_type:
+        p[0] = "Invalid resource type"
+        return
+
+    response = requests.get(
+        f"{API_URL}/api/resources/type/{resource_type}",
+        headers=get_headers()
+    )
+
+    data = response.json()
+
+    if isinstance(data, str):
+        p[0] = data
+        return
+
+    p[0] = resources_to_text(data)
 
 
 def p_instruction_register_sensor(p):
