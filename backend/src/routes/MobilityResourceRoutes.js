@@ -5,8 +5,8 @@ import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMid
 const router = Router();
 
 router.get('/', getMobilityResources);
-router.post('/', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_EQUIPAMENTOS'), registerMobilityResource);
+router.post('/', verifyToken, requireRole(['ADMIN']),registerMobilityResource);
 router.get('/type/:type', getMobilityResourcesByType);
-router.patch('/:id', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_EQUIPAMENTOS'), mobilityResourceStatus);
+router.patch('/:id', verifyToken, requireRole(['ADMIN']), mobilityResourceStatus);
 
 export default router;

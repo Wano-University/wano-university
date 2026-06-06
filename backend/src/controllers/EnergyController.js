@@ -13,6 +13,8 @@ export const exportEnergyReport = async (req, res) => {
         },
         include: { sensor: true },
         orderBy: { readingDate: 'asc' }
+
+        
     });
 
     if (readings.length === 0) {
@@ -45,6 +47,7 @@ export const getEnergySimulation = async (req, res) => {
       where: { type: "ENERGY_CONSUMPTION", isActive: true }, 
       orderBy: { id: 'asc' } 
     });
+
 
     // Insert new readings (simulate)
     const newReadings = sensors.map(sensor => ({

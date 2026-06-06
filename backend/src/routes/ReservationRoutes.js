@@ -6,7 +6,7 @@ import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMid
 const router = Router();
 
 router.get('/', verifyToken, getAllReservationsList);
-router.post('/', verifyToken, checkPermission('RESERVAR_SALAS'), createReservation);
+router.post('/', verifyToken, createReservation);
 router.post('/validate', verifyToken, requireRole('STAFF'), validateReservationQR);
 
 router.get('/user/:userId', verifyToken, getReservationsByUser);

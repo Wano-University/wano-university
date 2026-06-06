@@ -1,8 +1,5 @@
 import prisma from '../config/db.js';
 
-/**
- * Ir buscar todos os utilizadores do banco de dados
- */
 export const getAllUsers = async (req, res) => {
   try {
     const users = await prisma.user.findMany({
@@ -12,11 +9,11 @@ export const getAllUsers = async (req, res) => {
     email: true,
     type: true,
     isActive: true,
-    permissions: { // O nome da relação no modelo User
+    permissions: {
       select: {
-        permission: { // Navega para o modelo Permission ligado
+        permission: {
           select: {
-            description: true // Agora sim, o Prisma encontra o campo
+            description: true
           }
         }
       }
@@ -24,8 +21,6 @@ export const getAllUsers = async (req, res) => {
   }
 });
 
-    // 🔴 MAPA DE RETORNO: Transformamos o formato do Prisma [{ description: 'VER_EMENTA' }]
-    // num array simples de strings ['VER_EMENTA'] para que o teu Frontend funcione sem alterações!
     const usersFormatados = users.map(user => ({
   ...user,
   permissions: user.permissions.map(p => p.permission.description)
@@ -38,12 +33,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-/**
- * Atualizar estado e permissões de um utilizador específico
- */
-/**
- * Atualizar estado e permissões de um utilizador específico
- */
+
 export const updateUserPermissions = async (req, res) => {
   const { id } = req.params;
   const { ativo, novasPermissoes } = req.body;
@@ -52,26 +42,21 @@ export const updateUserPermissions = async (req, res) => {
   try {
     const listaPermissoes = Array.isArray(novasPermissoes) ? novasPermissoes : [];
 
-    // 1. Procurar os IDs das novas permissões
     const permissoesBd = await prisma.permission.findMany({
       where: { description: { in: listaPermissoes } },
       select: { id: true }
     });
 
-    // 2. Transação para garantir integridade
     const result = await prisma.$transaction(async (tx) => {
-      // A. Atualiza o status do utilizador
       await tx.user.update({
         where: { id: userId },
         data: { isActive: ativo }
       });
 
-      // B. Remove permissões antigas
       await tx.usersOnPermissions.deleteMany({
         where: { userId: userId }
       });
 
-      // C. Cria novas permissões
       await tx.usersOnPermissions.createMany({
         data: permissoesBd.map(p => ({
           userId: userId,
@@ -79,7 +64,6 @@ export const updateUserPermissions = async (req, res) => {
         }))
       });
 
-      // D. Busca o user atualizado com as relações carregadas
       return await tx.user.findUnique({
         where: { id: userId },
         include: { 
@@ -90,12 +74,10 @@ export const updateUserPermissions = async (req, res) => {
       });
     });
 
-    // 3. Resposta de sucesso (fora da transação)
     return res.status(200).json({ 
       message: "Permissões atualizadas com sucesso!",
       user: {
         ...result,
-        // Aqui corrigimos o mapeamento: acedemos ao objeto permission relacionado
         permissions: result.permissions.map(p => p.permission.description)
       }
     });

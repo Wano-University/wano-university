@@ -33,15 +33,12 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ error: "Password policy violation." });
     }
 
-    // 2. CRIAÇÃO DA VARIÁVEL AQUI (Isto faltava ou estava fora de alcance)
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const permsToAssign = MAPA_PERMISSOES
       .filter(perm => perm.roles.includes(type))
       .map(perm => perm.id);
 
-    // 1. Garantir que as permissões existem na BD (Upsert)
-    // Isto resolve o erro P2025 de uma vez por todas
     await Promise.all(
       permsToAssign.map(permId => 
         prisma.permission.upsert({
@@ -52,7 +49,6 @@ export const registerUser = async (req, res) => {
       )
     );
 
-    // 2. Criar o utilizador agora que a BD tem as permissões
     const user = await prisma.user.create({
       data: {
         name, address, nif, email, login,
@@ -78,11 +74,16 @@ export const registerUser = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-
     const { login, password, rememberMe } = req.body;
 
+    // AQUI ESTÁ A CORREÇÃO:
     const user = await prisma.user.findUnique({
-      where: { login: login }
+      where: { login: login },
+      include: {
+        permissions: { 
+          include: { permission: true } 
+        }
+      }
     });
 
     if (!user || !user.isActive) {
@@ -110,7 +111,6 @@ export const login = async (req, res) => {
       token: token,
       user: userWithoutPassword
     });
-
 
   } catch (error) {
     console.error("Login error:", error);

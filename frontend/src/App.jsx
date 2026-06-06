@@ -59,12 +59,12 @@ export default function App() {
         <Route path="/spaces" element={<Spaces />} />
         <Route path="/home" element={<HomeRedirection />} />
 
-        <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
+        <Route path="/cafeteria" element={<ProtectedRoute requiredPermission="VER_EMENTA_COMPRAS"> <Cafeteria /> </ProtectedRoute>} />
         <Route path="/tickets" element={<ProtectedRoute> <MyTickets /> </ProtectedRoute>} />
         <Route path="/changepassword" element={<ProtectedRoute> <ChangePassword /> </ProtectedRoute>} />
 
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminHome /> </ProtectedRoute>} />
-        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminUsers /> </ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']}requiredPermission="GERIR_USERS"> <AdminUsers /> </ProtectedRoute>} />
 
         <Route path="/staff" element={<ProtectedRoute allowedRoles={['STAFF']}> <StaffHome /> </ProtectedRoute>} />
         <Route path="/validate-ticket/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateTicket /> </ProtectedRoute>} />
@@ -74,12 +74,12 @@ export default function App() {
         <Route path="/reservations" element={<ProtectedRoute> <MyReservations /> </ProtectedRoute>} />
 
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
-        <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
+        <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="GERIR_EMENTA"> <MenuConfig /> </ProtectedRoute>} />
 
         <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <StudentHome /> </ProtectedRoute>} />
-        <Route path="/TemperatureDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <TemperatureDashboard /> </ProtectedRoute>} />
-        <Route path="/AirQualityDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
-        <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
+        <Route path="/TemperatureDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_TEMPERATURE"> <TemperatureDashboard /> </ProtectedRoute>} />
+        <Route path="/AirQualityDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_QUALIDADE_AR"> <AirQualityDashboard /> </ProtectedRoute>} />
+        <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_CONSUMO_ENERGETICO"> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/NoPerms" element={<NoPerms />} />
 

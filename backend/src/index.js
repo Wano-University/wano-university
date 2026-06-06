@@ -29,61 +29,25 @@ app.use(express.json());
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
 app.use('/api/users', userRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
+
 app.use('/api/menu', menuRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
+
 app.use('/api/dishes', dishRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
+
 app.use('/api/tickets', ticketRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
+
 app.use('/api/sensors', sensorRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
+
 app.use('/api/mobilityResources', mobilityResourceRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
+
 app.use('/api/resources', resourceRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
+
 app.use('/api/reservations', reservationRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
+
 app.use('/api/payments', paymentRoutes);
 
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
 app.use('/api/admin/users', adminRoutes);
-app.use((req, res, next) => {
-  console.log(`Recebido pedido: ${req.method} ${req.url}`);
-  next();
-});
 
 app.use('/api/dashboard', simulationRoutes);
 

@@ -5,6 +5,6 @@ import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMid
 const router = Router();
 
 router.get('/getMenu', getActiveMenu);
-router.put('/updateMenu', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_EMENTA'), updateActiveMenu);
+router.put('/updateMenu', verifyToken, requireRole(['ADMIN']), updateActiveMenu);
 
 export default router;

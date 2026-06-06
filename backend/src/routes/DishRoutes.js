@@ -28,9 +28,9 @@ const router = Router();
 
 router.get('/', getAllDishes);
 router.get('/type/:type', getDishesByType);
-router.post('/', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_EMENTA'), upload.single('image'), createDish);
-router.patch('/:id', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_EMENTA'), setDish);
-router.put('/:id', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_EMENTA'), upload.single('image'), updateDish);
-router.delete('/:id', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_EMENTA'), deleteDish);
+router.post('/', verifyToken, requireRole(['ADMIN']),upload.single('image'), createDish);
+router.patch('/:id', verifyToken, requireRole(['ADMIN']),setDish);
+router.put('/:id', verifyToken, requireRole(['ADMIN']),upload.single('image'), updateDish);
+router.delete('/:id', verifyToken, requireRole(['ADMIN']), deleteDish);
 
 export default router;

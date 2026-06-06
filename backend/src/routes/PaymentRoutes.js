@@ -4,7 +4,7 @@ import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMid
 
 const router = Router();
 
-router.post('/create-intent', verifyToken, checkPermission('FAZER_COMPRAS_CANTINA'), createPaymentIntent);
-router.post('/confirm', verifyToken, checkPermission('FAZER_COMPRAS_CANTINA'), confirmPayment);
+router.post('/create-intent', verifyToken,createPaymentIntent);
+router.post('/confirm', verifyToken,confirmPayment);
 
 export default router;

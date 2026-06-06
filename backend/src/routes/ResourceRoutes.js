@@ -5,7 +5,7 @@ import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMid
 const router = Router();
 
 router.get('/', getResources);
-router.post('/', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_SALAS_LABORATORIOS'), registerResource);
+router.post('/', verifyToken, requireRole(['ADMIN']),registerResource);
 
 router.get('/floor/:floor', getResourcesByFloor);
 router.get('/type/:type', getResourcesByType);
@@ -13,7 +13,7 @@ router.get('/type/:type', getResourcesByType);
 router.get('/reservations/all', getAllReservations);
 router.get('/accesses/all', getAllAccesses);
 
-router.patch('/:id/status', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_SALAS_LABORATORIOS'), resourceStatus);
+router.patch('/:id/status', verifyToken, requireRole(['ADMIN']),resourceStatus);
 router.get('/:id/reservations', getReservations);
 router.get('/:id/accesses', getAccesses);
 
