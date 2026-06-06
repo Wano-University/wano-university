@@ -61,7 +61,8 @@ model Sensor {
   floor              Floor?
   resourceId         Int?              @unique
   mobilityResourceId Int?              @unique
-  alertLimit         Float?
+  upperLimit         Float?
+  lowerLimit         Float?  
   isActive           Boolean           @default(true)
   isOccupied         Boolean           @default(true)
   xCoordinates       Float

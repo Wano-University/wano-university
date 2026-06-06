@@ -18,6 +18,9 @@ import ChangePassword from './pages/ChangePassword';
 import MyTickets from './pages/MyTickets';
 import ValidateTicket from './pages/ValidateTicket';
 import MyReservations from './pages/MyReservations';
+import TemperatureDashboard from './pages/TemperatureDashboard';
+import AirQualityDashboard from './pages/AirQualityDashboard';
+import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
 import NotFound from './components/NotFound';
 import Footer from './components/Footer';
@@ -62,6 +65,10 @@ export default function App() {
 
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
+
+        <Route path="/TemperatureDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <TemperatureDashboard /> </ProtectedRoute>} />
+        <Route path="/AirQualityDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
+        <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>

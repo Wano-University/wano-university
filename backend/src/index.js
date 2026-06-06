@@ -10,6 +10,7 @@ import mobilityResourceRoutes from './routes/MobilityResourceRoutes.js';
 import resourceRoutes from './routes/ResourceRoutes.js';
 import reservationRoutes from './routes/ReservationRoutes.js';
 import paymentRoutes from './routes/PaymentRoutes.js';
+import simulationRoutes from './routes/SimulationRoutes.js'; 
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -35,8 +36,8 @@ app.use('/api/mobilityResources', mobilityResourceRoutes);
 app.use('/api/resources', resourceRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/dashboard', simulationRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend is securely running and listening on port ${PORT}`);
-
 });
