@@ -4,8 +4,8 @@ import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMid
 
 const router = Router();
 
-router.get('/',verifyToken, requireRole(['ADMIN','STAFF']), getAllSensors);
-router.post('/', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_SENSOR_TEMPERATURA'), registerSensor);
+router.get('/',verifyToken, requireRole(['ADMIN','STAFF']),checkPermission('GERIR_SENSORES'), getAllSensors);
+router.post('/', verifyToken, requireRole(['ADMIN']), checkPermission('GERIR_SENSORES'), registerSensor);
 
 router.get('/floor/:floor',verifyToken,requireRole(['ADMIN','STAFF']), getSensorsByfloor);
 router.get('/type/:type',verifyToken, requireRole(['ADMIN','STAFF']), getSensorsByType);

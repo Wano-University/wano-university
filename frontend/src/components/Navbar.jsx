@@ -38,9 +38,9 @@ export default function Navbar() {
 
         {user?.type === 'ADMIN' && (
           <>
-            <Link to="/map" className={desktopLinkStyle}>Spaces</Link>
+            <Link to="/spaces" className={desktopLinkStyle}>Spaces</Link>
             <Link to="/parking" className={desktopLinkStyle}>Mobility</Link>
-            <Link to="/sensors" className={desktopLinkStyle}>Sensors</Link>
+            <Link to="/map" className={desktopLinkStyle}>Sensors</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
             <Link to="/admin/dashboard" className={desktopLinkStyle}>Dashboards</Link>
             <Link to="/admin/users" className={desktopLinkStyle}>User Management</Link>
