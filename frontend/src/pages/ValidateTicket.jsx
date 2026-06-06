@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ShieldAlert, CheckCircle2, Loader2, ScanLine } from 'lucide-react';
-import { validateTicket } from '../lib/tickets';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export default function ValidateTicket() {
   const { id } = useParams();
@@ -13,15 +14,27 @@ export default function ValidateTicket() {
   const user = storedUser ? JSON.parse(storedUser) : null;
   const isAuthorized = user && (user.type === 'STAFF' || user.type === 'ADMIN');
 
-  const handleUseTicket = async () => {
+  const handleConsumeTicket = async () => {
     setStatus('loading');
     setError(null);
 
     try {
-      await validateTicket(id);
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(`${API_URL}/api/tickets/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ id: parseInt(id), status: 'USED' })
+      });
+
+      if (!response.ok) throw new Error("Failed to validate ticket. It may already be used.");
+
       setStatus('success');
     } catch (err) {
-      setError(err.message || "Failed to validate ticket. It may already be used.");
+      setError(err.message);
       setStatus('error');
     }
   };
@@ -45,7 +58,7 @@ export default function ValidateTicket() {
           <div className="animate-in zoom-in duration-300">
             <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-4" />
             <h2 className="text-3xl font-black tracking-tight text-foreground">Ticket Validated!</h2>
-            <p className="text-muted-foreground mt-2">The ticket has been used.</p>
+            <p className="text-muted-foreground mt-2">The ticket has been consumed.</p>
           </div>
         ) : (
           <>
@@ -54,7 +67,7 @@ export default function ValidateTicket() {
             </div>
 
             <h2 className="text-2xl font-black tracking-tight mb-2">Validate Ticket #{id}</h2>
-            <p className="text-sm text-muted-foreground mb-8">Confirm the physical exchange of the meal before pressing use.</p>
+            <p className="text-sm text-muted-foreground mb-8">Confirm the physical exchange of the meal before pressing consume.</p>
 
             {error && (
               <div className="p-4 mb-6 bg-destructive/10 rounded-xl border border-destructive/20">
@@ -63,11 +76,11 @@ export default function ValidateTicket() {
             )}
 
             <button
-              onClick={handleUseTicket}
+              onClick={handleConsumeTicket}
               disabled={status === 'loading'}
               className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg rounded-2xl shadow-xl transition-all active:scale-95 flex justify-center items-center gap-2"
             >
-              {status === 'loading' ? <Loader2 className="w-6 h-6 animate-spin" /> : 'USE TICKET'}
+              {status === 'loading' ? <Loader2 className="w-6 h-6 animate-spin" /> : 'CONSUME TICKET'}
             </button>
           </>
         )}

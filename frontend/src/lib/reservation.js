@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const createReservation = async (reservationData) => {
   const token = localStorage.getItem('token');
@@ -49,24 +49,9 @@ export const updateReservationStatus = async (id, status) => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ status }),
+    body: JSON.stringify({ status }), 
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Failed to update reservation status.');
-  return data;
-};
-
-export const validateReservation = async (reservationId) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/api/reservations/validate`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify({ qrToken: reservationId })
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Validation failed');
   return data;
 };

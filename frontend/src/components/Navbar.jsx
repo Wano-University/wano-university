@@ -90,7 +90,7 @@ export default function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200 cursor-pointer"
+            className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200"
             title="Open Terminal"
             onClick={openTerminal}
           >

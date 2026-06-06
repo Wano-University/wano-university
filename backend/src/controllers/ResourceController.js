@@ -1,7 +1,7 @@
 import prisma from '../config/db.js';
 
 const VALID_SPACES = [
-  { floor: 'FLOOR_1', x: 477, y: 828},
+  { floor: 'FLOOR_1', x: 477, y: 828 },
   { floor: 'FLOOR_1', x: 151, y: 576 },
   { floor: 'FLOOR_1', x: 800, y: 400 },
   { floor: 'FLOOR_1', x: 284, y: 400 },
@@ -53,30 +53,31 @@ export const registerResource = async (req, res) => {
     const targetX = xCoordinates ? parseFloat(xCoordinates) : null;
     const targetY = yCoordinates ? parseFloat(yCoordinates) : null;
 
-    const isValidLocation = VALID_SPACES.some(space => 
-      space.floor === floor && 
-      Math.abs(space.x - targetX) < 20 && 
+    const floorNumber = (f) => parseInt(String(f).replace(/\D/g, ''));
+
+    const isValidLocation = VALID_SPACES.some(space =>
+      floorNumber(space.floor) === floorNumber(floor) &&
+      Math.abs(space.x - targetX) < 20 &&
       Math.abs(space.y - targetY) < 20
     );
-
     if (!isValidLocation) {
       return res.status(400).json({ error: "Invalid coordinates: Clicked location does not match hardcoded map." });
     }
 
     const resource = await prisma.resource.create({
-      data: { 
-        type, 
-        name, 
-        capacity: capacity ? parseInt(capacity) : 1, 
-        isAvailable, 
-        floor, 
-        xCoordinates: targetX, 
-        yCoordinates: targetY 
+      data: {
+        type,
+        name,
+        capacity: capacity ? parseInt(capacity) : 1,
+        isAvailable,
+        floor,
+        xCoordinates: targetX,
+        yCoordinates: targetY
       }
     });
 
     res.status(201).json(resource);
-   } catch (error) {
+  } catch (error) {
     console.error(error);
 
     res.status(400).json({
@@ -90,7 +91,7 @@ export const registerResource = async (req, res) => {
 // 3. GET RESERVATIONS BY RESOURCE ID
 export const getReservations = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
     const resource = await prisma.resource.findUnique({
       where: { id: parseInt(id) },
       include: { reservations: true }
@@ -134,7 +135,7 @@ export const getResources = async (req, res) => {
 export const resourceStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { isAvailable } = req.body; 
+    const { isAvailable } = req.body;
 
     const updatedResource = await prisma.resource.update({
       where: { id: parseInt(id) },
