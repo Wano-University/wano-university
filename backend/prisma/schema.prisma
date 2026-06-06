@@ -100,10 +100,12 @@ model Resource {
   id          Int          @id @default(autoincrement())
   type        ResourceType
   name        String
-  floor       Floor
+  floor       Floor?
+  desc        String?
   capacity    Int          @default(1)
   isAvailable Boolean      @default(true)
   createdAt   DateTime     @default(now())
+  color       String?
   xCoordinates Float?
   yCoordinates Float?
 
@@ -118,6 +120,8 @@ model MobilityResource {
   identifier String         @unique
   location   String?
   status     MobilityStatus @default(FREE)
+  xCoordinates Float?
+  yCoordinates Float?
 
   sensor       Sensor?
   reservations Reservation[]

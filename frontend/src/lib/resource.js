@@ -113,23 +113,58 @@ export const updateResource = async (id, formData) => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: formData,
+    body: JSON.stringify(formData), 
   });
+  
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Failed to update resource.');
   return data;
 };
 
 export const deleteResource = async (id) => {
-  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api/resources/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: getHeaders(),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Failed to delete resource.');
+  return data;
+};
+
+export const registerEquipment = async (payload) => {
+  const response = await fetch(`${API_URL}/api/resources`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ ...payload, type: 'EQUIPMENT' }),
+  });
+  
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to register equipment.');
+  return data;
+};
+
+export const updateEquipment = async (id, formData) => {
+  formData.append('type', 'EQUIPMENT');
+
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/resources/${id}`, {
+    method: 'PUT',
+    headers: {
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    },
+    body: formData, 
+  });
+  
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to update equipment.');
+  return data;
+};
+
+export const getAllEquipment = async () => {
+  const response = await fetch(`${API_URL}/api/resources/type/EQUIPMENT`, {
+    headers: getHeaders(),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to fetch equipment.');
   return data;
 };

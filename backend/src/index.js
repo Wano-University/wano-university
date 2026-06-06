@@ -47,6 +47,7 @@ app.use('/api/resources', resourceRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/payments', paymentRoutes);
 
+
 app.listen(PORT, () => {
   console.log('Server is running on http://localhost:${PORT}');
 });

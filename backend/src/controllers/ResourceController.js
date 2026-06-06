@@ -28,14 +28,7 @@ const VALID_SPACES = [
 
 export const getResourcesByFloor = async (req, res) => {
   try {
-    console.log(
-      Object.keys(
-        prisma.resource.fields ?? {}
-      )
-    );
-
     const resources = await prisma.resource.findMany();
-
     res.json(resources);
   } catch (err) {
     console.error(err);
@@ -45,14 +38,29 @@ export const getResourcesByFloor = async (req, res) => {
 
 export const registerResource = async (req, res) => {
   try {
-    const { type, name, capacity, isAvailable, floor, xCoordinates, yCoordinates } = req.body;
-    console.log("BODY:", req.body);
+    const { type, name, capacity, isAvailable, floor, desc, xCoordinates, yCoordinates, color } = req.body;
+
+    if (type === 'EQUIPMENT') {
+      const resource = await prisma.resource.create({
+        data: {
+          type,
+          name,
+          desc,
+          capacity: capacity ? parseInt(capacity) : 1,
+          isAvailable: isAvailable !== undefined ? isAvailable : true,
+          floor: floor || null,
+          color: color || null,
+        }
+      });
+      return res.status(201).json(resource);
+    }
+
     const targetX = xCoordinates ? parseFloat(xCoordinates) : null;
     const targetY = yCoordinates ? parseFloat(yCoordinates) : null;
 
-    const isValidLocation = VALID_SPACES.some(space => 
-      space.floor === floor && 
-      Math.abs(space.x - targetX) < 20 && 
+    const isValidLocation = VALID_SPACES.some(space =>
+      space.floor === floor &&
+      Math.abs(space.x - targetX) < 20 &&
       Math.abs(space.y - targetY) < 20
     );
 
@@ -61,28 +69,26 @@ export const registerResource = async (req, res) => {
     }
 
     const resource = await prisma.resource.create({
-      data: { 
-        type, 
-        name, 
-        capacity: capacity ? parseInt(capacity) : 1, 
-        isAvailable, 
-        floor, 
-        xCoordinates: targetX, 
-        yCoordinates: targetY 
+      data: {
+        type,
+        name,
+        capacity: capacity ? parseInt(capacity) : 1,
+        isAvailable: isAvailable !== undefined ? isAvailable : true,
+        floor,
+        xCoordinates: targetX,
+        yCoordinates: targetY,
+        color: color || null,
       }
     });
 
     res.status(201).json(resource);
-   } catch (error) {
+  } catch (error) {
     console.error(error);
-
-    res.status(400).json({
-      error: error.message
-    });
+    res.status(400).json({ error: error.message });
   }
 };
 
-export const getReservations = async (req, res) => {
+const getReservations = async (req, res) => {
   try {
     const { id } = req.params; 
     const resource = await prisma.resource.findUnique({
@@ -174,19 +180,20 @@ export const getAllAccesses = async (req, res) => {
 export const updateResource = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, capacity, isAvailable, floor, xCoordinates, yCoordinates } = req.body;
+    const { type, name, capacity, desc, isAvailable, floor, xCoordinates, yCoordinates, color } = req.body;
 
     const updateData = {
       name,
+      desc,
       capacity: parseInt(capacity),
       isAvailable,
-      floor,
-      xCoordinates: parseFloat(xCoordinates),
-      yCoordinates: parseFloat(yCoordinates)
+      floor: floor || null,
+      color: color || null,
     };
 
-    if (req.file) {
-      updateData.image = `/assets/${req.file.filename}`;
+    if (type !== 'EQUIPMENT') {
+      updateData.xCoordinates = parseFloat(xCoordinates);
+      updateData.yCoordinates = parseFloat(yCoordinates);
     }
 
     const updatedResource = await prisma.resource.update({

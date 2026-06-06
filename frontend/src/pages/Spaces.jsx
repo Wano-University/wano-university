@@ -5,13 +5,13 @@ import 'leaflet/dist/leaflet.css';
 import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Calendar as CalendarIcon, Users, ShieldAlert, Clock } from 'lucide-react';
 import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js'; 
 import { createReservation } from '../lib/reservation.js'; 
+import { Link } from "react-router-dom"
 
 const bounds = [[0, 0], [1100, 2000]];
 
 const HARDCODED_SPACES = [
   { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM'},
   { hcId: 'F1_R2', floor: 'FLOOR_1', x: 151, y: 576, defaultType: 'ROOM' },
-  { hcId: 'F1_R3', floor: 'FLOOR_1', x: 800, y: 400, defaultType: 'ROOM' },
   { hcId: 'F1_R4', floor: 'FLOOR_1', x: 284, y: 400, defaultType: 'ROOM' },
   { hcId: 'F1_R5', floor: 'FLOOR_1', x: 725, y: 128, defaultType: 'ROOM' },
   { hcId: 'F1_R6', floor: 'FLOOR_1', x: 338, y: 148, defaultType: 'ROOM' },
@@ -259,6 +259,13 @@ export default function InteractiveMap() {
         </div>
         
         <div className="flex items-center gap-3 mt-4 md:mt-0">
+          <Link 
+              to="/equipments" 
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
+            >
+            <Wrench size={16} />
+            Equipments
+          </Link>
           <button 
             onClick={() => setIsAdminMode(!isAdminMode)}
             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${

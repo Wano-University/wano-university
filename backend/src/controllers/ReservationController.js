@@ -12,33 +12,38 @@ export const getAllReservationsList = async (req, res) => {
   }
 };
 
+
 export const createReservation = async (req, res) => {
   try {
     const loggedInUserId = req.user.userId;
     const { resourceId, mobilityResourceId, startTime, endTime, status } = req.body;
 
-    const existingReservation = await prisma.reservation.findFirst({
-        where: {
-          startTime: new Date(startTime),
-          endTime: new Date(endTime)
-        }
-      });
-
-      if (existingReservation) {
-        return res.status(400).json({
-          message: "A reservation already exists for these time slots.",
-          reservation: existingReservation
-        });
+    const conflicting = await prisma.reservation.findFirst({
+      where: {
+        ...(resourceId && { resourceId: parseInt(resourceId) }),
+        ...(mobilityResourceId && { mobilityResourceId: parseInt(mobilityResourceId) }),
+        AND: [
+          { startTime: { lt: new Date(endTime) } },
+          { endTime:   { gt: new Date(startTime) } },
+        ],
       }
+    });
+
+    if (conflicting) {
+      return res.status(400).json({
+        message: "This equipment is already reserved during the selected time slot.",
+        reservation: conflicting,
+      });
+    }
 
     const reservation = await prisma.reservation.create({
       data: {
-        userId: loggedInUserId, 
-        resourceId: resourceId ? parseInt(resourceId) : null,
+        userId:             loggedInUserId, 
+        resourceId:         resourceId         ? parseInt(resourceId)         : null,
         mobilityResourceId: mobilityResourceId ? parseInt(mobilityResourceId) : null,
-        startTime: new Date(startTime),
-        endTime: new Date(endTime),
-        status
+        startTime:          new Date(startTime),
+        endTime:            new Date(endTime),
+        status,
       }
     });
 
