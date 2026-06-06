@@ -4,7 +4,7 @@ const API_URL = import.meta.env.VITE_FASTAPI_URL || "http://localhost:3000";
 export const handleApiResponse = async (response) => {
   if (response.status === 403) {
     // Redireciona para o Unauthorized.jsx
-    window.location.href = '/unauthorized';
+    window.location.href = '/NoPerms';
     return null; // Interrompe o fluxo
   }
   
@@ -34,7 +34,7 @@ export const getAllUsers = async () => {
     // 1. Verifica especificamente o 403 primeiro
     if (response.status === 403) {
       console.log("Acesso negado. Redirecionando...");
-      window.location.href = '/unauthorized';
+      window.location.href = '/NoPerms';
       return []; // Retorna vazio enquanto redireciona
     }
 

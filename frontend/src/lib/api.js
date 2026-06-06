@@ -11,7 +11,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 403) {
       // Redireciona para a tua página Unauthorized.jsx
-      window.location.href = '/unauthorized';
+      window.location.href = '/NoPerms';
     }
     return Promise.reject(error);
   }

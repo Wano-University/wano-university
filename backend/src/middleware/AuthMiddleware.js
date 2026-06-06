@@ -35,24 +35,26 @@ export const checkPermission = (permissaoRequerida) => {
   return async (req, res, next) => {
     console.log("3. Entrou no checkPermission para:", permissaoRequerida);
     try {
+      const userId = Number(req.user.userId);
+      console.log("DEBUG - A procurar user ID:", userId);
+
       const user = await prisma.user.findUnique({
-        where: { id: Number(req.user.userId) },
-        include: {
-          permissions: { // O nome correto da tua relação no modelo User
-            include: {
-              permission: true // Isto carrega o objeto da Permissão real
-            }
-          }
-        }
+        where: { id: userId },
+        include: { permissions: { include: { permission: true } } }
       });
 
-      if (!user || !user.isActive) {
-        return res.status(403).json({ error: "Acesso negado ou conta suspensa." });
+      if (!user) {
+        console.log("DEBUG - User não encontrado na BD!");
+        return res.status(403).json({ error: "Utilizador não encontrado." });
       }
 
-      // Agora acedemos através de 'permission' (o objeto relacionado)
-      const permissoesDoUtilizador = user.permissions.map(p => p.permission.description);
+      // VAMOS VER O QUE O PRISMA ESTÁ REALMENTE A BUSCAR:
+      console.log("DEBUG - User permissions objeto completo:", JSON.stringify(user.permissions, null, 2));
+
+      // Se o campo não for 'description', ajusta o 'p.permission.XXX' aqui:
+      const permissoesDoUtilizador = user.permissions.map(p => p.permission.name || p.permission.description);
       
+      console.log("DEBUG - Permissões mapeadas:", permissoesDoUtilizador);
       console.log("DEBUG - Permissões do utilizador:", permissoesDoUtilizador);
 
       if (!permissoesDoUtilizador.includes(permissaoRequerida)) {

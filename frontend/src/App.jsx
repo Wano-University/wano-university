@@ -17,9 +17,9 @@ import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
 import MyTickets from './pages/MyTickets';
 import ValidateTicket from './pages/ValidateTicket';
-import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminUsers from "./pages/AdminUsers.jsx";
 import Unauthorized from './pages/Unauthorized';
+import NoPerms from './pages/NoPerms';
 
 import MyReservations from './pages/MyReservations';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
@@ -63,8 +63,7 @@ export default function App() {
         <Route path="/changepassword" element={<ProtectedRoute> <ChangePassword /> </ProtectedRoute>} />
 
         {/* 👑 BLOCO DE ROTAS ADMIN (Agrupadas e protegidas num único sítio) */}
-        <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminDashboard /> </ProtectedRoute>} />
-        <Route path="/admin/home" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminHome /> </ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminHome /> </ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminUsers /> </ProtectedRoute>} />
 
         {/* Rotas Staff */}
@@ -73,7 +72,7 @@ export default function App() {
 
         <Route path="/validate-reservation/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateReservation /> </ProtectedRoute>} />
         <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <StudentHome /> </ProtectedRoute>} />
-        <Route path="/reservations" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <MyReservations /> </ProtectedRoute>} />
+        <Route path="/reservations" element={<ProtectedRoute> <MyReservations /> </ProtectedRoute>} />
 
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
@@ -82,6 +81,7 @@ export default function App() {
         <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <StudentHome /> </ProtectedRoute>} />
 
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/NoPerms" element={<NoPerms />} />
 
         {/* Rota Fallback para erros */}
         <Route path="*" element={<NotFound />} />

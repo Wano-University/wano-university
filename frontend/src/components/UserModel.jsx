@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 // O teu array original e perfeito de mapeamento
 const MAPA_PERMISSOES = [
-  { id: 'VER_EMENTA', label: 'Ementa', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'FAZER_COMPRAS_CANTINA', label: 'Compras Cantina', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'RESERVAR_SALAS', label: 'Reservar Salas', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'RESERVAR_LABORATORIOS', label: 'Reservar Labs', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'VER_EMENTA_COMPRAS', label: 'Ementa', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'RESERVAR_SALAS_LABORATORIOS', label: 'Reservar Salas', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
   { id: 'RESERVAR_EQUIPAMENTOS', label: 'Reservar Equipamentos', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'RESERVAR_BICICLETAS', label: 'Reservar Bicicletas', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'RESERVAR_TROTINETES', label: 'Reservar Trotinetes', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'RESERVAR_BICICLETAS_TROTINETES', label: 'Reservar Bicicletas', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
   { id: 'VER_DASHBOARD_TEMPERATURA', label: 'Dash: Temp', roles: ['STAFF', 'ADMIN'] },
   { id: 'VER_DASHBOARD_QUALIDADE_AR', label: 'Dash: Ar', roles: ['STAFF', 'ADMIN'] },
   { id: 'VER_DASHBOARD_CONSUMO_ENERGETICO', label: 'Dash: Energia', roles: ['STAFF', 'ADMIN'] },
@@ -16,6 +13,7 @@ const MAPA_PERMISSOES = [
   { id: 'GERIR_USERS', label: 'Gestão Users', roles: ['ADMIN'] },
   { id: 'GERIR_SALAS_LABORATORIOS', label: 'Gestão Salas/Labs', roles: ['ADMIN'] },
   { id: 'GERIR_EQUIPAMENTOS', label: 'Gestão Equipamentos', roles: ['ADMIN'] },
+  { id: 'GERIR_BICICLETAS_TROTINETES', label: 'Gestão Equipamentos', roles: ['ADMIN'] },
   { id: 'GERIR_EMENTA', label: 'Gestão Ementa', roles: ['ADMIN'] },
   { id: 'GERIR_SENSORES', label: 'Gestão Sensores', roles: ['ADMIN'] }
 ];
