@@ -24,7 +24,8 @@ export default function Login() {
 
     const credentials = {
       login: formValues.login,
-      password: formValues.password
+      password: formValues.password,
+      rememberMe: rememberMe
     };
 
     try {
@@ -110,7 +111,7 @@ export default function Login() {
                       />
                       Remember Me
                     </label>
-                    <a href="/forgot-password" className="text-muted-foreground hover:text-foreground">
+                    <a href="/changepw" className="text-muted-foreground hover:text-foreground">
                       Forgot Your Password?
                     </a>
                   </div>

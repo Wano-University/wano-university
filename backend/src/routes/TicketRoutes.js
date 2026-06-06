@@ -3,7 +3,7 @@ import { getTicketsByUser, updateTicketStatus } from '../controllers/TicketContr
 
 const router = Router();
 
-router.get('/user/:userId', getTicketsByUser);
-router.patch('/:id/status', updateTicketStatus);
+router.post('/user', getTicketsByUser);
+router.patch('/status', updateTicketStatus);
 
 export default router;

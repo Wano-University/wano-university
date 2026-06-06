@@ -8,9 +8,10 @@ import { createTicketPaymentIntent } from '../lib/payments';
 
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import CheckoutForm from '../components/CheckoutForm'; // Make sure this file exists!
+import CheckoutForm from '../components/CheckoutForm';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { getImageUrl } from '@/lib/utils';
+
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const getWorkdays = () => {
   const today = new Date();
@@ -28,12 +29,6 @@ const getWorkdays = () => {
   });
 };
 
-const getImageUrl = (path) => {
-  if (!path) return '';
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  const cleanApi = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
-  return `${cleanApi}/${cleanPath}`;
-};
 
 const getDishThemeStyles = (dish, isSelected) => {
   if (!dish) return 'bg-card text-card-foreground border-border';
@@ -77,20 +72,20 @@ export default function Cafeteria() {
         const data = await getActiveMenu();
         const formattedMenu = { meals: {}, desserts: {} };
 
-        let mealIndex = 0;
-        let dessertIndex = 0;
+        if (data && data.schedule && data.dishes) {
+          workdays.forEach(dateObj => {
+            const dateKey = dateObj.toISOString();
+            const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(dateObj);
 
-        if (data && Array.isArray(data)) {
-          data.forEach(dish => {
-            if (dish.dishType === 'DESSERT' && dessertIndex < 5) {
-              // Map by exact timestamp string instead of day name
-              const dateKey = workdays[dessertIndex].toISOString();
-              formattedMenu.desserts[dateKey] = dish;
-              dessertIndex++;
-            } else if (dish.dishType !== 'DESSERT' && mealIndex < 5) {
-              const dateKey = workdays[mealIndex].toISOString();
-              formattedMenu.meals[dateKey] = dish;
-              mealIndex++;
+            const dayIds = data.schedule[dayName];
+
+            if (dayIds) {
+              if (dayIds.mealId) {
+                formattedMenu.meals[dateKey] = data.dishes.find(d => d.id === dayIds.mealId);
+              }
+              if (dayIds.dessertId) {
+                formattedMenu.desserts[dateKey] = data.dishes.find(d => d.id === dayIds.dessertId);
+              }
             }
           });
         }
@@ -171,13 +166,13 @@ export default function Cafeteria() {
               const today = new Date().getDay();
               setSelectedDate((today >= 1 && today <= 5) ? workdays[today - 1] : workdays[0]);
             }}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
           >
             Meals
           </button>
           <button
             onClick={() => setActiveTab('desserts')}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
           >
             Desserts
           </button>
