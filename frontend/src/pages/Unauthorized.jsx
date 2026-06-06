@@ -40,7 +40,7 @@ export default function Unauthorized() {
             className="flex items-center justify-center gap-2 w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-[0.99] cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
-            Return to Dashboard
+            Return to Home Page
           </Link>
         </div>
       </Card>

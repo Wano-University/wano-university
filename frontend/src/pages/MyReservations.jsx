@@ -73,7 +73,7 @@ export default function MyReservations() {
         exit={{ opacity: 0, scale: 0.95 }}
         className="bg-card w-full max-w-lg p-6 rounded-[2rem] shadow-2xl relative border flex flex-col max-h-[85vh]"
       >
-        <button onClick={() => navigate(-1)} className="absolute top-5 right-5 p-2 bg-muted/50 rounded-full z-10">
+        <button onClick={() => navigate(-1)} className="absolute top-5 right-5 p-2 bg-muted/50 rounded-full z-10 cursor-pointer">
           <X className="w-5 h-5" />
         </button>
 
@@ -133,7 +133,7 @@ export default function MyReservations() {
             <div className="absolute inset-0 bg-background/95 backdrop-blur-md" onClick={() => { setSelectedQRUrl(null); setPollingId(null); }} />
             <div className="relative z-10 flex flex-col items-center">
               <QRCodeDisplay url={selectedQRUrl} title="Scan for Access/Checkout" />
-              <button onClick={() => { setSelectedQRUrl(null); setPollingId(null); }} className="mt-6 w-full py-3 bg-primary text-primary-foreground font-bold rounded-xl">
+              <button onClick={() => { setSelectedQRUrl(null); setPollingId(null); }} className="mt-6 w-full py-3 bg-primary text-primary-foreground font-bold rounded-xl cursor-pointer">
                 Close
               </button>
             </div>
