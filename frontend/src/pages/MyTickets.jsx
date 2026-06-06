@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { X, TicketCheck, Loader2, UtensilsCrossed, Calendar } from 'lucide-react';
-import { getMyTickets } from '../lib/tickets'; // Adjust path if needed
-import { getImageUrl } from '../lib/utils'; // Adjust path if needed
+import { getMyTickets } from '../lib/tickets';
+import { getImageUrl } from '../lib/utils';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
 
 export default function MyTickets() {

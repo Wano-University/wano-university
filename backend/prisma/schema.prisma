@@ -6,6 +6,158 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id           Int           @id @default(autoincrement())
+  name         String
+  address      String?
+  nif          String?       @unique
+  email        String        @unique
+  login        String        @unique
+  password     String
+  type         UserType
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  accesses     Access[]
+  purchases    Purchase[]
+  reservations Reservation[]
+  permissions  Permission[]  @relation("PermissionToUser")
+}
+
+model Permission {
+  id          Int    @id @default(autoincrement())
+  description String @unique
+  users       User[] @relation("PermissionToUser")
+}
+
+model Resource {
+  id           Int           @id @default(autoincrement())
+  type         ResourceType
+  name         String
+  floor        Floor
+  capacity     Int           @default(1)
+  isAvailable  Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  xCoordinates Float?
+  yCoordinates Float?
+  accesses     Access[]
+  reservations Reservation[]
+  sensor       Sensor?
+}
+
+model MobilityResource {
+  id           Int            @id @default(autoincrement())
+  type         MobilityType
+  identifier   String         @unique
+  location     String?
+  status       MobilityStatus @default(FREE)
+  reservations Reservation[]
+  sensor       Sensor?
+}
+
+model Sensor {
+  id                 Int               @id @default(autoincrement())
+  type               SensorType
+  space              String
+  floor              Floor?
+  resourceId         Int?              @unique
+  mobilityResourceId Int?              @unique
+  alertLimit         Float?
+  isActive           Boolean           @default(true)
+  isOccupied         Boolean           @default(true)
+  xCoordinates       Float
+  yCoordinates       Float
+  mobilityResource   MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
+  resource           Resource?         @relation(fields: [resourceId], references: [id])
+  alerts             SensorAlert[]
+  readings           SensorReading[]
+}
+
+model SensorReading {
+  id          BigInt   @id @default(autoincrement())
+  sensorId    Int
+  value       Float
+  readingDate DateTime @default(now())
+  sensor      Sensor   @relation(fields: [sensorId], references: [id], onDelete: Cascade)
+}
+
+model SensorAlert {
+  id         BigInt   @id @default(autoincrement())
+  sensorId   Int
+  message    String
+  alertDate  DateTime @default(now())
+  isResolved Boolean  @default(false)
+  sensor     Sensor   @relation(fields: [sensorId], references: [id], onDelete: Cascade)
+}
+
+model Reservation {
+  id                 Int               @id @default(autoincrement())
+  userId             Int
+  resourceId         Int?
+  mobilityResourceId Int?
+  startTime          DateTime
+  endTime            DateTime
+  status             ReservationStatus @default(ACTIVE)
+  createdAt          DateTime          @default(now())
+  accesses           Access[]
+  mobilityResource   MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
+  resource           Resource?         @relation(fields: [resourceId], references: [id])
+  user               User              @relation(fields: [userId], references: [id])
+}
+
+model Access {
+  id            BigInt       @id @default(autoincrement())
+  userId        Int
+  resourceId    Int
+  reservationId Int?
+  accessType    AccessType
+  timestamp     DateTime     @default(now())
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+  resource      Resource     @relation(fields: [resourceId], references: [id])
+  user          User         @relation(fields: [userId], references: [id])
+}
+
+model Menu {
+  id        Int      @id @default(autoincrement())
+  updatedAt DateTime @updatedAt
+  schedule  Json?    @default("{}")
+  dishes    Dish[]
+}
+
+model Dish {
+  id       Int      @id @default(autoincrement())
+  menuId   Int?
+  title    String
+  subtitle String
+  desc     String
+  image    String
+  color    String
+  isActive Boolean
+  dishType DishType @default(MEAL)
+  menu     Menu?    @relation(fields: [menuId], references: [id])
+  tickets  Ticket[]
+}
+
+model Purchase {
+  id             Int            @id @default(autoincrement())
+  userId         Int
+  purchaseDate   DateTime       @default(now())
+  paymentMethod  String?
+  stripeIntentId String?        @unique
+  status         PurchaseStatus @default(PENDING)
+  user           User           @relation(fields: [userId], references: [id])
+  tickets        Ticket[]
+}
+
+model Ticket {
+  id            Int          @id @default(autoincrement())
+  purchaseId    Int
+  dishId        Int
+  scheduledDate DateTime     @db.Date
+  status        TicketStatus @default(ACTIVE)
+  dish          Dish         @relation(fields: [dishId], references: [id])
+  purchase      Purchase     @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+}
+
 enum UserType {
   STUDENT
   PROFESSOR
@@ -66,173 +218,7 @@ enum DishType {
   DESSERT
 }
 
-enum Floor{
+enum Floor {
   FLOOR_1
   FLOOR_2
-}
-
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  address   String?
-  nif       String?  @unique
-  email     String   @unique
-  login     String   @unique
-  password  String
-  type      UserType
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-
-  permissions  Permission[]
-  reservations Reservation[]
-  accesses     Access[]
-  purchases    Purchase[]
-}
-
-model Permission {
-  id          Int    @id @default(autoincrement())
-  description String @unique
-
-  users User[]
-}
-
-model Resource {
-  id          Int          @id @default(autoincrement())
-  type        ResourceType
-  name        String
-  floor       Floor
-  capacity    Int          @default(1)
-  isAvailable Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  xCoordinates Float?
-  yCoordinates Float?
-
-  sensor       Sensor?      
-  reservations Reservation[]
-  accesses     Access[]
-}
-
-model MobilityResource {
-  id         Int            @id @default(autoincrement())
-  type       MobilityType
-  identifier String         @unique
-  location   String?
-  status     MobilityStatus @default(FREE)
-
-  sensor       Sensor?
-  reservations Reservation[]
-}
-
-model Sensor {
-  id                 Int        @id @default(autoincrement())
-  type               SensorType
-  space              String
-  floor              Floor?
-  resourceId         Int?       @unique 
-  mobilityResourceId Int?       @unique 
-  alertLimit         Float?
-  isActive           Boolean    @default(true)
-  isOccupied         Boolean    @default(true)
-  xCoordinates       Float
-  yCoordinates       Float
-
-  resource         Resource?         @relation(fields: [resourceId], references: [id])
-  mobilityResource MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
-
-  readings SensorReading[]
-  alerts   SensorAlert[]
-}
-
-model SensorReading {
-  id          BigInt   @id @default(autoincrement())
-  sensorId    Int
-  value       Float
-  readingDate DateTime @default(now())
-
-  sensor Sensor @relation(fields: [sensorId], references: [id], onDelete: Cascade)
-}
-
-model SensorAlert {
-  id         BigInt   @id @default(autoincrement())
-  sensorId   Int
-  message    String
-  alertDate  DateTime @default(now())
-  isResolved Boolean  @default(false)
-
-  sensor Sensor @relation(fields: [sensorId], references: [id], onDelete: Cascade)
-}
-
-model Reservation {
-  id                 Int               @id @default(autoincrement())
-  userId             Int
-  resourceId         Int?
-  mobilityResourceId Int?
-  startTime          DateTime
-  endTime            DateTime
-  status             ReservationStatus @default(ACTIVE)
-  createdAt          DateTime          @default(now())
-
-  user             User              @relation(fields: [userId], references: [id])
-  resource         Resource?         @relation(fields: [resourceId], references: [id])
-  mobilityResource MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
-  accesses         Access[]
-}
-
-model Access {
-  id            BigInt     @id @default(autoincrement())
-  userId        Int
-  resourceId    Int
-  reservationId Int?
-  accessType    AccessType
-  timestamp     DateTime   @default(now())
-
-  user        User         @relation(fields: [userId], references: [id])
-  resource    Resource     @relation(fields: [resourceId], references: [id])
-  reservation Reservation? @relation(fields: [reservationId], references: [id], onDelete: SetNull)
-}
-
-model Menu {
-  id        Int      @id @default(autoincrement())
-  updatedAt DateTime @updatedAt
-
-  schedule Json? @default("{}")
-  dishes Dish[]
-}
-
-model Dish {
-  id       Int     @id @default(autoincrement())
-  menuId   Int?
-  title    String
-  subtitle String
-  desc     String
-  image    String
-  color    String
-  isActive Boolean
-
-  dishType DishType @default(MEAL)
-  menu     Menu?    @relation(fields: [menuId], references: [id])
-  tickets  Ticket[]
-}
-
-model Purchase {
-  id                  Int            @id @default(autoincrement())
-  userId              Int
-  purchaseDate        DateTime       @default(now())
-  paymentMethod       String?
-  stripeIntentId      String?        @unique
-  status              PurchaseStatus @default(PENDING)
-
-  user    User     @relation(fields: [userId], references: [id])
-  tickets Ticket[]
-}
-
-model Ticket {
-  id            Int          @id @default(autoincrement())
-  purchaseId    Int
-  dishId        Int
-  scheduledDate DateTime     @db.Date
-  status        TicketStatus @default(ACTIVE)
-
-  purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
-  dish     Dish     @relation(fields: [dishId], references: [id])
 }
