@@ -13,6 +13,9 @@ import HomeRedirection from './components/HomeRedirection';
 import StaffHome from './pages/StaffHome';
 import StudentHome from './pages/StudentHome';
 import AdminHome from './pages/AdminHome';
+import Equipments from './pages/Equipments';
+import Parking from './pages/Parking';
+import Bikes from './pages/Bikes';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
 import MyTickets from './pages/MyTickets';
@@ -52,8 +55,13 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/changepw" element={<ForgotPassword />} />
         <Route path="/spaces" element={<Spaces />} />
+        <Route path="/parking" element={<Parking />} />
+        <Route path='/bikes' element={<Bikes/>}/>
+
         <Route path="/home" element={<HomeRedirection />} />
         <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
+        <Route path="/equipments" element={<ProtectedRoute> <Equipments /> </ProtectedRoute>} />
+
         <Route path="/tickets" element={<ProtectedRoute> <MyTickets /> </ProtectedRoute>} />
         <Route path="/changepassword" element={<ProtectedRoute> <ChangePassword /> </ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminHome /> </ProtectedRoute>} />

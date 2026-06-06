@@ -12,6 +12,7 @@ export const getAllReservationsList = async (req, res) => {
   }
 };
 
+
 export const createReservation = async (req, res) => {
   try {
     const loggedInUserId = req.user.userId;
