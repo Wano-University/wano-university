@@ -13,7 +13,6 @@ const bounds = [[0, 0], [1100, 2000]];
 const HARDCODED_SPACES = [
   { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM'},
   { hcId: 'F1_R2', floor: 'FLOOR_1', x: 151, y: 576, defaultType: 'ROOM' },
-  { hcId: 'F1_R3', floor: 'FLOOR_1', x: 800, y: 400, defaultType: 'ROOM' },
   { hcId: 'F1_R4', floor: 'FLOOR_1', x: 284, y: 400, defaultType: 'ROOM' },
   { hcId: 'F1_R5', floor: 'FLOOR_1', x: 725, y: 128, defaultType: 'ROOM' },
   { hcId: 'F1_R6', floor: 'FLOOR_1', x: 338, y: 148, defaultType: 'ROOM' },
