@@ -3,6 +3,8 @@ import { Pencil, Wrench, Plus, PlusCircle, Palette, Type, Check, X, Trash2, Shie
 import { getAllEquipment, registerEquipment, updateResource, deleteResource } from '../lib/resource.js';
 import { createReservation } from '../lib/reservation.js'; 
 
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+
 const THEME_OPTIONS = [
   { id: 'nika', label: 'Pink' }, { id: 'surgeon', label: 'Light blue' },
   { id: 'fire', label: 'Dark orange' }, { id: 'ohara', label: 'Dark purple' },
@@ -104,7 +106,7 @@ export default function EquipmentConfig() {
             <h2 className="text-xs text-muted-foreground">Make reservations of equipment!</h2>
           </div>
         </div>
-
+{isAdmin && (
         <button 
           onClick={() => setIsAdmin(!isAdmin)}
           className={`text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border transition-all flex items-center gap-2 cursor-pointer ${
@@ -114,8 +116,8 @@ export default function EquipmentConfig() {
           {isAdmin ? <ShieldAlert className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
           {isAdmin ? 'Admin Mode: ON' : 'Admin Mode: OFF'}
         </button>
+)}
       </div>
-
       {isAdmin && (
         <div className="flex items-center justify-end">
           <button 

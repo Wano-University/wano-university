@@ -6,6 +6,7 @@ import EditUser from '../components/EditUser';
 import { getAllUsers, updateUserPermissions, updateUserData } from "../lib/users";
 
 export default function AdminUsers() {
+  console.log("--- AdminUsers carregado ---");
   const [utilizadores, setUtilizadores] = useState([]);
   const [utilizadorSelecionado, setUtilizadorSelecionado] = useState(null); // Para Permissões
   const [userParaEditar, setUserParaEditar] = useState(null); // Para Dados Pessoais

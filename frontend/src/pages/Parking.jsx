@@ -7,7 +7,9 @@ import { registerMobilityResource, getAllMobilityResources, updateMobilityStatus
 import { Link } from "react-router-dom"
 
 const bounds = [[0, 0], [1100, 2000]];
-
+const userString = localStorage.getItem('user');
+const currentUser = userString ? JSON.parse(userString) : null;
+const isAdmin = currentUser?.type === 'ADMIN';
 const HARDCODED_SPACES = [
   { hcId: 'F1_R1', x: 410,  y: 835, defaultType: 'PARKING_SPOT' },
   { hcId: 'F1_R2', x: 480,  y: 835, defaultType: 'PARKING_SPOT' },
@@ -234,17 +236,19 @@ export default function InteractiveMap() {
                 <Bike size={16} />
                 Public Bikes
                 </Link>
-          <button
-            onClick={() => setIsAdminMode(!isAdminMode)}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
-              isAdminMode
-                ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10"
-                : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
-            }`}
-          >
-            <Settings size={16} />
-            {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
-          </button>
+          {isAdmin && (
+            <button
+    onClick={() => setIsAdminMode(!isAdminMode)}
+    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
+      isAdminMode
+        ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10"
+        : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
+    }`}
+  >
+    <Settings size={16} />
+    {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
+  </button>
+)}
         </div>
       </div>
 

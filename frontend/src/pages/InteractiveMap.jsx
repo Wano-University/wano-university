@@ -6,6 +6,8 @@ import {Thermometer, Zap, Wind, Users, Layers, Wrench, Settings, Filter, Power, 
 import { getSensorsByFloor, registerSensor, updateSensorStatus} from '../lib/sensor.js'; 
 
 const bounds = [[0, 0], [1100, 2000]];
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+const isAdmin = user?.type === 'ADMIN';
 
 const getSensorIcon = (type, isActive) => {
   let colorVar = 'var(--foreground)';
@@ -178,13 +180,21 @@ export default function InteractiveMap() {
         </div>
         
         <div className="flex items-center gap-3 mt-4 md:mt-0">
-          <button 
+          {isAdmin && (
+  <button
+
             onClick={() => alert("Admin Panel")}
+
             className="flex items-center gap-2 px-4 py-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-sm font-medium rounded-xl transition shadow-sm"
+
           >
+
             <Settings size={16} />
+
             Admin Panel
+
           </button>
+)}
         </div>
       </div>
 

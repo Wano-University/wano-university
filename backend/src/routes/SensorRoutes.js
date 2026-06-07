@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerSensor, sensorStatus, getSensorsByfloor, getAllSensors, getSensorsByType, getAlerts,  getReadings, getAllAlerts,  getAllReadings} from '../controllers/SensorController.js';
+import { registerSensor, sensorStatus, getSensorsByfloor, getAllSensors, getSensorsByType, getAlerts,  getReadings, getAllAlerts,  getAllReadings,getAllActiveSensors,getAllActiveSensorsByFloor,getAllActiveSensorsByType} from '../controllers/SensorController.js';
 import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMiddleware.js';
 
 const router = Router();
@@ -17,11 +17,6 @@ router.patch('/:id', verifyToken,requireRole(['ADMIN']), sensorStatus);
 router.get('/:id/alerts',verifyToken,requireRole(['ADMIN','STAFF']), getAlerts);
 router.get('/:id/readings',verifyToken,requireRole(['ADMIN','STAFF']), getReadings);
 
-
-// Leitura e monitorização (STAFF pode ver se tiver a permissão)
-//router.get('/', verifyToken, requireRole(['ADMIN', 'STAFF']), checkPermission('VER_DASHBOARD_TEMPERATURA'), getAllSensors);
-//router.get('/floor/:floor', verifyToken, requireRole(['ADMIN', 'STAFF']), checkPermission('VER_DASHBOARD_TEMPERATURA'), getSensorsByfloor);
-//router.get('/data/alerts', verifyToken, requireRole(['ADMIN', 'STAFF']), checkPermission('GERIR_SENSOR_TEMPERATURA'), getAllAlerts);
 
 router.get('/',verifyToken, requireRole(['STAFF']), getAllActiveSensors);
 router.get('/floor/:floor',verifyToken, requireRole(['STAFF']), getAllActiveSensorsByFloor);

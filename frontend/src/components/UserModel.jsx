@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const MAPA_PERMISSOES = [
   { id: 'VER_EMENTA_COMPRAS', label: 'Ementa', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'VER_PARKING', label: 'Parking', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
   { id: 'RESERVAR_SALAS_LABORATORIOS', label: 'Reservar Salas', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
   { id: 'RESERVAR_EQUIPAMENTOS', label: 'Reservar Equipamentos', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
   { id: 'RESERVAR_BICICLETAS_TROTINETES', label: 'Reservar Bicicletas', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
@@ -9,24 +10,31 @@ const MAPA_PERMISSOES = [
   { id: 'VER_DASHBOARD_QUALIDADE_AR', label: 'Dash: Ar', roles: ['STAFF', 'ADMIN'] },
   { id: 'VER_DASHBOARD_CONSUMO_ENERGETICO', label: 'Dash: Energia', roles: ['STAFF', 'ADMIN'] },
   { id: 'VER_SUSTENTABILIDADE', label: 'Sustentabilidade', roles: ['STAFF', 'ADMIN'] },
+  { id: 'GERIR_PARKING', label: 'Gestão Parking', roles: ['ADMIN'] },
   { id: 'GERIR_USERS', label: 'Gestão Users', roles: ['ADMIN'] },
   { id: 'GERIR_SALAS_LABORATORIOS', label: 'Gestão Salas/Labs', roles: ['ADMIN'] },
   { id: 'GERIR_EQUIPAMENTOS', label: 'Gestão Equipamentos', roles: ['ADMIN'] },
-  { id: 'GERIR_BICICLETAS_TROTINETES', label: 'Gestão Equipamentos', roles: ['ADMIN'] },
+  { id: 'GERIR_BICICLETAS_TROTINETES', label: 'Gestão Bicicletas', roles: ['ADMIN'] },
   { id: 'GERIR_EMENTA', label: 'Gestão Ementa', roles: ['ADMIN'] },
   { id: 'GERIR_SENSORES', label: 'Gestão Sensores', roles: ['ADMIN'] }
 ];
 
 export default function UserModel({ user, onClose, onSave }) {
-  const [ativo, setAtivo] = useState(true);
+  const [ativo, setAtivo] = useState(user?.isActive ?? true);
   const [permissions, setPermissions] = useState([]);
 
   useEffect(() => {
-    if (user) {
-      setAtivo(user.isActive ?? true);
-      setPermissions(Array.isArray(user.permissions) ? user.permissions : []);
+    if (user && Array.isArray(user.permissions)) {
+      // Extrai as descrições da base de dados e compara com os IDs do mapa
+      const userPermsFromDB = user.permissions.map(p => p.permission?.description);
+      const perms = MAPA_PERMISSOES
+        .filter(perm => userPermsFromDB.includes(perm.id))
+        .map(perm => perm.id);
+      setPermissions(perms);
+    } else {
+      setPermissions([]);
     }
-  }, [user?.id]); 
+  }, [user]);
 
   const userRole = user?.type?.toUpperCase() || 'STUDENT';
   const permissoesVisiveis = MAPA_PERMISSOES.filter(perm => perm.roles.includes(userRole));
@@ -37,7 +45,8 @@ export default function UserModel({ user, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(user.id, { ativo, isActive: ativo, permissions, novasPermissoes: permissions });
+    // Envia o array de strings (ex: ['GERIR_USERS', 'VER_PARKING']) para o backend
+    onSave(user.id, { isActive: ativo, permissions: permissions });
   };
 
   return (

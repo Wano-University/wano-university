@@ -33,29 +33,30 @@ export const requireRole = (allowedRoles) => {
 
 export const checkPermission = (permissaoRequerida) => {
   return async (req, res, next) => {
-    console.log("3. Entrou no checkPermission para:", permissaoRequerida);
     try {
       const userId = Number(req.user.userId);
-      console.log("DEBUG - A procurar user ID:", userId);
-
+      
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        include: { permissions: { include: { permission: true } } }
+        include: { 
+          permissions: { 
+            include: { permission: true } 
+          } 
+        }
       });
 
-      if (!user) {
-        console.log("DEBUG - User não encontrado na BD!");
-        return res.status(403).json({ error: "Utilizador não encontrado." });
-      }
+      if (!user) return res.status(403).json({ error: "Utilizador não encontrado na BD." });
 
-      // VAMOS VER O QUE O PRISMA ESTÁ REALMENTE A BUSCAR:
-      console.log("DEBUG - User permissions objeto completo:", JSON.stringify(user.permissions, null, 2));
-
-      // Se o campo não for 'description', ajusta o 'p.permission.XXX' aqui:
-      const permissoesDoUtilizador = user.permissions.map(p => p.permission.name || p.permission.description);
+      // LOG EXTREMO: Vamos imprimir exatamente o que o Prisma trouxe
+      console.log("--- DEBUG DE ACESSO ---");
+      console.log("User ID:", userId);
+      console.log("Permissões no objeto do User:", JSON.stringify(user.permissions, null, 2));
       
-      console.log("DEBUG - Permissões mapeadas:", permissoesDoUtilizador);
-      console.log("DEBUG - Permissões do utilizador:", permissoesDoUtilizador);
+      const permissoesDoUtilizador = user.permissions.map(p => p.permission.description);
+      console.log("Lista de permissões (strings):", permissoesDoUtilizador);
+      console.log("Permissão Requerida pelo sistema:", permissaoRequerida);
+      console.log("O utilizador tem esta permissão?", permissoesDoUtilizador.includes(permissaoRequerida));
+      console.log("-----------------------");
 
       if (!permissoesDoUtilizador.includes(permissaoRequerida)) {
         return res.status(403).json({ error: `Falta a permissão: ${permissaoRequerida}` });

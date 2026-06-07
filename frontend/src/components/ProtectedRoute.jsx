@@ -1,42 +1,44 @@
 import { Navigate } from 'react-router-dom';
-import NoPerms from '../pages/NoPerms';
 
-export default function ProtectedRoute({ children, allowedRoles, requiredPermission }) {
-  const storedUser = localStorage.getItem('user');
-  const user = storedUser ? JSON.parse(storedUser) : null;
+export default function ProtectedRoute({ children, requiredPermission, allowedRoles }) {
+  // 1. Vai buscar o utilizador diretamente ao Local Storage (onde o teu Login o guarda)
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
 
+  // 2. Se não houver ninguém logado, manda para o Login
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
+  // 3. Verificação de Tipo de Utilizador (Role)
   if (allowedRoles && !allowedRoles.includes(user.type)) {
-    return <NoPerms />;
+    return <Navigate to="/unauthorized" replace />;
   }
 
+  // 4. Verificação da Permissão (A Lógica Corrigida)
   if (requiredPermission) {
-    const userPermissions = user.permissions || [];
-    
-    // Lógica robusta para encontrar a permissão na estrutura do Prisma
-    const hasPermission = userPermissions.some((p) => {
-      // 1. Se for uma string direta no array (ex: ['GERIR_EMENTA'])
-      if (typeof p === 'string') return p === requiredPermission;
-      
-      if (p.permission) {
-        // 2. Se for um objeto da tabela de junção (Prisma): p.permission.description
-        if (p.permission.description === requiredPermission) return true;
-        
-        // 3. Se for apenas p.permission como string
-        if (typeof p.permission === 'string' && p.permission === requiredPermission) return true;
-      }
-      
-      return false;
-    });
+    // Se o user não tiver o array de permissões, bloqueia logo
+    if (!user.permissions || !Array.isArray(user.permissions)) {
+      return <Navigate to="/NoPerms" replace />;
+    }
 
-    if (!hasPermission) {
-      console.log(`[Segurança] Acesso negado. Falta a permissão: ${requiredPermission}`);
-      return <NoPerms />;
+    // Transforma a lista do Prisma numa lista de strings
+    const permissoesDoUtilizador = user.permissions.map(p => p.permission?.description);
+    
+    // Verifica se a permissão requerida está na lista
+    const hasPerm = permissoesDoUtilizador.includes(requiredPermission);
+
+    // Logs para tu veres na consola (Podes apagar isto mais tarde)
+    console.log("--- TESTE DE ACESSO ---");
+    console.log("Permissões na tua conta:", permissoesDoUtilizador);
+    console.log("A página exige:", requiredPermission);
+    console.log("Pode entrar?:", hasPerm);
+
+    if (!hasPerm) {
+      return <Navigate to="/NoPerms" replace />;
     }
   }
 
+  // Se passou em todos os testes, carrega a página!
   return children;
 }
