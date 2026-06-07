@@ -18,11 +18,10 @@ export const createDish = async (formData) => {
   const response = await fetch(`${API_URL}/api/dishes`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
 
-    body: formData,
+    body: JSON.stringify,
   });
 
   const data = await response.json();
@@ -71,7 +70,6 @@ export const updateDishAPI = async (id, formData) => {
   const response = await fetch(`${API_URL}/api/dishes/${id}`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
     body: formData,

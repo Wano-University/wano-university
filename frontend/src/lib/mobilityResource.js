@@ -52,3 +52,13 @@ export const deleteMobilityResource = async (id) => {
   }
   return true;
 };
+
+export const simulateParkingOccupancy = async () => {
+  const response = await fetch(`${API_URL}/api/mobilityResources/simulate`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to simulate occupancy.');
+  return data; 
+};
