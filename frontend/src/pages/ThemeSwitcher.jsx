@@ -174,6 +174,30 @@ const THEMES = [
         border:  'oklch(0.25 0.03 20)',
     },
     },
+    {
+    id: 'cyan',
+    label: 'Cyan',
+    mode: 'Light',
+    p: {
+      bg:      'oklch(0.97 0.01 210)',
+      card:    'oklch(0.99 0.005 210)',
+      primary: 'oklch(0.65 0.16 210)',
+      muted:   'oklch(0.94 0.02 210)',
+      border:  'oklch(0.88 0.03 210)',
+    },
+  },
+  {
+    id: 'darkCyan',
+    label: 'Cyan',
+    mode: 'Dark',
+    p: {
+      bg:      'oklch(0.15 0.04 210)',
+      card:    'oklch(0.18 0.04 210)',
+      primary: 'oklch(0.75 0.12 210)',
+      muted:   'oklch(0.25 0.04 210)',
+      border:  'oklch(0.30 0.05 210)',
+    },
+  },
 ];
 
 

@@ -18,10 +18,12 @@ const TOGGLE_MAP = {
   red: 'darkRed',
   darkRed: 'red',
   wine: 'darkWine',
-  darkWine: 'wine'
+  darkWine: 'wine',
+  cyan: 'darkCyan',
+  darkCyan: 'cyan'
 };
 
-const DARK_THEMES = new Set(['dark', 'darkPink', 'darkTeal', 'darkBlackAndWhite', 'darkBluee', 'darkRed', 'darkWine']);
+const DARK_THEMES = new Set(['dark', 'darkPink', 'darkTeal', 'darkBlackAndWhite', 'darkBluee', 'darkRed', 'darkWine', 'darkCyan']);
 
 function resolveSystemTheme(theme) {
   if (theme === 'system') {

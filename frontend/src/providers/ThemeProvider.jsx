@@ -20,7 +20,7 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement
 
-    root.classList.remove('light', 'dark', 'pink', 'darkPink', 'teal', 'darkTeal', 'blackAndWhite', 'darkBlackAndWhite', 'bluee', 'darkBluee', 'red', 'darkRed', 'wine', 'darkWine');
+    root.classList.remove('light', 'dark', 'pink', 'darkPink', 'teal', 'darkTeal', 'blackAndWhite', 'darkBlackAndWhite', 'bluee', 'darkBluee', 'red', 'darkRed', 'wine', 'darkWine', 'cyan', 'darkCyan');
 
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
