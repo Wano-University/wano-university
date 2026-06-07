@@ -3,7 +3,6 @@ import useSWR, { mutate } from "swr"
 import { useNavigate } from "react-router-dom"
 import { useTheme } from "@/providers/ThemeProvider"
 import { Card } from "@/components/ui/card"
-import { useTranslation } from "react-i18next";
 import { ArrowLeft, ArrowRight, Download, Zap, Settings, Info, AlertTriangle, Thermometer, Wind } from "lucide-react"
 import { simulateEnergy, updateSensorLimits, getEnergyReport } from "../lib/sensors"
 
@@ -55,7 +54,6 @@ export default function EnergyConsumptionDashboard() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedSensorId, setSelectedSensorId] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const { t } = useTranslation();
   const [lowerLimitInput, setLowerLimitInput] = useState("")
   const [upperLimitInput, setUpperLimitInput] = useState("")
   const [isExporting, setIsExporting] = useState(false)
@@ -118,7 +116,7 @@ export default function EnergyConsumptionDashboard() {
   const chartJsData = {
     labels: chartData.map(d => d.time),
     datasets: [{
-      fill: false,
+      fill: true,
       label: 'Average Power',
       data: chartData.map(d => d.power),
       borderColor: 'hsl(var(--primary))',

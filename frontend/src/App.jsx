@@ -25,9 +25,6 @@ import MyTickets from './pages/MyTickets';
 import ValidateTicket from './pages/ValidateTicket';
 import LssDocs from './pages/Lssdocs';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
-import NotFound from './components/NotFound';
-import Footer from './components/Footer';
-import ValidateReservation from './pages/ValidateReservation';
 import './i18n';
 import Alerts from './pages/Alerts';
 
