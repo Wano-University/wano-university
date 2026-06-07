@@ -71,31 +71,38 @@ export default function StaffHome() {
           </Link>
         </Card>
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Fan className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">Energy Comsumption</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            View the Air Quality in the Campus in real time and export reports.
-          </p>
+          <Link to={"/airqualitydashboard"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Fan className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">Air Quality</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              View the Air Quality in the Campus in real time and export reports.
+            </p>
+          </Link>
         </Card>
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Thermometer className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">Energy Comsumption</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            View the Temperature in the Campus in real time and export reports.
-          </p>
+          <Link to={"/temperaturedashboard"} className="flex flex-col h-full">
+
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Thermometer className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">Temperature</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              View the Temperature in the Campus in real time and export reports.
+            </p>
+          </Link>
         </Card>
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Zap className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">Energy Comsumption</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            View the Energy Consumption in the Campus in real time and export reports.
-          </p>
+          <Link to={"/energydashboard"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Zap className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">Energy Consumption</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              View the Energy Consumption in the Campus in real time and export reports.
+            </p>
+          </Link>
         </Card>
         <Card className="col-span-1 row-span-1 md:col-span-2 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
