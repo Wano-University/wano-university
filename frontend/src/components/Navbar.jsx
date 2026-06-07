@@ -42,7 +42,7 @@ export default function Navbar() {
             <Link to="/parking" className={desktopLinkStyle}>Mobility</Link>
             <Link to="/sensors" className={desktopLinkStyle}>Sensors</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
-            <Link to="/admin/dashboard" className={desktopLinkStyle}>Dashboards</Link>
+            <Link to="/energydashboard" className={desktopLinkStyle}>Dashboards</Link>
             <Link to="/admin/users" className={desktopLinkStyle}>User Management</Link>
           </>
         )}
@@ -51,14 +51,15 @@ export default function Navbar() {
           <>
             <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
             <Link to="/sensors" className={desktopLinkStyle}>Sensors</Link>
-            <Link to="/sensors/temperature" className={desktopLinkStyle}>Temperature</Link>
-            <Link to="/sensors/air-quality" className={desktopLinkStyle}>Air Quality</Link>
+            <Link to="/energydashboard" className={desktopLinkStyle}>Energy</Link>
+            <Link to="/temperaturedashboard" className={desktopLinkStyle}>Temperature</Link>
+            <Link to="/airqualitydashboard" className={desktopLinkStyle}>Air Quality</Link>
           </>
         )}
 
         {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
           <>
-            <Link to="/map" className={desktopLinkStyle}>Spaces</Link>
+            <Link to="/spaces" className={desktopLinkStyle}>Spaces</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
             <Link to="/parking" className={desktopLinkStyle}>Mobility</Link>
           </>
@@ -126,7 +127,7 @@ export default function Navbar() {
                 <Link to="/parking" className={mobileLinkStyle}>Mobility</Link>
                 <Link to="/sensors" className={mobileLinkStyle}>Sensors</Link>
                 <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
-                <Link to="/admin/dashboard" className={mobileLinkStyle}>Dashboards</Link>
+                <Link to="/energydashboard" className={mobileLinkStyle}>Dashboards</Link>
                 <Link to="/admin/users" className={mobileLinkStyle}>User Management</Link>
               </>
             )}
@@ -135,14 +136,15 @@ export default function Navbar() {
               <>
                 <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
                 <Link to="/sensors" className={mobileLinkStyle}>Sensors</Link>
-                <Link to="/sensors/temperature" className={mobileLinkStyle}>Temperature</Link>
-                <Link to="/sensors/air-quality" className={mobileLinkStyle}>Air Quality</Link>
+                <Link to="/energydashboard" className={mobileLinkStyle}>Energy</Link>
+                <Link to="/temperaturedashboard" className={mobileLinkStyle}>Temperature</Link>
+                <Link to="/airqualitydashboard" className={mobileLinkStyle}>Air Quality</Link>
               </>
             )}
 
             {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
               <>
-                <Link to="/map" className={mobileLinkStyle}>Spaces</Link>
+                <Link to="/spaces" className={mobileLinkStyle}>Spaces</Link>
                 <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
                 <Link to="/parking" className={mobileLinkStyle}>Mobility</Link>
               </>

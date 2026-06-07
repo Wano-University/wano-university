@@ -66,9 +66,9 @@ export default function App() {
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
 
-        <Route path="/TemperatureDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <TemperatureDashboard /> </ProtectedRoute>} />
-        <Route path="/AirQualityDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
-        <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
+        <Route path="/temperaturedashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <TemperatureDashboard /> </ProtectedRoute>} />
+        <Route path="/airqualitydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
+        <Route path="/energydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
