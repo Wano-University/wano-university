@@ -29,19 +29,4 @@ async def executeLSSPOST(request: Request):
             "message":str(result),
             } 
 
-@app.get('/')
-async def executeLSSGET(request: Request):
-    data = await request.json()
-    print("DATA RECEIVED", data)
-    print("Token: ",data['token'])
-    print("Command: ",data['command'])
-    command = data['command']
-    jwt_token.token= data['token']
-    result = parser.parse(command)
-
-    
-    return {
-            "message":result.body,
-            "json": result 
-            }
 
