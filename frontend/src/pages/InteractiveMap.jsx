@@ -83,7 +83,8 @@ export default function InteractiveMap() {
   const [formData, setFormData] = useState({
     type: 'TEMPERATURE',
     space: '',
-    alertLimit: ''
+    upperLimit: '',
+    lowerLimit: ''
   });
 
   const fetchSensors = async () => {
@@ -131,7 +132,8 @@ export default function InteractiveMap() {
       type: formData.type,
       floor: currentFloor,
       space: formData.space,
-      alertLimit: parseFloat(formData.alertLimit) || 0,
+      upperLimit: parseFloat(formData.upperLimit) || 0,
+      lowerLimit: parseFloat(formData.lowerLimit) || 0,
       isActive: true,
       xCoordinates: clickedCoords.x,
       yCoordinates: clickedCoords.y,
@@ -243,7 +245,8 @@ export default function InteractiveMap() {
 
                       <div className="text-xs space-y-1.5">
                         <p><span className="font-semibold text-muted-foreground">{t('IMapClassType')}:</span> {sensor.type}</p>
-                        <p><span className="font-semibold text-muted-foreground">{t('IMapAlert')}:</span> {sensor.alertLimit}</p>
+                        <p><span className="font-semibold text-muted-foreground">{t('IMapUAlert')}:</span> {sensor.upperLimit}</p>
+                        <p><span className="font-semibold text-muted-foreground">{t('IMapLAlert')}:</span> {sensor.lowerLimit}</p>
                         <p><span className="font-semibold text-muted-foreground">{t('IMapCoords')}:</span> X:{sensor.xCoordinates} | Y:{sensor.yCoordinates}</p>
                         
                         <div className="pt-2 flex items-center justify-between border-t border-muted-foreground/20 mt-2">
@@ -293,6 +296,7 @@ export default function InteractiveMap() {
                       </button>
                     </div>
 
+                    {/* Type Selection */}
                     <div className="space-y-1">
                       <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapType')}</label>
                       <select 
@@ -307,6 +311,7 @@ export default function InteractiveMap() {
                       </select>
                     </div>
 
+                    {/* Location Input */}
                     <div className="space-y-1">
                       <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapLocal')}</label>
                       <input 
@@ -318,15 +323,28 @@ export default function InteractiveMap() {
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapTrigger')}</label>
-                      <input 
-                        type="number" 
-                        value={formData.alertLimit}
-                        onChange={(e) => setFormData({ ...formData, alertLimit: e.target.value })}
-                        className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
-                        required
-                      />
+                    {/* New Upper and Lower Limit Fields */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapUAlert')}</label>
+                        <input 
+                          type="number" 
+                          value={formData.upperLimit}
+                          onChange={(e) => setFormData({...formData, upperLimit: e.target.value})}
+                          className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapLAlert')}</label>
+                        <input 
+                          type="number" 
+                          value={formData.lowerLimit}
+                          onChange={(e) => setFormData({...formData, lowerLimit: e.target.value})}
+                          className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
+                          required
+                        />
+                      </div>
                     </div>
 
                     <button
@@ -434,7 +452,6 @@ export default function InteractiveMap() {
               <strong>{t('IMapDH')}:</strong> {t('IMapDHDesc')}
             </p>
           </div>
-
         </div>
       </div>
     </section>
