@@ -13,7 +13,6 @@ export default function Bikes() {
   const [bookingForm, setBookingForm]             = useState({ date: '', startTime: '', endTime: '' });
   const { t } = useTranslation();
 
-  // Lê o user do localStorage e verifica role + permissão
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin =
     user?.type === 'ADMIN' &&
@@ -119,7 +118,6 @@ export default function Bikes() {
           </div>
         </div>
 
-        {/* Badge informativo — só aparece se for admin com permissão */}
         {isAdmin && (
           <div className="text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border bg-foreground text-primary-foreground border-foreground/80 flex items-center gap-2">
             <ShieldAlert className="w-4 h-4" />
@@ -214,18 +212,17 @@ export default function Bikes() {
         </div>
       </div>
 
-      {/* Vehicle create/edit modal */}
       {modalState !== false && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-4">
           <ResourceForm
             onClose={() => setModalState(false)}
             onSave={handleSaveResource}
             initialData={modalState !== true ? modalState : null}
+            t = {t}
           />
         </div>
       )}
 
-      {/* Reservation modal */}
       {reservationTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-4">
           <div className="bg-card text-card-foreground w-full max-w-sm p-6 rounded-3xl shadow-2xl border border-border relative">
@@ -258,7 +255,7 @@ export default function Bikes() {
   );
 }
 
-function ResourceForm({ onClose, onSave, initialData }) {
+function ResourceForm({ onClose, onSave, initialData, t }) {
   const isEditing = !!initialData;
 
   const handleSubmit = (e) => {

@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { Settings, AlertTriangle, ShieldAlert, Bike } from 'lucide-react';
 import { registerMobilityResource, getAllMobilityResources, updateMobilityStatus, simulateParkingOccupancy } from '../lib/mobilityResource.js';
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const bounds = [[0, 0], [1100, 2000]];
 const HARDCODED_SPACES = [
@@ -165,8 +166,8 @@ const simulateAndFetch = () => simulateParkingOccupancy();
 export default function InteractiveMap() {
   const userString = localStorage.getItem('user');
   const currentUser = userString ? JSON.parse(userString) : null;
+  const { t } = useTranslation();
 
-  // type === 'ADMIN' + tem a permissão GERIR_SENSORES
   const isAdmin =
     currentUser?.type === 'ADMIN' &&
     Array.isArray(currentUser?.permissions) &&
@@ -263,11 +264,11 @@ export default function InteractiveMap() {
     <section className="py-12 max-w-7xl mx-auto px-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-primary-foreground">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">Wano University Parking Map</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">{t('PTitle')}</h1>
           <p className="text-sm text-muted-foreground/80">
             {isAdminMode
-              ? "Admin privileges enabled: Parking management."
-              : "Click on icons to check availability. Green = free. Gray = inactive or unregistered. Red = occupied."}
+              ? t('PAdminDesc')
+              : t('PDesc')}
           </p>
         </div>
         <div className="flex items-center gap-3 mt-4 md:mt-0">
@@ -276,10 +277,9 @@ export default function InteractiveMap() {
             className="flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
           >
             <Bike size={16} />
-            Public Bikes
+            {t('PPBikes')}
           </Link>
 
-          {/* Botão só aparece se for ADMIN + tiver GERIR_SENSORES */}
           {isAdmin && (
             <button
               onClick={() => setIsAdminMode(!isAdminMode)}
@@ -290,7 +290,7 @@ export default function InteractiveMap() {
               }`}
             >
               <Settings size={16} />
-              {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
+              {isAdminMode ? t('PAdminEPanel') : t('PAdminPanel')}
             </button>
           )}
         </div>
@@ -332,7 +332,7 @@ export default function InteractiveMap() {
                             <div className="text-center py-2 space-y-1">
                               <strong className="block text-sm font-bold text-foreground">{space.dbData.identifier}</strong>
                               <p className="text-xs text-meat font-medium leading-relaxed bg-meat/10 py-1.5 rounded-lg border border-meat/20">
-                                Parking space currently unavailable
+                                {t('PUnavail')}
                               </p>
                             </div>
                           ) : (
@@ -353,21 +353,20 @@ export default function InteractiveMap() {
                             </div>
                           )}
 
-                          {/* Admin actions — só aparece se isAdmin + isAdminMode */}
                           {isAdmin && isAdminMode && (
                             <div className="mt-3 pt-3 border-t border-muted space-y-2">
                               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <ShieldAlert size={14} className="text-swordsman" /> Admin Actions
+                                <ShieldAlert size={14} className="text-swordsman" /> {t('PAdminActions')}
                               </h4>
                               <div className="bg-background p-2.5 rounded-xl border border-muted space-y-2">
-                                <label className="block text-[10px] font-bold text-muted-foreground uppercase">Update Space Status</label>
+                                <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('PUpdate')}</label>
                                 <select
                                   value={space.dbData.status}
                                   onChange={(e) => handleStatusChange(space.dbData.id, e.target.value)}
                                   className="w-full text-xs p-1.5 rounded-lg border border-muted bg-background text-foreground"
                                 >
-                                  <option value="FREE">Free (Active)</option>
-                                  <option value="INACTIVE">Inactive</option>
+                                  <option value="FREE">{t('PFreeA')}</option>
+                                  <option value="INACTIVE">{t('PInactive')}</option>
                                 </select>
                               </div>
                             </div>
@@ -378,20 +377,20 @@ export default function InteractiveMap() {
                           <form onSubmit={(e) => handleRegisterResource(e, space)} className="space-y-3">
                             <div className="border-b border-muted pb-2">
                               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                                <ShieldAlert size={16} className="text-swordsman" /> Activate Space
+                                <ShieldAlert size={16} className="text-swordsman" /> {t('PActiveSpace')}
                               </h3>
-                              <span className="text-[10px] text-muted-foreground block mt-0.5">Register this parking space to the system.</span>
+                              <span className="text-[10px] text-muted-foreground block mt-0.5">{t('PRegister')}</span>
                             </div>
 
                             <div>
-                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">Initial Status</label>
+                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('PInitial')}</label>
                               <select
                                 value={resourceForm.status}
                                 onChange={(e) => setResourceForm({ ...resourceForm, status: e.target.value })}
                                 className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground"
                               >
-                                <option value="FREE">Free</option>
-                                <option value="INACTIVE">Inactive</option>
+                                <option value="FREE">{t('PFree')}</option>
+                                <option value="INACTIVE">{t('PInactive')}</option>
                               </select>
                             </div>
 
@@ -407,14 +406,14 @@ export default function InteractiveMap() {
                             </div>
 
                             <button type="submit" className="w-full bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm cursor-pointer">
-                              Register & Activate
+                              {t('PRegisterActive')}
                             </button>
                           </form>
                         ) : (
                           <div className="text-center py-4 space-y-2">
                             <ShieldAlert size={24} className="mx-auto text-muted-foreground/50 mb-2" />
-                            <strong className="block text-sm font-bold text-foreground">Space Unregistered</strong>
-                            <p className="text-xs text-muted-foreground leading-relaxed">This space is not registered for parking.</p>
+                            <strong className="block text-sm font-bold text-foreground">{t('PSpaceUn')}</strong>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{t('PNRegist')}.</p>
                           </div>
                         )
                       )}

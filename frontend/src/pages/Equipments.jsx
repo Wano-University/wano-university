@@ -226,18 +226,17 @@ export default function EquipmentConfig() {
         )}
       </div>
 
-      {/* Equipment create/edit modal */}
       {modalState !== false && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-4">
           <EquipmentForm
             onClose={() => setModalState(false)}
             onSave={handleSaveEquipment}
             initialData={modalState !== true ? modalState : null}
+            t = {t}
           />
         </div>
       )}
 
-      {/* Reservation modal */}
       {reservationTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-4">
           <div className="bg-card text-card-foreground w-full max-w-sm p-6 rounded-3xl shadow-2xl border border-border relative">
@@ -268,7 +267,7 @@ export default function EquipmentConfig() {
   );
 }
 
-function EquipmentForm({ onClose, onSave, initialData }) {
+function EquipmentForm({ onClose, onSave, initialData, t }) {
   const isEditing = !!initialData;
 
   const handleSubmit = (e) => {

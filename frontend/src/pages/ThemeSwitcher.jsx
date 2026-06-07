@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { X, Palette, Check } from 'lucide-react';
 import { useTheme } from '../providers/ThemeProvider.jsx';
+import { useTranslation } from "react-i18next";
 
 const ALL_THEME_CLASSES = ['light', 'dark', 'pink', 'darkPink', 'teal', 'darkTeal', 'darkBlackAndWhite', 'blackAndWhite', 'darKBlue', 'blue', 'darkWine', 'wine'];
 
@@ -54,6 +55,7 @@ export function ThemeSwitcher({ onClose }) {
   const navigate = useNavigate();
   const [pending, setPending] = useState(() => resolveTheme(theme));
   const submittedRef = useRef(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -99,8 +101,8 @@ export function ThemeSwitcher({ onClose }) {
           <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary border border-primary/20">
             <Palette className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-black tracking-tight">Appearance</h2>
-          <p className="text-sm text-muted-foreground mt-1">Previewing <span className="font-semibold text-foreground">{selected?.label} {selected?.mode}</span> — apply to save.</p>
+          <h2 className="text-2xl font-black tracking-tight">{t('ThemeApp')}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t('ThemePrev')} <span className="font-semibold text-foreground">{selected?.label} {selected?.mode}</span> {t('ThemePrevSave')}</p>
         </div>
         <div className="grid grid-cols-3 gap-3 mb-6">
           {THEMES.map((t) => {
@@ -118,9 +120,9 @@ export function ThemeSwitcher({ onClose }) {
           })}
         </div>
         <div className="flex gap-3">
-          <button onClick={handleCancel} className="flex-1 py-3 bg-muted/80 hover:bg-muted text-foreground font-bold rounded-xl transition-all cursor-pointer active:scale-95">Cancel</button>
+          <button onClick={handleCancel} className="flex-1 py-3 bg-muted/80 hover:bg-muted text-foreground font-bold rounded-xl transition-all cursor-pointer active:scale-95">{t('ThemeCancel')}</button>
           <button onClick={handleApply} className="flex-1 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
-            <Check className="w-4 h-4" /> Apply
+            <Check className="w-4 h-4" /> {t('ThemeApply')}
           </button>
         </div>
       </motion.div>
