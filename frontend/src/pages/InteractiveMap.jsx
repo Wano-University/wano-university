@@ -130,19 +130,6 @@ export default function InteractiveMap() {
   const handleRegisterSensor = async (e) => {
     e.preventDefault();
 
-    let unit = "";
-    switch (formData.type) {
-      case 'TEMPERATURE':
-        unit = 'ºC';
-        break;
-      case 'ENERGY_CONSUMPTION':
-        unit = 'W';
-        break;
-      case 'AIR_QUALITY':
-        unit = 'AQI';
-        break;
-    }
-
     const newSensorPayload = {
       type: formData.type,
       floor: currentFloor,
@@ -152,7 +139,6 @@ export default function InteractiveMap() {
       isActive: true,
       xCoordinates: clickedCoords.x,
       yCoordinates: clickedCoords.y,
-      UnityMeasure: unit,
     };
 
     try {

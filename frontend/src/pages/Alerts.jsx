@@ -99,11 +99,11 @@ export default function Alerts() {
           </div>
 
           <h2 className="text-2xl font-black">
-            Sensor Alerts
+            {t('AlertTitle')}
           </h2>
 
           <p className="text-sm text-muted-foreground">
-            Sensors currently exceeding limits.
+            {t('AlertExceed')}
           </p>
         </div>
 
@@ -115,7 +115,7 @@ export default function Alerts() {
           ) : alerts.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed rounded-2xl">
               <p className="font-bold">
-                No Active Alerts
+                {t('AlertActive')}
               </p>
             </div>
           ) : (
@@ -152,7 +152,7 @@ export default function Alerts() {
                   }
                   className="mt-4 w-full py-2 rounded-xl bg-primary text-primary-foreground font-bold cursor-pointer"
                 >
-                  Mark as Resolved
+                  {t('AlertResolve')}
                 </button>
               </div>
             ))
