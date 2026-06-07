@@ -117,8 +117,6 @@ export default function InteractiveMap() {
 
   const handleMarkerClick = async (space) => {
     setResourceForm({ type: space.defaultType, name: '', capacity: '30' });
-    // Reset booking form; calDate in ReservationCalendarForm is derived from
-    // bookingForm.date so setting it to '' clears the calendar selection too.
     setBookingForm({ date: '', startTime: '', endTime: '', userId: '1' });
     setErrorMessage('');
 
@@ -384,7 +382,7 @@ export default function InteractiveMap() {
           </div>
         </div>
 
-        {/* Sidebar: floor & type filters */}
+        {/* Filter*/}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">

@@ -144,7 +144,7 @@ export default function InteractiveMap() {
     }
   };
 
-  function MapEventsHandler() {
+function MapEventsHandler() {
     useMapEvents({
       click(e) {
         const clickedX = Math.round(e.latlng.lng);
@@ -156,7 +156,7 @@ export default function InteractiveMap() {
           (s.floor || 'FLOOR_1') === currentFloor
         );
 
-        if (!existingNode) {
+        if (!existingNode && user?.type == 'ADMIN') {
           setClickedCoords({ x: clickedX, y: clickedY });
           setIsRegistering(true);
         } else {

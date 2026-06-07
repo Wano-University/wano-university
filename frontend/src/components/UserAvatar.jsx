@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { useState } from 'react'; 
+import { createPortal } from 'react-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,11 +12,15 @@ import {
 import { Button } from "./ui/button";
 import { User } from "lucide-react";
 import { logoutUser } from "../lib/auth";
+import { AnimatePresence } from 'framer-motion';
+import { ThemeSwitcher } from '../pages/ThemeSwitcher.jsx';
+
 
 export default function UserAvatar({ user }) {
+  const [themeOpen, setThemeOpen] = useState(false);
   if (!user) return null;
-
-  return (
+return (
+  <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
@@ -34,9 +40,10 @@ export default function UserAvatar({ user }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
-          <Link to="/profile/customize" className="cursor-pointer w-full">Customize</Link>
+        <DropdownMenuItem onClick={() => setThemeOpen(true)} className="cursor-pointer">
+          Customize
         </DropdownMenuItem>
+
         <DropdownMenuItem asChild>
           <Link to="/tickets" className="cursor-pointer w-full">Tickets</Link>
         </DropdownMenuItem>
@@ -56,5 +63,15 @@ export default function UserAvatar({ user }) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+
+  {createPortal(
+  <AnimatePresence>
+    {themeOpen && (
+      <ThemeSwitcher onClose={() => setThemeOpen(false)} />
+    )}
+  </AnimatePresence>,
+  document.body
+)}
+  </>
+);
 }
