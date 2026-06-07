@@ -123,21 +123,21 @@ const getResourceIcon = (status, isRegistered) => {
   let bgColor, statusClass;
 
   if (!isRegistered) {
-    bgColor = '#6b7280';               // gray-500 — unregistered
+    bgColor = '#6b7280';             
     statusClass = 'opacity-80 border-dashed animate-pulse';
   } else {
     switch (status) {
       case 'FREE':
-        bgColor = '#22c55e';           // green
+        bgColor = '#22c55e';          
         statusClass = '';
         break;
       case 'OCCUPIED':
-        bgColor = '#ef4444';           // red
+        bgColor = '#ef4444';       
         statusClass = '';
         break;
       case 'INACTIVE':
       default:
-        bgColor = 'var(--muted-foreground)';           // gray
+        bgColor = 'var(--muted-foreground)';         
         statusClass = 'opacity-80 border-dashed';
         break;
     }
