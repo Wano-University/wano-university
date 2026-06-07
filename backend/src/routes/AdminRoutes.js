@@ -8,4 +8,7 @@ router.get('/', verifyToken, requireRole(['ADMIN']),getAllUsers);
 router.put('/:id/permissions', verifyToken, requireRole(['ADMIN']),updateUserPermissions);
 router.put('/:id/profile', verifyToken, requireRole(['ADMIN']), updateProfile);
 
+// Para isto (apenas para teste):
+router.put('/test', (req, res) => res.send("Rota encontrada!"));
+
 export default router;

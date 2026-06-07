@@ -130,7 +130,6 @@ export default function InteractiveMap() {
   const [activeResourceReservations, setActiveResourceReservations] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Vai buscar os dados do utilizador logado
   const userString = localStorage.getItem('user');
   const currentUser = userString ? JSON.parse(userString) : null;
 

@@ -63,7 +63,7 @@ export default function Navbar() {
 
         {(user?.type === 'STUDENT' || user?.type === 'TEACHER') && (
           <>
-            <Link to="/map" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
+            <Link to="/spaces" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
             <Link to="/parking" className={desktopLinkStyle}>{t('NavbarMobility')}</Link>
           </>
