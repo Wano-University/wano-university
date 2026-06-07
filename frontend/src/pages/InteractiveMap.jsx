@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, ImageOverlay, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {Thermometer, Zap, Wind, Users, Layers, Wrench, Settings, Filter, Power, AlertTriangle } from 'lucide-react';
-import { getSensorsByFloor, registerSensor, updateSensorStatus} from '../lib/sensor.js'; 
+import { Thermometer, Zap, Wind, Users, Layers, Wrench, Settings, Filter, Power, AlertTriangle } from 'lucide-react';
+import { getSensorsByFloor, registerSensor, updateSensorStatus } from '../lib/sensors.js';
 
 const bounds = [[0, 0], [1100, 2000]];
 
@@ -25,12 +25,6 @@ const getSensorIcon = (type, isActive) => {
       colorVar = 'var(--surgeon-color)';
       iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
       break;
-    case 'OCCUPANCY':
-      colorVar = 'var(--swordsman-color)';
-      iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
-      break;
-    default:
-      break;
   }
 
   return L.divIcon({
@@ -46,7 +40,6 @@ const getSensorIcon = (type, isActive) => {
   });
 };
 
-// Invisible component that bridges Leaflet coordinates to React pixel state
 function MapTracker({ clickedCoords, setPixelCoords }) {
   const map = useMap();
 
@@ -58,7 +51,7 @@ function MapTracker({ clickedCoords, setPixelCoords }) {
       setPixelCoords({ x: point.x, y: point.y });
     };
 
-    updatePosition(); 
+    updatePosition();
     map.on('zoom', updatePosition);
     map.on('move', updatePosition);
 
@@ -76,11 +69,11 @@ export default function InteractiveMap() {
   const [filteredSensors, setFilteredSensors] = useState([]);
   const [currentFloor, setCurrentFloor] = useState('FLOOR_1');
   const [selectedTypeFilter, setSelectedTypeFilter] = useState('ALL');
-  
+
   const [clickedCoords, setClickedCoords] = useState(null);
   const [pixelCoords, setPixelCoords] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     type: 'TEMPERATURE',
     space: '',
@@ -93,7 +86,7 @@ export default function InteractiveMap() {
       setSensors(data || []);
     } catch (error) {
       console.error("Failed to load sensors from database:", error);
-      setSensors([]); 
+      setSensors([]);
     }
   };
 
@@ -127,7 +120,7 @@ export default function InteractiveMap() {
 
   const handleRegisterSensor = async (e) => {
     e.preventDefault();
-    
+
     const newSensorPayload = {
       type: formData.type,
       floor: currentFloor,
@@ -141,7 +134,7 @@ export default function InteractiveMap() {
     try {
       const savedSensor = await registerSensor(newSensorPayload);
       setSensors([...sensors, savedSensor]);
-      
+
       closeForm();
       setFormData({ type: 'TEMPERATURE', space: '', alertLimit: '' });
     } catch (err) {
@@ -155,9 +148,9 @@ export default function InteractiveMap() {
       click(e) {
         const clickedX = Math.round(e.latlng.lng);
         const clickedY = Math.round(e.latlng.lat);
-        
-        const existingNode = sensors.find(s => 
-          Math.abs(s.xCoordinates - clickedX) < 25 && 
+
+        const existingNode = sensors.find(s =>
+          Math.abs(s.xCoordinates - clickedX) < 25 &&
           Math.abs(s.yCoordinates - clickedY) < 25 &&
           (s.floor || 'FLOOR_1') === currentFloor
         );
@@ -175,24 +168,16 @@ export default function InteractiveMap() {
 
   return (
     <section className="py-12 max-w-400 mx-auto px-6 space-y-6">
-      
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-primary-foreground">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">Wano University Spaces Map</h1>
           <p className="text-sm text-muted-foreground/80">
-            Review real-time resource distribution and floor occupancy baselines.
+            Review real-time sensor distribution.
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3 mt-4 md:mt-0">
-          <button 
-            onClick={() => console.log("Equipments Module")}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
-          >
-            <Wrench size={16} />
-            Equipments Module
-          </button>
-          
           <button 
             onClick={() => alert("Admin Panel")}
             className="flex items-center gap-2 px-4 py-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-sm font-medium rounded-xl transition shadow-sm"
@@ -203,9 +188,9 @@ export default function InteractiveMap() {
         </div>
       </div>
 
-    {/* Map container */}
+      {/* Map container */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
+
         <div className="lg:col-span-8 bg-primary-foreground p-4 rounded-3xl border border-muted-foreground/20 shadow-xl relative overflow-hidden min-h-150 lg:50">
           <div className="relative w-full h-full">
             <MapContainer
@@ -216,9 +201,9 @@ export default function InteractiveMap() {
               style={{ width: '100%', height: '100%', minHeight: '600px', backgroundColor: 'transparent' }}
               className="rounded-2xl z-10 border border-primary-foreground shadow-sm"
             >
-              <ImageOverlay 
-                url={currentFloor === 'FLOOR_1' ? '/floor1.png' : '/floor2.png'} 
-                bounds={bounds} 
+              <ImageOverlay
+                url={currentFloor === 'FLOOR_1' ? '/floor1.png' : '/floor2.png'}
+                bounds={bounds}
               />
 
               <MapEventsHandler />
@@ -226,8 +211,8 @@ export default function InteractiveMap() {
 
               {/* Existing sensors */}
               {filteredSensors.map((sensor) => (
-                <Marker 
-                  key={sensor.id} 
+                <Marker
+                  key={sensor.id}
                   position={[sensor.yCoordinates, sensor.xCoordinates]}
                   icon={getSensorIcon(sensor.type, sensor.isActive)}
                 >
@@ -246,7 +231,7 @@ export default function InteractiveMap() {
                         <p><span className="font-semibold text-muted-foreground">Class Type:</span> {sensor.type}</p>
                         <p><span className="font-semibold text-muted-foreground">Alert Threshold:</span> {sensor.alertLimit}</p>
                         <p><span className="font-semibold text-muted-foreground">Coordinates:</span> X:{sensor.xCoordinates} | Y:{sensor.yCoordinates}</p>
-                        
+
                         <div className="pt-2 flex items-center justify-between border-t border-muted-foreground/20 mt-2">
                           <span className="text-[11px] text-muted-foreground">Toggle Operations State:</span>
                           <button
@@ -266,15 +251,15 @@ export default function InteractiveMap() {
 
             {/* Register sensor*/}
             {isRegistering && clickedCoords && pixelCoords && (
-              <div 
+              <div
                 className="absolute bg-primary-foreground shadow-xl rounded-xl border border-muted-foreground/20 z-1000 transition-all duration-100"
                 style={{
                   left: pixelCoords.x,
                   top: pixelCoords.y,
-                  transform: 'translate(-50%, -100%)', 
-                  marginTop: '-15px', 
+                  transform: 'translate(-50%, -100%)',
+                  marginTop: '-15px',
                 }}
-                onClick={(e) => e.stopPropagation()} 
+                onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-2 w-64">
                   <form onSubmit={handleRegisterSensor} className="font-sans space-y-3">
@@ -285,8 +270,8 @@ export default function InteractiveMap() {
                           X: {clickedCoords.x} | Y: {clickedCoords.y}
                         </span>
                       </div>
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         onClick={closeForm}
                         className="text-muted-foreground hover:text-foreground p-1"
                       >
@@ -296,24 +281,23 @@ export default function InteractiveMap() {
 
                     <div className="space-y-1">
                       <label className="block text-[10px] font-bold text-muted-foreground uppercase">Type</label>
-                      <select 
+                      <select
                         value={formData.type}
-                        onChange={(e) => setFormData({...formData, type: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                         className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
                       >
                         <option value="TEMPERATURE">Temperature</option>
                         <option value="ENERGY_CONSUMPTION">Energy consumption</option>
                         <option value="AIR_QUALITY">Air quality</option>
-                        <option value="OCCUPANCY">Occupancy</option>
                       </select>
                     </div>
 
                     <div className="space-y-1">
                       <label className="block text-[10px] font-bold text-muted-foreground uppercase">Location</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.space}
-                        onChange={(e) => setFormData({...formData, space: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, space: e.target.value })}
                         className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
                         required
                       />
@@ -321,17 +305,17 @@ export default function InteractiveMap() {
 
                     <div className="space-y-1">
                       <label className="block text-[10px] font-bold text-muted-foreground uppercase">Trigger limit</label>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         value={formData.alertLimit}
-                        onChange={(e) => setFormData({...formData, alertLimit: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, alertLimit: e.target.value })}
                         className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
                         required
                       />
                     </div>
 
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="w-full mt-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm"
                     >
                       Save to database
@@ -343,7 +327,7 @@ export default function InteractiveMap() {
           </div>
         </div>
 
-      {/* Floor change */}
+        {/* Floor change */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-primary-foreground p-5 rounded-3xl border border-primary-foreground shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
@@ -356,32 +340,32 @@ export default function InteractiveMap() {
                 onClick={() => setCurrentFloor('FLOOR_1')}
                 className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                Floor 01 
+                Floor 01
               </button>
               <button
                 type="button"
                 onClick={() => setCurrentFloor('FLOOR_2')}
                 className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                Floor 02 
+                Floor 02
               </button>
             </div>
           </div>
 
-        {/* Filter */}
+          {/* Filter */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-primary-foreground shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Filter size={14} />
               Filter by type
             </h2>
-            
+
             <div className="flex flex-col gap-1.5">
               <button
                 type="button"
                 onClick={() => setSelectedTypeFilter('ALL')}
                 className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground border-foreground text-primary-foreground' : 'bg-muted-foreground/10 border-primary-foreground text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                <span>All Active Sensors</span>
+                <span>All Sensors</span>
                 <span className="px-2 py-0.5 rounded bg-primary-foreground/80 text-muted-foreground text-[10px] font-bold">
                   {sensors.filter(s => (s.floor || 'FLOOR_1') === currentFloor).length}
                 </span>
@@ -393,7 +377,7 @@ export default function InteractiveMap() {
                 className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'TEMPERATURE' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
                 style={selectedTypeFilter === 'TEMPERATURE' ? { backgroundColor: 'var(--fire-color)' } : {}}
               >
-                <Thermometer size={16} style={selectedTypeFilter === 'TEMPERATURE' ? {color: 'primary-foreground'} : {color: 'var(--fire-color)'}} />
+                <Thermometer size={16} style={selectedTypeFilter === 'TEMPERATURE' ? { color: 'primary-foreground' } : { color: 'var(--fire-color)' }} />
                 <span>Temperature</span>
               </button>
 
@@ -403,7 +387,7 @@ export default function InteractiveMap() {
                 className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ENERGY_CONSUMPTION' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
                 style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? { backgroundColor: 'var(--nika-color)' } : {}}
               >
-                <Zap size={16} style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? {color: 'primary-foreground'} : {color: 'var(--nika-color)'}} />
+                <Zap size={16} style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? { color: 'primary-foreground' } : { color: 'var(--nika-color)' }} />
                 <span>Energy Consumption</span>
               </button>
 
@@ -413,18 +397,8 @@ export default function InteractiveMap() {
                 className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'AIR_QUALITY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
                 style={selectedTypeFilter === 'AIR_QUALITY' ? { backgroundColor: 'var(--surgeon-color)' } : {}}
               >
-                <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? {color: 'primary-foreground'} : {color: 'var(--surgeon-color)'}} />
+                <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? { color: 'primary-foreground' } : { color: 'var(--surgeon-color)' }} />
                 <span>Air Quality</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('OCCUPANCY')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'OCCUPANCY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-                style={selectedTypeFilter === 'OCCUPANCY' ? { backgroundColor: 'var(--swordsman-color)' } : {}}
-              >
-                <Users size={16} style={selectedTypeFilter === 'OCCUPANCY' ? {color: 'primary-foreground'} : {color: 'var(--swordsman-color)'}} />
-                <span>Occupancy</span>
               </button>
             </div>
           </div>

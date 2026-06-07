@@ -55,6 +55,42 @@ export const sensorStatus = async (req, res) => {
   }
 };
 
+export const getAllActiveSensors = async(req, res)=>{
+  try {
+    const sensors = await prisma.sensor.findMany({ 
+      where: { isActive: true } });
+
+      res.status(200).json(sensors);
+  }catch (error){
+    res.status(500).json({ error: "Failed to fetch active sensors."})
+  }
+};
+
+export const getAllActiveSensorsByFloor = async(req, res)=>{
+  try {
+    const sensors = await prisma.sensor.findMany({ 
+      where: { isActive: true },
+      orderBy: {floor: 'asc'}});
+
+      res.status(200).json(sensors);
+  }catch (error){
+    res.status(500).json({ error: "Failed to fetch active sensors."})
+  }
+};
+
+export const getAllActiveSensorsByType = async(req, res)=>{
+  try {
+    const {isActive} = req.body;
+    const { type } = req.params;
+    const sensors = await prisma.sensor.findMany({ 
+      where: { isActive: true, type: type } });
+
+      res.status(200).json(sensors);
+  }catch (error){
+    res.status(500).json({ error: "Failed to fetch active sensors."})
+  }
+};
+
 export const getAllSensors = async (req, res) => {
   try {
     const sensors = await prisma.sensor.findMany();
