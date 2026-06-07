@@ -5,14 +5,9 @@ import 'leaflet/dist/leaflet.css';
 import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Calendar as CalendarIcon, Users, ShieldAlert, Clock } from 'lucide-react';
 import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js'; 
 import { createReservation } from '../lib/reservation.js'; 
-<<<<<<< HEAD
-import { Link } from "react-router-dom";
-=======
 import { useTranslation } from "react-i18next";
 
 import { Link } from "react-router-dom"
->>>>>>> main
-
 const bounds = [[0, 0], [1100, 2000]];
 
 const HARDCODED_SPACES = [

@@ -54,7 +54,6 @@ app.use('/api/payments', paymentRoutes);
 
 app.use('/api/admin/users', adminRoutes);
 
-app.use('/api/dashboard', simulationRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend is securely running and listening on port ${PORT}`);
