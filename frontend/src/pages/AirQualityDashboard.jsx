@@ -10,9 +10,9 @@ import { useTranslation } from "react-i18next";
 const SIMULATE_KEY = "air-quality-simulate"
 
 const SENSOR_TABS = [
-  { key: "energy", label: "Energy", icon: Zap, path: "/energydashboard" },
-  { key: "temperature", label: "Temperature", icon: Thermometer, path: "/temperaturedashboard" },
-  { key: "air", label: "Air Quality", icon: Wind, path: "/airqualitydashboard" },
+  { key: "energy", label: "DashboardTitleEnergy", icon: Zap, path: "/energydashboard" },
+  { key: "temperature", label: "DashboardTitleTemp", icon: Thermometer, path: "/temperaturedashboard" },
+  { key: "air", label: "DashboardTitleAir", icon: Wind, path: "/airqualitydashboard" },
 ]
 
 const fetcher = async () => {
@@ -136,7 +136,7 @@ export default function AirQualityDashboard() {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
               >
-                <Icon className="w-4 h-4" /> {label}
+                <Icon className="w-4 h-4" /> {t(label)}
               </button>
             ))}
           </div>

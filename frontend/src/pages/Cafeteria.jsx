@@ -186,7 +186,6 @@ export default function Cafeteria() {
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
 
-        {/* Selected Dish View */}
         <Card className={`md:col-span-3 p-8 border transition-all duration-300 shadow-xl rounded-4xl flex flex-col md:flex-row items-center gap-8 ${displayDish.color} hover:shadow-md`}>
           <div
             onClick={() => displayDish.image && setIsModalOpen(true)}
@@ -217,7 +216,6 @@ export default function Cafeteria() {
           </div>
         </Card>
 
-        {/* Days Navigation List */}
         <div className="md:col-span-2 flex flex-col gap-3">
           {workdays.map((dateObj) => {
             const dateKey = dateObj.toISOString();
