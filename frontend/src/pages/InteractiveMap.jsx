@@ -168,7 +168,7 @@ export default function InteractiveMap() {
     }
   };
 
-function MapEventsHandler() {
+  function MapEventsHandler() {
     useMapEvents({
       click(e) {
         const clickedX = Math.round(e.latlng.lng);
