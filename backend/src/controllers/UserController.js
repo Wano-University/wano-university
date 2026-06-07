@@ -3,22 +3,17 @@ import prisma from '../config/db.js';
 import jwt from 'jsonwebtoken';
 
 const MAPA_PERMISSOES = [
-  { id: 'VER_EMENTA_COMPRAS', label: 'Ementa', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_PARKING', label: 'Parking', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'RESERVAR_SALAS_LABORATORIOS', label: 'Reservar Salas', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'RESERVAR_EQUIPAMENTOS', label: 'Reservar Equipamentos', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'RESERVAR_BICICLETAS_TROTINETES', label: 'Reservar Bicicletas', roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_DASHBOARD_TEMPERATURA', label: 'Dash: Temp', roles: ['STAFF', 'ADMIN'] },
-  { id: 'VER_DASHBOARD_QUALIDADE_AR', label: 'Dash: Ar', roles: ['STAFF', 'ADMIN'] },
-  { id: 'VER_DASHBOARD_CONSUMO_ENERGETICO', label: 'Dash: Energia', roles: ['STAFF', 'ADMIN'] },
-  { id: 'VER_SUSTENTABILIDADE', label: 'Sustentabilidade', roles: ['STAFF', 'ADMIN'] },
-  { id: 'GERIR_PARKING', label: 'Gestão Parking', roles: ['ADMIN'] },
-  { id: 'GERIR_USERS', label: 'Gestão Users', roles: ['ADMIN'] },
-  { id: 'GERIR_SALAS_LABORATORIOS', label: 'Gestão Salas/Labs', roles: ['ADMIN'] },
-  { id: 'GERIR_EQUIPAMENTOS', label: 'Gestão Equipamentos', roles: ['ADMIN'] },
-  { id: 'GERIR_BICICLETAS_TROTINETES', label: 'Gestão Bicicletas', roles: ['ADMIN'] },
-  { id: 'GERIR_EMENTA', label: 'Gestão Ementa', roles: ['ADMIN'] },
-  { id: 'GERIR_SENSORES', label: 'Gestão Sensores', roles: ['ADMIN'] }
+  { id: 'VER_EMENTA_COMPRAS',            label: 'Ementa',                roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'VER_PARKING',                   label: 'Parking',               roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'VER_SALAS_LABORATORIOS',        label: 'Ver Salas',             roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'VER_EQUIPAMENTOS',              label: 'Ver Equipamentos',      roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'VER_BICICLETAS_TROTINETES',     label: 'Ver Bicicletas',        roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
+  { id: 'VER_DASHBOARD',                 label: 'Dashboards',            roles: ['STAFF', 'ADMIN'] },
+  { id: 'GERIR_USERS',                   label: 'Gestão Users',          roles: ['ADMIN'] },
+  { id: 'GERIR_EQUIPAMENTOS',            label: 'Gestão Equipamentos',   roles: ['ADMIN'] },
+  { id: 'GERIR_BICICLETAS_TROTINETES',   label: 'Gestão Bicicletas',     roles: ['ADMIN'] },
+  { id: 'GERIR_EMENTA',                  label: 'Gestão Ementa',         roles: ['ADMIN', 'STAFF'] },
+  { id: 'GERIR_SENSORES',                label: 'Gestão Sensores',       roles: ['ADMIN'] }
 ];
 
 const isValidPassword = (password) => {
@@ -30,7 +25,6 @@ export const registerUser = async (req, res) => {
   try {
     const { name, address, nif, email, login, password, type } = req.body;
 
-    // 1. Validação da Password
     if (!isValidPassword(password)) {
       return res.status(400).json({ error: "Password policy violation." });
     }
@@ -42,7 +36,7 @@ export const registerUser = async (req, res) => {
       .map(perm => perm.id);
 
     await Promise.all(
-      permsToAssign.map(permId => 
+      permsToAssign.map(permId =>
         prisma.permission.upsert({
           where: { description: permId },
           update: {},
@@ -51,20 +45,19 @@ export const registerUser = async (req, res) => {
       )
     );
 
-    // VOLTAMOS A METER O CREATE AQUI (Como tinhas no início)
     const user = await prisma.user.create({
       data: {
         name, address, nif, email, login,
         password: hashedPassword,
         type,
-        permissions: { 
+        permissions: {
           create: permsToAssign.map(permId => ({
             permission: { connect: { description: permId } }
           }))
         }
       },
-      include: { 
-        permissions: { include: { permission: true } } 
+      include: {
+        permissions: { include: { permission: true } }
       }
     });
 
@@ -79,22 +72,16 @@ export const login = async (req, res) => {
   try {
     const { login, password, rememberMe } = req.body;
 
-    // A CORREÇÃO ENTRA AQUI NO LOGIN!
     const user = await prisma.user.findUnique({
       where: { login: login },
-      include: { 
-        permissions :{
+      include: {
+        permissions: {
           include: {
-            permission: true // ISTO FAZ O PRISMA TRAZER A DESCRIÇÃO!
+            permission: true
           }
         }
       }
     });
-
-    // Após isto, verifica se o user tem permissões:
-    if (user && user.permissions) {
-      console.log("Permissões carregadas:", user.permissions);
-    }
 
     if (!user || !user.isActive) {
       return res.status(401).json({ error: "Invalid credentials or inactive account." });
@@ -107,7 +94,6 @@ export const login = async (req, res) => {
     }
 
     const tokenDuration = rememberMe ? '7d' : '8h';
-
     const { password: _, ...userWithoutPassword } = user;
 
     const token = jwt.sign(
@@ -133,10 +119,7 @@ export const resetPassword = async (req, res) => {
     const { login, email, newPassword } = req.body;
 
     const user = await prisma.user.findFirst({
-      where: {
-        login: login,
-        email: email
-      }
+      where: { login: login, email: email }
     });
 
     if (!user) {

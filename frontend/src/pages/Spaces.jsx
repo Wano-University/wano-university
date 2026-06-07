@@ -4,7 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Calendar as CalendarIcon, Users, ShieldAlert, Clock } from 'lucide-react';
-import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js';
+import { getResourcesByFloor, registerResource, getResourceReservations, updateResource } from '../lib/resource.js';
 import { createReservation } from '../lib/reservation.js';
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -170,6 +170,7 @@ export default function InteractiveMap() {
   const [currentFloor, setCurrentFloor] = useState('FLOOR_1');
   const [selectedTypeFilter, setSelectedTypeFilter] = useState('ALL');
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const [editingData, setEditingData] = useState(null);
 
   const [resourceForm, setResourceForm] = useState({ type: 'ROOM', name: '', capacity: '30' });
   const [bookingForm, setBookingForm] = useState({ date: '', startTime: '', endTime: '', userId: '1' });
@@ -221,18 +222,54 @@ export default function InteractiveMap() {
     setBookingForm({ date: '', startTime: '', endTime: '', userId: '1' });
     setErrorMessage('');
     if (space.isRegistered && space.dbData) {
+      // Pre-load the editing data from the clicked room
+      setEditingData({
+        id: space.dbData.id,
+        name: space.dbData.name,
+        type: space.dbData.type,
+        capacity: space.dbData.capacity,
+        isAvailable: space.dbData.isAvailable,
+        floor: space.dbData.floor,
+        xCoordinates: space.dbData.xCoordinates,
+        yCoordinates: space.dbData.yCoordinates,
+      });
       try {
         const resList = await getResourceReservations(space.dbData.id);
         setActiveResourceReservations(resList || []);
       } catch (err) {
         console.error("Could not fetch active bookings:", err);
       }
+    } else {
+      setEditingData(null);
+    }
+  };
+
+  const handleUpdateResource = async (e) => {
+    e.preventDefault();
+    if (!editingData) return;
+    setErrorMessage('');
+
+    try {
+      const updated = await updateResource(editingData.id, {
+        type: editingData.type,
+        name: editingData.name,
+        capacity: parseInt(editingData.capacity),
+        isAvailable: editingData.isAvailable,
+        floor: editingData.floor,
+        xCoordinates: editingData.xCoordinates,
+        yCoordinates: editingData.yCoordinates,
+      });
+      setResources(prev => prev.map(r => r.id === updated.id ? updated : r));
+      alert("Resource updated successfully!");
+    } catch (err) {
+      setErrorMessage(err.message || "Failed to update resource.");
     }
   };
 
   const handleRegisterResource = async (e, space) => {
     e.preventDefault();
     setErrorMessage('');
+
     try {
       const savedResource = await registerResource({
         type: resourceForm.type,
@@ -340,26 +377,29 @@ export default function InteractiveMap() {
                   <Popup autoPan={false} maxWidth={320}>
                     <div className="p-1 min-w-[280px] text-foreground/80 font-sans">
                       {errorMessage && (
-                        <div className="mb-3 p-2 bg-meat/20 border-meat/50 text-meat hover:bg-meat/10 text-xs rounded border flex items-start gap-1.5">
+                        <div className="mb-3 p-2 bg-meat/20 border-meat/50 text-meat text-xs rounded border flex items-start gap-1.5">
                           <AlertTriangle size={14} className="shrink-0 mt-0.5" />
                           <span>{errorMessage}</span>
                         </div>
                       )}
                       {space.isRegistered && space.dbData ? (
                         <>
+                          {/* Room info — always visible */}
                           <div className="flex justify-between items-center border-b border-muted pb-2 mb-3">
                             <div>
                               <strong className="block text-sm font-bold text-foreground">{space.dbData.name}</strong>
                               <span className="text-[11px] text-muted-foreground/80 capitalize">{space.dbData.type.toLowerCase()}</span>
                             </div>
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${space.dbData.isAvailable ? 'text-swordsman/80 hover:bg-swordsman/20' : 'text-muted-foreground hover:bg-primary-foreground/20'}`}>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${space.dbData.isAvailable ? 'text-swordsman/80' : 'text-muted-foreground'}`}>
                               {space.dbData.isAvailable ? t('SpaceOperational') : t('SpaceMaintenance')}
                             </span>
                           </div>
                           <div className="text-xs space-y-1 mb-2 bg-background p-2 rounded-lg border border-muted">
                             <p className="flex justify-between">
                               <span className="text-muted-foreground">{t('SpaceRoomCap')}:</span>
-                              <span className="font-semibold flex items-center gap-1 text-foreground"><Users size={12} />{space.dbData.capacity} {t('SpaceSeats')}</span>
+                              <span className="font-semibold flex items-center gap-1 text-foreground">
+                                <Users size={12} />{space.dbData.capacity} {t('SpaceSeats')}
+                              </span>
                             </p>
                           </div>
                           {!isAdminMode ? (
@@ -370,14 +410,65 @@ export default function InteractiveMap() {
                               onSubmit={handleCreateReservation}
                               t={t}
                             />
-                          ) : (
+                          )}
+
+                          {/* Admin Actions — same pattern as Parking.jsx */}
+                          {isAdminMode && (
                             <div className="mt-3 pt-3 border-t border-muted space-y-2">
                               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <ShieldAlert size={14} className="text-swordsman" /> {t('SpaceAdminView')}
+                                <ShieldAlert size={14} className="text-swordsman" /> Admin Actions
                               </h4>
-                              <div className="bg-background p-2.5 rounded-xl border border-muted">
-                                <p className="text-xs text-muted-foreground leading-relaxed">{t('SpaceRegistered')}</p>
-                              </div>
+
+                              <form onSubmit={handleUpdateResource} className="bg-background p-2.5 rounded-xl border border-muted space-y-2">
+                                <div>
+                                  <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceClass')}</label>
+                                  <select
+                                    value={editingData?.type ?? space.dbData.type}
+                                    onChange={(e) => setEditingData(prev => ({ ...prev, type: e.target.value }))}
+                                    className="w-full text-xs p-1.5 mt-1 rounded-lg border border-muted bg-background text-foreground"
+                                  >
+                                    <option value="ROOM">{t('SpaceRoomHall')}</option>
+                                    <option value="LABORATORY">{t('SpaceLab')}</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceResource')}</label>
+                                  <input
+                                    type="text"
+                                    value={editingData?.name ?? space.dbData.name}
+                                    onChange={(e) => setEditingData(prev => ({ ...prev, name: e.target.value }))}
+                                    className="w-full text-xs p-1.5 mt-1 rounded-lg border border-muted bg-background text-foreground"
+                                    required
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-[10px] font-bold text-muted-foreground uppercase">Seating Capacity</label>
+                                  <input
+                                    type="number"
+                                    value={editingData?.capacity ?? space.dbData.capacity}
+                                    onChange={(e) => setEditingData(prev => ({ ...prev, capacity: e.target.value }))}
+                                    className="w-full text-xs p-1.5 mt-1 rounded-lg border border-muted bg-background text-foreground"
+                                    required
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-[10px] font-bold text-muted-foreground uppercase">Status</label>
+                                  <select
+                                    value={String(editingData?.isAvailable ?? space.dbData.isAvailable)}
+                                    onChange={(e) => setEditingData(prev => ({ ...prev, isAvailable: e.target.value === 'true' }))}
+                                    className="w-full text-xs p-1.5 mt-1 rounded-lg border border-muted bg-background text-foreground"
+                                  >
+                                    <option value="true">{t('SpaceOperational')}</option>
+                                    <option value="false">{t('SpaceMaintenance')}</option>
+                                  </select>
+                                </div>
+                                <button
+                                  type="submit"
+                                  className="w-full text-xs py-2 mt-1 rounded-lg bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground font-bold transition cursor-pointer"
+                                >
+                                  Save Changes
+                                </button>
+                              </form>
                             </div>
                           )}
                         </>
@@ -392,18 +483,34 @@ export default function InteractiveMap() {
                             </div>
                             <div>
                               <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceClass')}</label>
-                              <select value={resourceForm.type} onChange={(e) => setResourceForm({ ...resourceForm, type: e.target.value })} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground">
+                              <select
+                                value={resourceForm.type}
+                                onChange={(e) => setResourceForm({ ...resourceForm, type: e.target.value })}
+                                className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground"
+                              >
                                 <option value="ROOM">{t('SpaceRoomHall')}</option>
                                 <option value="LABORATORY">{t('SpaceLab')}</option>
                               </select>
                             </div>
                             <div>
                               <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceResource')}</label>
-                              <input type="text" value={resourceForm.name} onChange={(e) => setResourceForm({ ...resourceForm, name: e.target.value })} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
+                              <input
+                                type="text"
+                                value={resourceForm.name}
+                                onChange={(e) => setResourceForm({ ...resourceForm, name: e.target.value })}
+                                className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground"
+                                required
+                              />
                             </div>
                             <div>
                               <label className="block text-[10px] font-bold text-muted-foreground uppercase">Seating Capacity</label>
-                              <input type="number" value={resourceForm.capacity} onChange={(e) => setResourceForm({ ...resourceForm, capacity: e.target.value })} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
+                              <input
+                                type="number"
+                                value={resourceForm.capacity}
+                                onChange={(e) => setResourceForm({ ...resourceForm, capacity: e.target.value })}
+                                className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground"
+                                required
+                              />
                             </div>
                             <button type="submit" className="w-full bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm cursor-pointer">
                               {t('SpaceRegister')}
@@ -431,8 +538,26 @@ export default function InteractiveMap() {
               <Layers size={14} /> {t('SpaceFloorNav')}
             </h2>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => setCurrentFloor('FLOOR_1')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}>{t('SpaceFloor1')}</button>
-              <button onClick={() => setCurrentFloor('FLOOR_2')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}>{t('SpaceFloor2')}</button>
+              <button
+                onClick={() => setCurrentFloor('FLOOR_1')}
+                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${
+                  currentFloor === 'FLOOR_1'
+                    ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md'
+                    : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'
+                }`}
+              >
+                {t('SpaceFloor1')}
+              </button>
+              <button
+                onClick={() => setCurrentFloor('FLOOR_2')}
+                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${
+                  currentFloor === 'FLOOR_2'
+                    ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md'
+                    : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'
+                }`}
+              >
+                {t('SpaceFloor2')}
+              </button>
             </div>
           </div>
 
@@ -443,13 +568,34 @@ export default function InteractiveMap() {
             <div className="flex flex-col gap-1.5">
               <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
                 <span>{t('SpaceDisplay')}</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${selectedTypeFilter === 'ALL' ? 'bg-primary-foreground/20 border-primary-foreground/30' : 'bg-muted border-muted-foreground/20'}`}>{displayLayout.length}</span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                  selectedTypeFilter === 'ALL'
+                    ? 'bg-primary-foreground/20 border-primary-foreground/30'
+                    : 'bg-muted border-muted-foreground/20'
+                }`}>{displayLayout.length}</span>
               </button>
-              <button onClick={() => setSelectedTypeFilter('ROOM')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold order transition-all ${selectedTypeFilter === 'ROOM' ? 'bg-chef/60 border-chef/70 text-primary-foreground' : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'}`}>
-                <Home size={16} style={selectedTypeFilter === 'ROOM' ? { color: 'primary-foreground' } : { color: 'var(--chef-color)' }} /> <span>{t('SpaceRoomsHalls')}</span>
+
+              <button
+                onClick={() => setSelectedTypeFilter('ROOM')}
+                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${
+                  selectedTypeFilter === 'ROOM'
+                    ? 'bg-chef/60 border-chef/70 text-primary-foreground'
+                    : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                <Home size={16} style={selectedTypeFilter === 'ROOM' ? { color: 'primary-foreground' } : { color: 'var(--chef-color)' }} />
+                <span>{t('SpaceRoomsHalls')}</span>
               </button>
-              <button onClick={() => setSelectedTypeFilter('LABORATORY')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'LABORATORY' ? 'bg-swordsman/60 border-swordsman/70 text-primary-foreground' : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'}`}>
-                <FlaskConical size={16} style={selectedTypeFilter === 'LABORATORY' ? { color: 'primary-foreground' } : { color: 'var(--swordsman-color)' }} /> <span>{t('SpaceLabs')}</span>
+              <button
+                onClick={() => setSelectedTypeFilter('LABORATORY')}
+                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${
+                  selectedTypeFilter === 'LABORATORY'
+                    ? 'bg-swordsman/60 border-swordsman/70 text-primary-foreground'
+                    : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                <FlaskConical size={16} style={selectedTypeFilter === 'LABORATORY' ? { color: 'primary-foreground' } : { color: 'var(--swordsman-color)' }} />
+                <span>{t('SpaceLabs')}</span>
               </button>
             </div>
           </div>

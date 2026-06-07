@@ -5,8 +5,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTranslation } from "react-i18next";
 
-import { Thermometer, Zap, Wind, Users, Layers, Wrench, Settings, Filter, Power, AlertTriangle } from 'lucide-react';
-import { getSensorsByFloor, registerSensor, updateSensorStatus } from '../lib/sensors.js';
+import { Thermometer, Zap, Wind, Users, Layers, Wrench, Settings, Filter, Power, AlertTriangle, ShieldAlert, Trash2 } from 'lucide-react';
+import { getSensorsByFloor, registerSensor, updateSensorStatus, updateSensor, deleteSensor } from '../lib/sensors.js';
 
 const bounds = [[0, 0], [1100, 2000]];
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -16,7 +16,6 @@ const getSensorIcon = (type, isActive) => {
   let colorVar = 'var(--foreground)';
   let iconHtml = '';
   const activeClass = isActive ? '' : 'opacity-40 grayscale';
-
 
   switch (type) {
     case 'TEMPERATURE':
@@ -79,9 +78,14 @@ export default function InteractiveMap() {
   const [clickedCoords, setClickedCoords] = useState(null);
   const [pixelCoords, setPixelCoords] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
-  const { t } = useTranslation();
 
   const mapContainerRef = useRef(null);
+
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [editingData, setEditingData] = useState(null);
+
+  const { t } = useTranslation();
+
 
   const [formData, setFormData] = useState({
     type: 'TEMPERATURE',
@@ -126,6 +130,7 @@ export default function InteractiveMap() {
     setFilteredSensors(result);
   }, [sensors, currentFloor, selectedTypeFilter]);
 
+  // --- Existing toggle handler ---
   const handleToggleActive = async (id, currentStatus) => {
     try {
       await updateSensorStatus(id, !currentStatus);
@@ -133,6 +138,37 @@ export default function InteractiveMap() {
     } catch (err) {
       console.error("Backend update failed:", err);
       alert("Failed to sync with the database.");
+    }
+  };
+
+  // --- NEW: Update sensor (edit all fields) ---
+  const handleUpdateSensor = async (e) => {
+    e.preventDefault();
+    if (!editingData) return;
+    try {
+      const updated = await updateSensor(editingData.id, {
+        upperLimit: parseFloat(editingData.upperLimit) || 0,
+        lowerLimit: parseFloat(editingData.lowerLimit) || 0,
+        isActive: editingData.isActive,
+      });
+      setSensors(prev => prev.map(s => s.id === updated.id ? updated : s));
+      setEditingData(null);
+      alert("Sensor updated successfully!");
+    } catch (err) {
+      console.error("Failed to update sensor:", err);
+      alert("Failed to update sensor.");
+    }
+  };
+
+  // --- NEW: Delete sensor ---
+  const handleDeleteSensor = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this sensor? This action cannot be undone.")) return;
+    try {
+      await deleteSensor(id);
+      setSensors(prev => prev.filter(s => s.id !== id));
+    } catch (err) {
+      console.error("Failed to delete sensor:", err);
+      alert("Failed to delete sensor.");
     }
   };
 
@@ -159,7 +195,6 @@ export default function InteractiveMap() {
     try {
       const savedSensor = await registerSensor(newSensorPayload);
       setSensors([...sensors, savedSensor]);
-
       closeForm();
       setFormData({ type: 'TEMPERATURE', space: '', upperLimit: '', lowerLimit: '' });
     } catch (err) {
@@ -181,7 +216,8 @@ export default function InteractiveMap() {
           (s.floor || 'FLOOR_1') === currentFloor
         );
 
-        if (!existingNode && user?.type == 'ADMIN') {
+        // Only allow placing sensors when admin mode is active
+        if (!existingNode && isAdminMode) {
           setClickedCoords({ x: clickedX, y: clickedY });
           setIsRegistering(true);
         } else {
@@ -199,10 +235,30 @@ export default function InteractiveMap() {
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">{t('IMapTitle')}</h1>
           <p className="text-sm text-muted-foreground/80">
-            {t('IMapDesc')}
+            {isAdminMode
+              ? 'Admin panel active — click a sensor to edit it, or click the map to place a new one.'
+              : t('IMapDesc')}
           </p>
         </div>
 
+        {/* Admin Panel toggle button — mirrors Spaces.jsx pattern */}
+        {isAdmin && (
+          <button
+            onClick={() => {
+              setIsAdminMode(prev => !prev);
+              closeForm();
+              setEditingData(null);
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border mt-4 md:mt-0 ${
+              isAdminMode
+                ? 'bg-meat/20 border-meat/50 text-meat hover:bg-meat/10'
+                : 'bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground'
+            }`}
+          >
+            <Settings size={16} />
+            {isAdminMode ? 'Exit Admin Panel' : 'Admin Panel'}
+          </button>
+        )}
       </div>
 
       {/* Map container */}
@@ -232,9 +288,24 @@ export default function InteractiveMap() {
                   key={sensor.id}
                   position={[sensor.yCoordinates, sensor.xCoordinates]}
                   icon={getSensorIcon(sensor.type, sensor.isActive)}
+                  eventHandlers={{
+                    click: () => {
+                      // Pre-load editing data for this sensor when its marker is clicked
+                      setEditingData({
+                        id: sensor.id,
+                        type: sensor.type,
+                        space: sensor.space || '',
+                        upperLimit: sensor.upperLimit,
+                        lowerLimit: sensor.lowerLimit,
+                        isActive: sensor.isActive,
+                      });
+                    }
+                  }}
                 >
-                  <Popup>
-                    <div className="p-2 min-w-50 font-sans text-foreground/80">
+                  <Popup maxWidth={300}>
+                    <div className="p-2 min-w-[260px] font-sans text-foreground/80">
+
+                      {/* Header */}
                       <div className="flex justify-between items-center border-b pb-1.5 mb-2">
                         <strong className="block text-sm font-bold text-foreground/80 truncate pr-2">
                           {sensor.space || `Node #${sensor.id}`}
@@ -244,30 +315,101 @@ export default function InteractiveMap() {
                         </span>
                       </div>
 
+                      {/* Sensor read-only info */}
                       <div className="text-xs space-y-1.5">
                         <p><span className="font-semibold text-muted-foreground">{t('IMapClassType')}:</span> {sensor.type}</p>
                         <p><span className="font-semibold text-muted-foreground">{t('IMapUAlert')}:</span> {sensor.upperLimit}</p>
                         <p><span className="font-semibold text-muted-foreground">{t('IMapLAlert')}:</span> {sensor.lowerLimit}</p>
                         <p><span className="font-semibold text-muted-foreground">{t('IMapCoords')}:</span> X:{sensor.xCoordinates} | Y:{sensor.yCoordinates}</p>
 
-                        <div className="pt-2 flex items-center justify-between border-t border-muted-foreground/20 mt-2">
-                          <span className="text-[11px] text-muted-foreground">{t('IMapOpState')}:</span>
+                        {/* Toggle active — only visible outside admin mode */}
+                        {!isAdminMode && (
+                          <div className="pt-2 flex items-center justify-between border-t border-muted-foreground/20 mt-2">
+                            <span className="text-[11px] text-muted-foreground">{t('IMapOpState')}:</span>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleActive(sensor.id, sensor.isActive)}
+                              className={`p-1 rounded transition-colors ${sensor.isActive ? 'text-swordsman/80 hover:bg-swordsman/20' : 'text-muted-foreground hover:bg-primary-foreground/20 cursor-pointer'}`}
+                            >
+                              <Power size={16} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* ─── Admin Actions Panel ─── mirrors Spaces.jsx pattern */}
+                      {isAdminMode && editingData?.id === sensor.id && (
+                        <div className="mt-3 pt-3 border-t border-muted-foreground/20 space-y-2">
+                          <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                            <ShieldAlert size={14} className="text-swordsman" /> Admin Actions
+                          </h4>
+
+                          <form onSubmit={handleUpdateSensor} className="bg-background p-2.5 rounded-xl border border-muted-foreground/20 space-y-2">
+
+                            {/* Alert Limits */}
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapUAlert')}</label>
+                                <input
+                                  type="number"
+                                  value={editingData.upperLimit}
+                                  onChange={(e) => setEditingData(prev => ({ ...prev, upperLimit: e.target.value }))}
+                                  className="w-full text-xs p-1.5 mt-1 rounded-lg border border-muted-foreground/20 bg-background text-foreground"
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapLAlert')}</label>
+                                <input
+                                  type="number"
+                                  value={editingData.lowerLimit}
+                                  onChange={(e) => setEditingData(prev => ({ ...prev, lowerLimit: e.target.value }))}
+                                  className="w-full text-xs p-1.5 mt-1 rounded-lg border border-muted-foreground/20 bg-background text-foreground"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            {/* Status */}
+                            <div>
+                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapOpState')}</label>
+                              <select
+                                value={String(editingData.isActive)}
+                                onChange={(e) => setEditingData(prev => ({ ...prev, isActive: e.target.value === 'true' }))}
+                                className="w-full text-xs p-1.5 mt-1 rounded-lg border border-muted-foreground/20 bg-background text-foreground"
+                              >
+                                <option value="true">ACTIVE</option>
+                                <option value="false">INACTIVE</option>
+                              </select>
+                            </div>
+
+                            <button
+                              type="submit"
+                              className="w-full text-xs py-2 mt-1 rounded-lg bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground font-bold transition cursor-pointer"
+                            >
+                              Save Changes
+                            </button>
+                          </form>
+
+                          {/* Delete button */}
                           <button
                             type="button"
-                            onClick={() => handleToggleActive(sensor.id, sensor.isActive)}
-                            className={`p-1 rounded transition-colors ${sensor.isActive ? 'text-swordsman/80 hover:bg-swordsman/20' : 'text-muted-foreground hover:bg-primary-foreground/20 cursor-pointer'}`}
+                            onClick={() => handleDeleteSensor(sensor.id)}
+                            className="w-full text-xs py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold border border-red-500/30 transition cursor-pointer flex items-center justify-center gap-2"
                           >
-                            <Power size={16} />
+                            <Trash2 size={14} />
+                            Delete Sensor
                           </button>
                         </div>
-                      </div>
+                      )}
+
                     </div>
                   </Popup>
                 </Marker>
               ))}
             </MapContainer>
 
-            {/* Register sensor*/}
+            {/* Register sensor form (floating, on map click) */}
             {isRegistering && clickedCoords && pixelCoords && (
               <div
                 className="absolute bg-primary-foreground shadow-xl rounded-xl border border-muted-foreground/20 z-1000 transition-all duration-100"
@@ -318,7 +460,7 @@ export default function InteractiveMap() {
                       />
                     </div>
 
-                    {/* New Upper and Lower Limit Fields */}
+                    {/* Upper and Lower Limit Fields */}
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
                         <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapUAlert')}</label>
@@ -355,8 +497,10 @@ export default function InteractiveMap() {
           </div>
         </div>
 
-        {/* Floor change */}
+        {/* Sidebar — Floor navigation + Filters + Hint */}
         <div className="lg:col-span-4 space-y-6">
+
+          {/* Floor navigation */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-primary-foreground shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Layers size={14} />
@@ -380,7 +524,7 @@ export default function InteractiveMap() {
             </div>
           </div>
 
-          {/* Filter */}
+          {/* Filter by type */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-primary-foreground shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Filter size={14} />
