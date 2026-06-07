@@ -30,8 +30,6 @@ export default function UserModel({ user, onClose, onSave }) {
           return p.permission?.description || p.description;
         }).filter(Boolean);
 
-        // Se o utilizador tiver qualquer uma das 3 permissões antigas de dashboard,
-        // consideramos que tem VER_DASHBOARD (compatibilidade com dados antigos na BD)
         const DASHBOARD_ANTIGAS = [
           'VER_DASHBOARD_TEMPERATURA',
           'VER_DASHBOARD_QUALIDADE_AR',

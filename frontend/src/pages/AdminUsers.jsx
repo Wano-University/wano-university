@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { jwtDecode } from "jwt-decode";
 
 export default function AdminUsers() {
-  console.log("--- AdminUsers carregado ---");
   const [utilizadores, setUtilizadores] = useState([]);
   const [utilizadorSelecionado, setUtilizadorSelecionado] = useState(null);
   const [userParaEditar, setUserParaEditar] = useState(null);

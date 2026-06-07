@@ -11,6 +11,7 @@ import MenuConfig from './pages/MenuConfig';
 import Spaces from './pages/Spaces';
 import HomeRedirection from './components/HomeRedirection';
 import StaffHome from './pages/StaffHome';
+import Parking from './pages/Parking';
 import StudentHome from './pages/StudentHome';
 import AdminHome from './pages/AdminHome';
 import Equipments from './pages/Equipments';
@@ -30,6 +31,7 @@ import NotFound from './components/NotFound';
 import AdminUsers from './pages/AdminUsers';
 import Alerts from './pages/Alerts';
 import AccessLogs from './pages/AccessLogs';
+import { ThemeSwitcher } from './pages/ThemeSwitcher';
 
 function RootLayout() {
   return (
@@ -55,7 +57,6 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/lssdocs" element={<LssDocs />} />
         <Route path="/changepw" element={<ForgotPassword />} />
 
         <Route path="/spaces" element={<ProtectedRoute requiredPermission="VER_SALAS_LABORATORIOS"><Spaces /></ProtectedRoute>} />
@@ -66,6 +67,8 @@ export default function App() {
         <Route path="/equipments" element={<ProtectedRoute requiredPermission="VER_EQUIPAMENTOS"><Equipments /></ProtectedRoute>} />
         <Route path="/tickets" element={<ProtectedRoute><MyTickets /></ProtectedRoute>} />
         <Route path="/changepassword" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+        <Route path="/profile/customize" element={<ProtectedRoute> <ThemeSwitcher /> </ProtectedRoute>} />
+        <Route path="/parking" element={<ProtectedRoute requiredPermission="VER_PARKING"> <Parking /> </ProtectedRoute>} />
 
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminHome /></ProtectedRoute>} />
         <Route path="/staff" element={<ProtectedRoute allowedRoles={['STAFF']}><StaffHome /></ProtectedRoute>} />
