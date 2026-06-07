@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ADDRESS ASSIGN BUY CANCEL COLON COMMA DATE DISHTYPE ELSE EMAIL EQUIPMENT FLOAT HOUR ID IF MEAL NIF NUMBER PASSWORD REGISTER RENT SENSORTYPE STRING THEN USER USERTYPE WEEKDAYstatement : ID ASSIGN valuestatement : instructionvalue : NUMBER\n| FLOAT\n| DATE\n| HOUR\n| WEEKDAY\n| DISHTYPE\n| SENSORTYPE\n| IDnumber_or_var : NUMBER \n| IDfloat_or_var : FLOAT \n| NUMBER \n| IDdate_or_var : DATE \n| IDhour_or_var : HOUR\n| IDdishtype_or_var : DISHTYPE\n| IDsensortype_or_var : SENSORTYPE \n| IDinstruction : RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_varinstruction : CANCEL EQUIPMENT COLON number_or_varinstruction : BUY MEAL COLON dishtype_or_var COMMA date_or_varinstruction : CANCEL MEAL COLON number_or_varinstruction : REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPEinstruction : REGISTER EQUIPMENT COLON ID COMMA number_or_varinstruction : REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_varaction : RENT \n| BUY \n| REGISTER \n| CANCEL'
+_lr_signature = 'ACTIVE ADDRESS ASSIGN BUY CANCEL CANCELED COLON COMMA COMPLETED DATE DISHTYPE ELSE EMAIL EQUIPMENT FLOAT FLOOR GET HCID HOUR ID IF MEAL MOBILITY MOBILITY MOBILITY_STATUS MOBILITY_TYPE NIF NUMBER PASSWORD REGISTER RENT RESERVATIONS RESOURCES RESOURCE_TYPE SENSORTYPE STRING THEN UPDATE USER USERTYPE WEEKDAYstatement : ID ASSIGN valuestatement : instructionvalue : NUMBER\n| FLOAT\n| DATE\n| HOUR\n| WEEKDAY\n| DISHTYPE\n| SENSORTYPE\n| IDnumber_or_var : NUMBER \n| IDfloat_or_var : FLOAT \n| NUMBER \n| IDdate_or_var : DATE \n| IDhour_or_var : HOUR\n| IDdishtype_or_var : DISHTYPE\n| IDsensortype_or_var : SENSORTYPE \n| IDinstruction : RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_varreservation_status : ACTIVE\n| COMPLETED\n| CANCELEDinstruction : GET RESERVATIONSinstruction : GET RESERVATIONS number_or_varinstruction : UPDATE RESERVATIONS  number_or_var reservation_statusinstruction : REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPEinstruction :  REGISTER EQUIPMENT COLON HCID COMMA number_or_varinstruction : GET RESOURCESinstruction : GET RESOURCES number_or_varinstruction : GET RESOURCES EQUIPMENTinstruction : REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var COMMA HCIDinstruction : GET EQUIPMENTinstruction : GET EQUIPMENT SENSORTYPEinstruction : GET EQUIPMENT FLOORinstruction : GET MOBILITYinstruction : GET MOBILITY MOBILITY_TYPEinstruction : REGISTER MOBILITY COLON MOBILITY_TYPE COMMA STRING COMMA HCIDinstruction : UPDATE MOBILITY number_or_var MOBILITY_STATUSaction : RENT \n| BUY \n| REGISTER \n| CANCEL'
     
-_lr_action_items = {'ID':([0,8,24,25,26,27,29,42,43,45,46,56,58,65,69,],[2,15,32,32,32,37,39,49,52,32,32,49,64,52,70,]),'RENT':([0,],[4,]),'CANCEL':([0,],[5,]),'BUY':([0,],[6,]),'REGISTER':([0,],[7,]),'$end':([1,3,15,16,17,18,19,20,21,22,23,31,32,33,34,50,51,52,54,61,62,63,64,67,74,],[0,-2,-10,-1,-3,-4,-5,-6,-7,-8,-9,-11,-12,-25,-27,-26,-16,-17,-29,-30,-13,-14,-15,-24,-28,]),'ASSIGN':([2,],[8,]),'EQUIPMENT':([4,5,7,],[9,10,14,]),'MEAL':([5,6,],[11,12,]),'USER':([7,],[13,]),'NUMBER':([8,24,25,26,45,46,58,],[17,31,31,31,31,31,63,]),'FLOAT':([8,58,],[18,62,]),'DATE':([8,43,65,],[19,51,51,]),'HOUR':([8,42,56,],[20,48,48,]),'WEEKDAY':([8,],[21,]),'DISHTYPE':([8,27,],[22,36,]),'SENSORTYPE':([8,29,],[23,41,]),'COLON':([9,10,11,12,13,14,],[24,25,26,27,28,29,]),'STRING':([28,44,],[38,53,]),'COMMA':([30,31,32,35,36,37,38,39,40,41,47,48,49,53,55,59,60,68,70,72,],[42,-11,-12,43,-20,-21,44,45,46,-22,56,-18,-19,57,58,65,66,69,71,73,]),'NIF':([57,],[60,]),'EMAIL':([66,],[68,]),'PASSWORD':([71,],[72,]),'USERTYPE':([73,],[74,]),}
+_lr_action_items = {'ID':([0,8,10,11,14,15,28,40,54,56,57,66,68,77,85,],[2,19,31,31,31,31,31,52,61,31,31,61,75,82,86,]),'RENT':([0,],[4,]),'GET':([0,],[5,]),'UPDATE':([0,],[6,]),'REGISTER':([0,],[7,]),'$end':([1,3,10,11,12,13,19,20,21,22,23,24,25,26,27,29,30,31,32,33,34,35,36,43,44,45,46,47,63,76,80,81,82,84,90,],[0,-2,-28,-33,-37,-40,-10,-1,-3,-4,-5,-6,-7,-8,-9,-29,-11,-12,-34,-35,-38,-39,-41,-30,-25,-26,-27,-43,-32,-42,-24,-16,-17,-36,-31,]),'ASSIGN':([2,],[8,]),'EQUIPMENT':([4,5,7,11,],[9,12,17,33,]),'RESERVATIONS':([5,6,],[10,14,]),'RESOURCES':([5,],[11,]),'MOBILITY':([5,6,7,],[13,15,18,]),'USER':([7,],[16,]),'NUMBER':([8,10,11,14,15,28,56,57,68,],[21,30,30,30,30,30,30,30,74,]),'FLOAT':([8,68,],[22,73,]),'DATE':([8,77,],[23,81,]),'HOUR':([8,54,66,],[24,60,60,]),'WEEKDAY':([8,],[25,]),'DISHTYPE':([8,],[26,]),'SENSORTYPE':([8,12,40,],[27,34,51,]),'COLON':([9,16,17,18,],[28,39,40,41,]),'FLOOR':([12,],[35,]),'MOBILITY_TYPE':([13,41,],[36,53,]),'ACTIVE':([30,31,37,],[-11,-12,44,]),'COMPLETED':([30,31,37,],[-11,-12,45,]),'CANCELED':([30,31,37,],[-11,-12,46,]),'MOBILITY_STATUS':([30,31,38,],[-11,-12,47,]),'COMMA':([30,31,42,48,49,50,51,52,53,59,60,61,62,64,65,70,71,72,73,74,75,83,86,88,],[-11,-12,54,55,56,57,-22,-23,58,66,-18,-19,67,68,69,77,78,79,-13,-14,-15,85,87,89,]),'STRING':([39,55,58,],[48,62,65,]),'HCID':([40,69,79,],[49,76,84,]),'NIF':([67,],[71,]),'EMAIL':([78,],[83,]),'PASSWORD':([87,],[88,]),'USERTYPE':([89,],[90,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'statement':([0,],[1,]),'instruction':([0,],[3,]),'value':([8,],[16,]),'number_or_var':([24,25,26,45,46,],[30,33,34,54,55,]),'dishtype_or_var':([27,],[35,]),'sensortype_or_var':([29,],[40,]),'hour_or_var':([42,56,],[47,59,]),'date_or_var':([43,65,],[50,67,]),'float_or_var':([58,],[61,]),}
+_lr_goto_items = {'statement':([0,],[1,]),'instruction':([0,],[3,]),'value':([8,],[20,]),'number_or_var':([10,11,14,15,28,56,57,],[29,32,37,38,42,63,64,]),'reservation_status':([37,],[43,]),'sensortype_or_var':([40,],[50,]),'hour_or_var':([54,66,],[59,70,]),'float_or_var':([68,],[72,]),'date_or_var':([77,],[80,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,38 +27,51 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> statement","S'",1,None,None,None),
-  ('statement -> ID ASSIGN value','statement',3,'p_statement_assign','lss.py',207),
-  ('statement -> instruction','statement',1,'p_statement_instruction','lss.py',213),
-  ('value -> NUMBER','value',1,'p_value','lss.py',217),
-  ('value -> FLOAT','value',1,'p_value','lss.py',218),
-  ('value -> DATE','value',1,'p_value','lss.py',219),
-  ('value -> HOUR','value',1,'p_value','lss.py',220),
-  ('value -> WEEKDAY','value',1,'p_value','lss.py',221),
-  ('value -> DISHTYPE','value',1,'p_value','lss.py',222),
-  ('value -> SENSORTYPE','value',1,'p_value','lss.py',223),
-  ('value -> ID','value',1,'p_value','lss.py',224),
-  ('number_or_var -> NUMBER','number_or_var',1,'p_number_or_var','lss.py',229),
-  ('number_or_var -> ID','number_or_var',1,'p_number_or_var','lss.py',230),
-  ('float_or_var -> FLOAT','float_or_var',1,'p_float_or_var','lss.py',234),
-  ('float_or_var -> NUMBER','float_or_var',1,'p_float_or_var','lss.py',235),
-  ('float_or_var -> ID','float_or_var',1,'p_float_or_var','lss.py',236),
-  ('date_or_var -> DATE','date_or_var',1,'p_date_or_var','lss.py',240),
-  ('date_or_var -> ID','date_or_var',1,'p_date_or_var','lss.py',241),
-  ('hour_or_var -> HOUR','hour_or_var',1,'p_hour_or_var','lss.py',245),
-  ('hour_or_var -> ID','hour_or_var',1,'p_hour_or_var','lss.py',246),
-  ('dishtype_or_var -> DISHTYPE','dishtype_or_var',1,'p_dishtype_or_var','lss.py',250),
-  ('dishtype_or_var -> ID','dishtype_or_var',1,'p_dishtype_or_var','lss.py',251),
-  ('sensortype_or_var -> SENSORTYPE','sensortype_or_var',1,'p_sensortype_or_var','lss.py',255),
-  ('sensortype_or_var -> ID','sensortype_or_var',1,'p_sensortype_or_var','lss.py',256),
-  ('instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var','instruction',10,'p_instruction_rent_resource','lss.py',261),
-  ('instruction -> CANCEL EQUIPMENT COLON number_or_var','instruction',4,'p_instruction_cancel_resource','lss.py',278),
-  ('instruction -> BUY MEAL COLON dishtype_or_var COMMA date_or_var','instruction',6,'p_instruction_buy_meal','lss.py',292),
-  ('instruction -> CANCEL MEAL COLON number_or_var','instruction',4,'p_instruction_cancel_meal','lss.py',302),
-  ('instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE','instruction',16,'p_instruction_register_user','lss.py',310),
-  ('instruction -> REGISTER EQUIPMENT COLON ID COMMA number_or_var','instruction',6,'p_instruction_register_resource','lss.py',329),
-  ('instruction -> REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var','instruction',8,'p_instruction_register_sensor','lss.py',345),
-  ('action -> RENT','action',1,'p_action','lss.py',356),
-  ('action -> BUY','action',1,'p_action','lss.py',357),
-  ('action -> REGISTER','action',1,'p_action','lss.py',358),
-  ('action -> CANCEL','action',1,'p_action','lss.py',359),
+  ('statement -> ID ASSIGN value','statement',3,'p_statement_assign','lss.py',443),
+  ('statement -> instruction','statement',1,'p_statement_instruction','lss.py',449),
+  ('value -> NUMBER','value',1,'p_value','lss.py',453),
+  ('value -> FLOAT','value',1,'p_value','lss.py',454),
+  ('value -> DATE','value',1,'p_value','lss.py',455),
+  ('value -> HOUR','value',1,'p_value','lss.py',456),
+  ('value -> WEEKDAY','value',1,'p_value','lss.py',457),
+  ('value -> DISHTYPE','value',1,'p_value','lss.py',458),
+  ('value -> SENSORTYPE','value',1,'p_value','lss.py',459),
+  ('value -> ID','value',1,'p_value','lss.py',460),
+  ('number_or_var -> NUMBER','number_or_var',1,'p_number_or_var','lss.py',465),
+  ('number_or_var -> ID','number_or_var',1,'p_number_or_var','lss.py',466),
+  ('float_or_var -> FLOAT','float_or_var',1,'p_float_or_var','lss.py',470),
+  ('float_or_var -> NUMBER','float_or_var',1,'p_float_or_var','lss.py',471),
+  ('float_or_var -> ID','float_or_var',1,'p_float_or_var','lss.py',472),
+  ('date_or_var -> DATE','date_or_var',1,'p_date_or_var','lss.py',476),
+  ('date_or_var -> ID','date_or_var',1,'p_date_or_var','lss.py',477),
+  ('hour_or_var -> HOUR','hour_or_var',1,'p_hour_or_var','lss.py',481),
+  ('hour_or_var -> ID','hour_or_var',1,'p_hour_or_var','lss.py',482),
+  ('dishtype_or_var -> DISHTYPE','dishtype_or_var',1,'p_dishtype_or_var','lss.py',486),
+  ('dishtype_or_var -> ID','dishtype_or_var',1,'p_dishtype_or_var','lss.py',487),
+  ('sensortype_or_var -> SENSORTYPE','sensortype_or_var',1,'p_sensortype_or_var','lss.py',491),
+  ('sensortype_or_var -> ID','sensortype_or_var',1,'p_sensortype_or_var','lss.py',492),
+  ('instruction -> RENT EQUIPMENT COLON number_or_var COMMA hour_or_var COMMA hour_or_var COMMA date_or_var','instruction',10,'p_instruction_rent_resource','lss.py',497),
+  ('reservation_status -> ACTIVE','reservation_status',1,'p_reservation_status','lss.py',526),
+  ('reservation_status -> COMPLETED','reservation_status',1,'p_reservation_status','lss.py',527),
+  ('reservation_status -> CANCELED','reservation_status',1,'p_reservation_status','lss.py',528),
+  ('instruction -> GET RESERVATIONS','instruction',2,'p_instruction_get_reservations','lss.py',539),
+  ('instruction -> GET RESERVATIONS number_or_var','instruction',3,'p_instruction_get_reservations_by_user','lss.py',551),
+  ('instruction -> UPDATE RESERVATIONS number_or_var reservation_status','instruction',4,'p_instruction_update_reservation','lss.py',563),
+  ('instruction -> REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE','instruction',16,'p_instruction_register_user','lss.py',614),
+  ('instruction -> REGISTER EQUIPMENT COLON HCID COMMA number_or_var','instruction',6,'p_instruction_register_resource','lss.py',634),
+  ('instruction -> GET RESOURCES','instruction',2,'p_instruction_get_resources','lss.py',670),
+  ('instruction -> GET RESOURCES number_or_var','instruction',3,'p_instruction_get_resources_by_floor','lss.py',682),
+  ('instruction -> GET RESOURCES EQUIPMENT','instruction',3,'p_instruction_get_resources_by_type','lss.py',695),
+  ('instruction -> REGISTER EQUIPMENT COLON sensortype_or_var COMMA number_or_var COMMA float_or_var COMMA HCID','instruction',10,'p_instruction_register_sensor','lss.py',718),
+  ('instruction -> GET EQUIPMENT','instruction',2,'p_instruction_get_sensors','lss.py',754),
+  ('instruction -> GET EQUIPMENT SENSORTYPE','instruction',3,'p_instruction_get_sensors_by_type','lss.py',771),
+  ('instruction -> GET EQUIPMENT FLOOR','instruction',3,'p_instruction_get_sensors_by_floor','lss.py',788),
+  ('instruction -> GET MOBILITY','instruction',2,'p_instruction_get_mobility_resources','lss.py',809),
+  ('instruction -> GET MOBILITY MOBILITY_TYPE','instruction',3,'p_instruction_get_mobility_resources_by_type','lss.py',822),
+  ('instruction -> REGISTER MOBILITY COLON MOBILITY_TYPE COMMA STRING COMMA HCID','instruction',8,'p_instruction_register_mobility_resource','lss.py',835),
+  ('instruction -> UPDATE MOBILITY number_or_var MOBILITY_STATUS','instruction',4,'p_instruction_update_mobility_status','lss.py',862),
+  ('action -> RENT','action',1,'p_action','lss.py',880),
+  ('action -> BUY','action',1,'p_action','lss.py',881),
+  ('action -> REGISTER','action',1,'p_action','lss.py',882),
+  ('action -> CANCEL','action',1,'p_action','lss.py',883),
 ]
