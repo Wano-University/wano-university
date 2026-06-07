@@ -3,6 +3,7 @@ import { Trash2, Pencil, Plus, PlusCircle, Check, X, Shield, ShieldAlert, Calend
 import { getAllMobilityResources, registerMobilityResource, updateMobilityStatus, deleteMobilityResource } from '../lib/mobilityResource.js';
 import { createReservation } from '../lib/reservation.js';
 import { ReservationCalendarForm } from '../components/ReservationCalendarForm.jsx';
+import { useTranslation } from "react-i18next";
 
 // Verifica se o user existe e se o tipo é ADMIN
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -13,6 +14,7 @@ export default function Bikes() {
 
   const [reservationTarget, setReservationTarget] = useState(null);
   const [bookingForm, setBookingForm]             = useState({ date: '', startTime: '', endTime: '' });
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadData();
@@ -107,8 +109,8 @@ export default function Bikes() {
             <Bike className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-bold text-primary tracking-tight">Mobility Resources</h4>
-            <h2 className="text-xs text-muted-foreground">Book a bicycle or scooter for your commute!</h2>
+            <h4 className="text-2xl font-bold text-primary tracking-tight">{t('BikeTitle')}</h4>
+            <h2 className="text-xs text-muted-foreground">{t('BikeDesc')}</h2>
           </div>
         </div>
 
@@ -133,7 +135,7 @@ export default function Bikes() {
             onClick={() => setModalState(true)}
             className="text-sm font-bold bg-primary text-primary-foreground px-4 py-2.5 rounded-xl hover:bg-primary/90 transition-all flex items-center gap-2 cursor-pointer"
           >
-            <Plus className="w-4 h-4" /> Register New Vehicle
+            <Plus className="w-4 h-4" /> {t('BikeRegister')}
           </button>
         </div>
       )}
@@ -143,8 +145,8 @@ export default function Bikes() {
           {Object.keys(mobilityPool).length === 0 ? (
             <div className="col-span-full text-center py-12 text-muted-foreground bg-muted/20 rounded-2xl border border-dashed border-border">
               <Bike className="w-8 h-8 mx-auto mb-3 opacity-50" />
-              <p>No bicycles or scooters registered yet.</p>
-              {isAdmin && <p className="text-sm mt-1">Click the "Register New Vehicle" button to add one!</p>}
+              <p>{t('BikeNoReg')}</p>
+              {isAdmin && <p className="text-sm mt-1">{t('BikeClickReg')}</p>}
             </div>
           ) : (
             Object.keys(mobilityPool).map((poolKey) => {
@@ -187,13 +189,13 @@ export default function Bikes() {
                           onClick={() => setModalState(item)}
                           className="px-4 py-2 flex items-center gap-1.5 bg-background/50 hover:bg-muted text-foreground border border-border rounded-lg transition-colors cursor-pointer text-xs font-bold"
                         >
-                          <Pencil className="w-3.5 h-3.5" /> Update Status
+                          <Pencil className="w-3.5 h-3.5" /> {t('BikeUpdate')}
                         </button>
                         <button
                           onClick={(e) => handleDeleteResource(e, item.id)}
                           className="px-4 py-2 flex items-center gap-1.5 bg-background/50 hover:bg-foreground/30 text-foreground border border-border rounded-lg transition-colors cursor-pointer text-xs font-bold"
                         >
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                          <Trash2 className="w-3.5 h-3.5" /> {t('BikeDelete')}
                         </button>
                       </div>
                     ) : (
@@ -202,7 +204,7 @@ export default function Bikes() {
                         onClick={() => openReservationModal(item)}
                         className="px-6 py-2 flex items-center gap-1.5 bg-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer text-xs font-bold"
                       >
-                        <CalendarDays className="w-3.5 h-3.5" /> Reserve
+                        <CalendarDays className="w-3.5 h-3.5" /> {t('BikeReserve')}
                       </button>
                     )}
                   </div>
@@ -236,7 +238,7 @@ export default function Bikes() {
             </button>
 
             <div className="mb-2">
-              <h3 className="text-xl font-black tracking-tight text-primary">Book Vehicle</h3>
+              <h3 className="text-xl font-black tracking-tight text-primary">{t('BikeBVehicle')}</h3>
               <p className="text-sm font-semibold truncate mt-1 capitalize">
                 {reservationTarget.type.toLowerCase()} — {reservationTarget.identifier}
               </p>
@@ -288,7 +290,7 @@ function ResourceForm({ onClose, onSave, initialData }) {
           <div className="flex items-center gap-2 text-primary mb-1">
             <PlusCircle className="w-5 h-5" />
             <h3 className="text-xl font-black tracking-tight">
-              {isEditing ? 'Update Status' : 'Register New'} Vehicle
+              {isEditing ? 'Update Status' : 'Register New'} {t('BikeVehicle')}
             </h3>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -312,21 +314,21 @@ function ResourceForm({ onClose, onSave, initialData }) {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-primary flex items-center gap-1.5">
-                  <Bike className="w-3.5 h-3.5" /> Vehicle Type:
+                  <Bike className="w-3.5 h-3.5" /> {t('BikeVType')}:
                 </label>
                 <select
                   name="type"
                   required
                   className="w-full bg-muted/40 border border-border rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all text-foreground cursor-pointer"
                 >
-                  <option value="BICYCLE">Bicycle</option>
-                  <option value="SCOOTER">Scooter</option>
+                  <option value="BICYCLE">{t('BikeTBike')}</option>
+                  <option value="SCOOTER">{t('BikeTScooter')}</option>
                 </select>
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-primary flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5" /> Identifier:
+                  <Tag className="w-3.5 h-3.5" /> {t('BikeId')}:
                 </label>
                 <input
                   name="identifier"
@@ -339,7 +341,7 @@ function ResourceForm({ onClose, onSave, initialData }) {
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-primary flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5" /> Location Name:
+                <MapPin className="w-3.5 h-3.5" /> {t('BikeLocal')}:
               </label>
               <input
                 name="location"
@@ -352,15 +354,15 @@ function ResourceForm({ onClose, onSave, initialData }) {
 
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-primary flex items-center gap-1.5">
-            Current Status:
+            {t('BikeStatus')}:
           </label>
           <select
             name="status"
             defaultValue={initialData?.status || "FREE"}
             className="w-full bg-muted/40 border border-border rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all text-foreground cursor-pointer"
           >
-            <option value="FREE">ACTIVE</option>
-            <option value="INACTIVE">MAINTENANCE</option>
+            <option value="FREE">{t('BikeSActive')}</option>
+            <option value="INACTIVE">{t('BikeSMaint')}</option>
           </select>
         </div>
 
@@ -370,7 +372,7 @@ function ResourceForm({ onClose, onSave, initialData }) {
             onClick={onClose}
             className="flex-1 py-2.5 bg-muted hover:bg-muted/80 text-foreground font-semibold rounded-xl text-sm transition-all cursor-pointer"
           >
-            Cancel
+            {t('BikeCancel')}
           </button>
           <button
             type="submit"

@@ -5,6 +5,7 @@ import { useTheme } from "@/providers/ThemeProvider"
 import { Card } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight, Download, Zap, Settings, Info, AlertTriangle, Thermometer, Wind } from "lucide-react"
 import { simulateEnergy, updateSensorLimits, getEnergyReport } from "../lib/sensors"
+import { useTranslation } from "react-i18next";
 
 import {
   Chart as ChartJS,
@@ -70,6 +71,7 @@ export default function EnergyConsumptionDashboard() {
   const indexOfFirstSensor = indexOfLastSensor - sensorsPerPage
   const currentSensors = sensors.slice(indexOfFirstSensor, indexOfLastSensor)
   const totalPages = Math.ceil(sensors.length / sensorsPerPage)
+  const { t } = useTranslation();
 
   const handleEditClick = () => {
     if (!selectedSensorId) return
@@ -159,13 +161,13 @@ export default function EnergyConsumptionDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-foreground flex items-center gap-3">
-            <Zap className="w-8 h-8 text-primary" /> Energy Dashboard
+            <Zap className="w-8 h-8 text-primary" /> {t('EnergyDashboardTitle')}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">Real-time consumption and anomaly tracking.</p>
+          <p className="text-muted-foreground mt-1 text-sm">{t('EnergyDashboardDesc')}</p>
         </div>
         {alertsGenerated > 0 && (
           <div className="flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-xl font-bold text-sm border border-destructive/20 cursor-default shadow-sm">
-            <AlertTriangle className="w-4 h-4" /> {alertsGenerated} Active Alert{alertsGenerated !== 1 ? "s" : ""}
+            <AlertTriangle className="w-4 h-4" /> {alertsGenerated} {t('EnergyDashboardAlert')} {alertsGenerated !== 1 ? "s" : ""}
           </div>
         )}
       </div>
@@ -195,11 +197,11 @@ export default function EnergyConsumptionDashboard() {
         <div className="order-2 lg:col-start-8 lg:col-span-5 lg:row-start-1">
           <div className="grid grid-cols-2 gap-4 h-full">
             <Card className="p-6 flex flex-col justify-between h-32 hover:shadow-md transition-all cursor-default">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Load</span>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('EnergyDashboardLoad')}</span>
               <p className="text-3xl font-black text-foreground truncate">{totalPower}</p>
             </Card>
             <Card className="p-6 flex flex-col justify-between h-32 overflow-hidden min-w-0 hover:shadow-md transition-all cursor-default">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Today's Peak</span>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('EnergyDashboardPeak')}</span>
               <div className="min-w-0">
                 <p className="text-2xl font-black text-foreground truncate">{peak?.value ?? 0} W</p>
                 <p className="text-[10px] font-bold uppercase truncate text-muted-foreground mt-1">
@@ -214,12 +216,12 @@ export default function EnergyConsumptionDashboard() {
         <div className="order-3 lg:col-start-8 lg:col-span-5 lg:row-start-2 lg:row-span-2">
           <Card className="p-6 flex flex-col h-full min-h-[350px] hover:shadow-md transition-all cursor-default bg-white">
             <h3 className="text-sm font-bold text-muted-foreground mb-4 flex items-center gap-2">
-              <Zap className="w-4 h-4" /> Today's Average Trend
+              <Zap className="w-4 h-4" /> {t('EnergyDashboardTAvg')}
             </h3>
             {isLoading ? (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">Loading Chart...</div>
+              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">{t('EnergyDashboardLoading')}</div>
             ) : chartData.length === 0 ? (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">No data yet.</div>
+              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">{t('EnergyDashboardData')}</div>
             ) : (
               <div className="w-full h-full min-h-[280px]">
                 <Line key={theme} options={chartOptions} data={chartJsData} />
@@ -269,7 +271,7 @@ export default function EnergyConsumptionDashboard() {
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
-              <span className="text-sm font-bold w-20 text-center">Page {currentPage}</span>
+              <span className="text-sm font-bold w-20 text-center">{t('EnergyDashboardPage')} {currentPage}</span>
               <button
                 onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                 disabled={currentPage === totalPages || totalPages === 0}
@@ -287,7 +289,7 @@ export default function EnergyConsumptionDashboard() {
                 disabled={!selectedSensorId}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm font-bold hover:bg-secondary/80 hover:shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all cursor-pointer"
               >
-                <Settings className="w-4 h-4" /> Edit
+                <Settings className="w-4 h-4" /> {t('EnergyDashboardEdit')}
               </button>
               <button
                 onClick={handleExport}
@@ -312,12 +314,12 @@ export default function EnergyConsumptionDashboard() {
               </div>
               <div>
                 <h3 className="font-black text-lg">Sensor {selectedSensorId}</h3>
-                <p className="text-sm text-muted-foreground">Adjust trigger boundaries.</p>
+                <p className="text-sm text-muted-foreground">{t('EnergyDashboardAdjust')}</p>
               </div>
             </div>
             <div className="space-y-4 mb-8">
               <div>
-                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">Lower Limit (W)</label>
+                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">{t('EnergyDashboardLower')}</label>
                 <input
                   type="number"
                   value={lowerLimitInput}
@@ -327,7 +329,7 @@ export default function EnergyConsumptionDashboard() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">Upper Limit (W)</label>
+                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">{t('EnergyDashboardUpper')}</label>
                 <input
                   type="number"
                   value={upperLimitInput}
@@ -339,10 +341,10 @@ export default function EnergyConsumptionDashboard() {
             </div>
             <div className="flex gap-3">
               <button onClick={handleUpdateLimits} className="flex-1 bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all cursor-pointer">
-                Save
+                {t('EnergyDashboardSave')}
               </button>
               <button onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-muted text-foreground font-bold py-3 rounded-xl hover:bg-muted/80 active:scale-95 transition-all cursor-pointer">
-                Cancel
+                {t('EnergyDashboardCancel')}
               </button>
             </div>
           </Card>
@@ -354,15 +356,15 @@ export default function EnergyConsumptionDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
           <Card className="w-full max-w-sm p-6 border-border shadow-2xl animate-in zoom-in-95">
             <h3 className="font-black text-xl mb-4 flex items-center gap-2">
-              <Info className="w-5 h-5 text-primary" /> Efficiency Tips
+              <Info className="w-5 h-5 text-primary" /> {t('EnergyDashboardInfo')}
             </h3>
             <ul className="space-y-3 mb-6 text-sm text-muted-foreground font-medium">
-              <li className="flex items-start gap-2"><Zap className="w-4 h-4 mt-0.5 text-primary shrink-0" /> Turn off lighting in unoccupied zones.</li>
-              <li className="flex items-start gap-2"><Zap className="w-4 h-4 mt-0.5 text-primary shrink-0" /> Maximize natural light during peak daylight hours.</li>
-              <li className="flex items-start gap-2"><Zap className="w-4 h-4 mt-0.5 text-primary shrink-0" /> Unplug unused lab equipment to prevent phantom load.</li>
+              <li className="flex items-start gap-2"><Zap className="w-4 h-4 mt-0.5 text-primary shrink-0" /> {t('EnergyDashboardInfoTip1')}</li>
+              <li className="flex items-start gap-2"><Zap className="w-4 h-4 mt-0.5 text-primary shrink-0" /> {t('EnergyDashboardInfoTip2')}</li>
+              <li className="flex items-start gap-2"><Zap className="w-4 h-4 mt-0.5 text-primary shrink-0" /> {t('EnergyDashboardInfoTip3')}</li>
             </ul>
             <button onClick={() => setIsInfoModalOpen(false)} className="w-full bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all cursor-pointer">
-              Close
+              {t('EnergyDashboardClose')}
             </button>
           </Card>
         </div>

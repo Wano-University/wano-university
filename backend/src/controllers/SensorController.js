@@ -2,7 +2,20 @@ import prisma from '../config/db.js';
 
 export const registerSensor = async (req, res) => {
   try {
-    const { type, floor, space, upperLimit, lowerLimit, isActive, xCoordinates, yCoordinates, UnityMeasure } = req.body;
+    const { type, floor, space, upperLimit, lowerLimit, isActive, xCoordinates, yCoordinates} = req.body;
+
+    let UnityMeasure = "";
+    switch (type) {
+      case 'TEMPERATURE':
+        UnityMeasure = 'ºC';
+        break;
+      case 'ENERGY_CONSUMPTION':
+        UnityMeasure = 'W';
+        break;
+      case 'AIR_QUALITY':
+        UnityMeasure = 'AQI';
+        break;
+    }
 
     const existingSensor = await prisma.sensor.findFirst({
       where: {

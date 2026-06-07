@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom"
 import { useTheme } from "../providers/ThemeProvider"
 import { Card } from "../components/ui/card"
 import { ArrowLeft, ArrowRight, Download, Thermometer, Settings, Info, AlertTriangle, Zap, Wind } from "lucide-react"
-// FIX 1: Imported getTemperatureTrend
 import { simulateTemperature, updateTemperatureLimits, getTemperatureReport, getTemperatureTrend } from "../lib/sensors"
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip as ChartTooltip, Filler } from 'chart.js';
 import { Line } from 'react-chartjs-2';
@@ -17,9 +16,9 @@ const SIMULATE_KEY = "temperature-simulate"
 const TREND_KEY = "temperature-trend"
 
 const SENSOR_TABS = [
-  { key: "energy", label: "Energy", icon: Zap, path: "/energydashboard" },
-  { key: "temperature", label: "Temperature", icon: Thermometer, path: "/temperaturedashboard" },
-  { key: "air", label: "Air Quality", icon: Wind, path: "/airqualitydashboard" },
+  { key: "energy", label: "DashboardTitleEnergy", icon: Zap, path: "/energydashboard" },
+  { key: "temperature", label: "DashboardTitleTemp", icon: Thermometer, path: "/temperaturedashboard" },
+  { key: "air", label: "DashboardTitleAir", icon: Wind, path: "/airqualitydashboard" },
 ]
 
 // FIX 3: Replaced the generic "fetcher" with the two specific fetchers
@@ -154,13 +153,13 @@ export default function TemperatureDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-foreground flex items-center gap-3">
-            <Thermometer className="w-8 h-8 text-primary" /> Temperature Dashboard
+            <Thermometer className="w-8 h-8 text-primary" /> {t('TempDashTitle')}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">Real-time thermal monitoring and climate control.</p>
+          <p className="text-muted-foreground mt-1 text-sm">{t('TempDashDesc')}</p>
         </div>
         {alertsGenerated > 0 && (
           <div className="flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-xl font-bold text-sm border border-destructive/20 cursor-default shadow-sm">
-            <AlertTriangle className="w-4 h-4" /> {alertsGenerated} Active Alert{alertsGenerated !== 1 ? "s" : ""}
+            <AlertTriangle className="w-4 h-4" /> {alertsGenerated} {t('TempDashAA')}{alertsGenerated !== 1 ? "s" : ""}
           </div>
         )}
       </div>
@@ -180,7 +179,7 @@ export default function TemperatureDashboard() {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
               >
-                <Icon className="w-4 h-4" /> {label}
+                <Icon className="w-4 h-4" /> {t(label)}
               </button>
             ))}
           </div>
@@ -210,12 +209,12 @@ export default function TemperatureDashboard() {
         <div className="order-3 lg:col-start-8 lg:col-span-5 lg:row-start-2 lg:row-span-2">
           <Card className="p-6 flex flex-col h-full min-h-[350px] hover:shadow-md transition-all cursor-default bg-white">
             <h3 className="text-sm font-bold text-muted-foreground mb-4 flex items-center gap-2">
-              <Thermometer className="w-4 h-4" /> Recent Temperature Trend
+              <Thermometer className="w-4 h-4" /> {t('TempDashRecent')}
             </h3>
             {trendLoading ? (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">Loading Chart...</div>
+              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">{t('TempDashLoading')}</div>
             ) : chartData.length === 0 ? (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">No data yet.</div>
+              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">{t('TempDashNoData')}</div>
             ) : (
               <div className="w-full h-full min-h-[280px]">
                 <Line key={theme} options={chartOptions} data={chartJsData} />
@@ -268,7 +267,7 @@ export default function TemperatureDashboard() {
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
-              <span className="text-sm font-bold w-20 text-center">Page {currentPage}</span>
+              <span className="text-sm font-bold w-20 text-center">{t('TempDashPage')} {currentPage}</span>
               <button
                 onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                 disabled={currentPage === totalPages || totalPages === 0}
@@ -286,14 +285,14 @@ export default function TemperatureDashboard() {
                 disabled={!selectedSensorId}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm font-bold hover:bg-secondary/80 hover:shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all cursor-pointer"
               >
-                <Settings className="w-4 h-4" /> Edit
+                <Settings className="w-4 h-4" /> {t('TempDashEdit')}
               </button>
               <button
                 onClick={handleExport}
                 disabled={isExporting}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 hover:shadow-md active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all cursor-pointer"
               >
-                <Download className="w-4 h-4" /> {isExporting ? "Exporting..." : "Export"}
+                <Download className="w-4 h-4" /> {isExporting ? t('TempDashExporting') : t('TempDashExport')}
               </button>
             </div>
           </div>
@@ -311,12 +310,12 @@ export default function TemperatureDashboard() {
               </div>
               <div>
                 <h3 className="font-black text-lg">Sensor {selectedSensorId}</h3>
-                <p className="text-sm text-muted-foreground">Adjust trigger boundaries (°C).</p>
+                <p className="text-sm text-muted-foreground">{t('TempDashboardAdjust')}</p>
               </div>
             </div>
             <div className="space-y-4 mb-8">
               <div>
-                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">Lower Limit (°C)</label>
+                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">{t('TempDashboardLower')}</label>
                 <input
                   type="number"
                   value={lowerLimitInput}
@@ -326,7 +325,7 @@ export default function TemperatureDashboard() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">Upper Limit (°C)</label>
+                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">{t('TempDashboardUpper')}</label>
                 <input
                   type="number"
                   value={upperLimitInput}
@@ -338,10 +337,10 @@ export default function TemperatureDashboard() {
             </div>
             <div className="flex gap-3">
               <button onClick={handleUpdateLimits} className="flex-1 bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all cursor-pointer">
-                Save
+                {t('TempDashSave')}
               </button>
               <button onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-muted text-foreground font-bold py-3 rounded-xl hover:bg-muted/80 active:scale-95 transition-all cursor-pointer">
-                Cancel
+                {t('TempDashEditN')}
               </button>
             </div>
           </Card>
@@ -353,15 +352,15 @@ export default function TemperatureDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
           <Card className="w-full max-w-sm p-6 border-border shadow-2xl animate-in zoom-in-95">
             <h3 className="font-black text-xl mb-4 flex items-center gap-2">
-              <Info className="w-5 h-5 text-primary" /> Thermal Efficiency Tips
+              <Info className="w-5 h-5 text-primary" /> {t('TempDashInfo')}
             </h3>
             <ul className="space-y-3 mb-6 text-sm text-muted-foreground font-medium">
-              <li className="flex items-start gap-2"><Thermometer className="w-4 h-4 mt-0.5 text-primary shrink-0" /> Optimal server room temperature is between 18°C and 27°C.</li>
-              <li className="flex items-start gap-2"><Thermometer className="w-4 h-4 mt-0.5 text-primary shrink-0" /> Avoid placing temperature sensors directly under HVAC vents to prevent skewed readings.</li>
-              <li className="flex items-start gap-2"><Thermometer className="w-4 h-4 mt-0.5 text-primary shrink-0" /> Set up automated alerts for any spikes above 28°C to protect sensitive equipment.</li>
+              <li className="flex items-start gap-2"><Thermometer className="w-4 h-4 mt-0.5 text-primary shrink-0" />{t('TempDashTip1')}</li>
+              <li className="flex items-start gap-2"><Thermometer className="w-4 h-4 mt-0.5 text-primary shrink-0" />{t('TempDashTip2')}</li>
+              <li className="flex items-start gap-2"><Thermometer className="w-4 h-4 mt-0.5 text-primary shrink-0" />{t('TempDashTip3')}</li>
             </ul>
             <button onClick={() => setIsInfoModalOpen(false)} className="w-full bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all cursor-pointer">
-              Close
+              {t('TempDashClose')}
             </button>
           </Card>
         </div>

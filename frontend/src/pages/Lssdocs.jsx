@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Terminal, ChevronRight, BookOpen, Cpu, Wifi, Users, Calendar, Bike, Info } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const sections = [
   {
@@ -10,7 +11,7 @@ const sections = [
     color: "nika",
     commands: [
       {
-        title: "Register a Resource",
+        title: 'LSSRR',
         syntax: "register [type] : [Space ID], [capacity]",
         examples: [
           "register room : F1_R1, 10",
@@ -18,17 +19,17 @@ const sections = [
         ],
       },
       {
-        title: "Get All Resources",
+        title: 'LSSGR',
         syntax: "get resources",
         examples: ["get resources"],
       },
       {
-        title: "Get Resources by Floor",
+        title: 'LSSGRF',
         syntax: "get resources [floor]",
         examples: ["get resources 1", "get resources 2"],
       },
       {
-        title: "Get Resources by Type",
+        title: 'LSSGRT',
         syntax: "get resources [type]",
         examples: ["get resources room", "get resources lab"],
       },
@@ -41,7 +42,7 @@ const sections = [
     color: "surgeon",
     commands: [
       {
-        title: "Register a Sensor",
+        title: 'LSSRS',
         syntax: "register sensor : [type], [resourceId], [alertLimit], [Space ID]",
         examples: [
           "register sensor : temperature, 3, 36.5, F1_R1",
@@ -49,12 +50,12 @@ const sections = [
         ],
       },
       {
-        title: "Get All Sensors",
+        title: 'LSSGAS',
         syntax: "get sensor",
         examples: ["get sensor"],
       },
       {
-        title: "Get Sensors by Type",
+        title: 'LSSGST',
         syntax: "get sensor [type]",
         examples: [
           "get sensor temperature",
@@ -64,7 +65,7 @@ const sections = [
         ],
       },
       {
-        title: "Get Sensors by Floor",
+        title: 'LSSGSF',
         syntax: "get sensor [FLOOR]",
         examples: ["get sensor FLOOR_1", "get sensor FLOOR_2"],
       },
@@ -77,22 +78,22 @@ const sections = [
     color: "fire",
     commands: [
       {
-        title: "Create a Reservation",
+        title: 'LSSCR',
         syntax: "rent [type] : [resourceId], [startHour], [endHour], [date]",
         examples: ["rent room : 3, 09:00, 11:00, 01/06/2025"],
       },
       {
-        title: "Get All Reservations",
+        title: 'LSSGAR',
         syntax: "get reservations",
         examples: ["get reservations"],
       },
       {
-        title: "Get Reservations by User",
+        title: 'LSSGRU',
         syntax: "get reservations [userId]",
         examples: ["get reservations 4"],
       },
       {
-        title: "Update Reservation Status",
+        title: 'LSSURS',
         syntax: "update reservations [id] [status]",
         examples: [
           "update reservations 1 active",
@@ -109,7 +110,7 @@ const sections = [
     color: "tanuki",
     commands: [
       {
-        title: "Register a Mobility Resource",
+        title: 'LSSRMR',
         syntax: 'register mobility : [type], "[identifier]", [Space ID]',
         examples: [
           'register mobility : scooter, "SC-001", F1_R1',
@@ -118,12 +119,12 @@ const sections = [
         ],
       },
       {
-        title: "Get All Mobility Resources",
+        title: 'LSSGAMR',
         syntax: "get mobility",
         examples: ["get mobility"],
       },
       {
-        title: "Get Mobility by Type",
+        title: 'LSSGMT',
         syntax: "get mobility [type]",
         examples: [
           "get mobility scooter",
@@ -132,7 +133,7 @@ const sections = [
         ],
       },
       {
-        title: "Update Mobility Status",
+        title: 'LSSUMS',
         syntax: "update mobility [id] [status]",
         examples: [
           "update mobility 1 free",
@@ -149,7 +150,7 @@ const sections = [
     color: "swordsman",
     commands: [
       {
-        title: "Register a User",
+        title: 'LSSRU',
         syntax: 'register user : "[name]", "[address]", [nif], [email], [login], [password], [type]',
         examples: [
           'register user : "John Doe", "123 Street", 123456789, john@email.com, johndoe, Password1, regular',
@@ -161,16 +162,16 @@ const sections = [
 ];
 
 const notes = [
-  { label: "Date format", value: "DD/MM/YYYY" },
-  { label: "Hour format", value: "HH:00 or HH:30 only" },
-  { label: "Space ID format", value: "F1_R1 → F1_R83, F2_R1 → F2_R13" },
-  { label: "Strings", value: 'Must be wrapped in double quotes: "like this"' },
-  { label: "NIF", value: "Exactly 9 digits" },
-  { label: "Password", value: "Min 8 chars, at least one uppercase and one lowercase" },
-  { label: "User types", value: "admin, regular" },
-  { label: "Mobility types", value: "scooter, bicycle, parking_spot" },
-  { label: "Mobility statuses", value: "free, occupied, inactive" },
-  { label: "Sensor types", value: "temperature, energy, air_quality, occupancy" },
+  { label: 'LSSLblDate', value: "DD/MM/YYYY" },
+  { label: 'LSSLblHour', value: "HH:00 or HH:30 only" },
+  { label: 'LSSLblSpace', value: "F1_R1 → F1_R83, F2_R1 → F2_R13" },
+  { label: 'LSSLblString', value: 'Must be wrapped in double quotes: "like this"' },
+  { label: 'LSSLblNIF', value: "Exactly 9 digits" },
+  { label: 'LSSLblPass', value: "Min 8 chars, at least one uppercase and one lowercase" },
+  { label: 'LSSLblUType', value: "admin, regular" },
+  { label: 'LSSLblMType', value: "scooter, bicycle, parking_spot" },
+  { label: 'LSSLblMStatus', value: "free, occupied, inactive" },
+  { label: 'LSSLblSType', value: "temperature, energy, air_quality, occupancy" },
 ];
 
 const variables = [
@@ -182,6 +183,7 @@ const variables = [
 
 export default function LssDocs() {
   const [activeSection, setActiveSection] = useState("resources");
+  const { t } = useTranslation();
 
   const current = sections.find((s) => s.id === activeSection);
 
@@ -193,8 +195,8 @@ export default function LssDocs() {
           <BookOpen className="w-6 h-6" />
         </div>
         <div>
-          <h4 className="text-2xl font-bold text-primary tracking-tight">LSS Language Documentation</h4>
-          <p className="text-xs text-muted-foreground">Command reference for the LSS grammar</p>
+          <h4 className="text-2xl font-bold text-primary tracking-tight">{t('LSSTitle')}</h4>
+          <p className="text-xs text-muted-foreground">{t('LSSDesc')}</p>
         </div>
       </div>
 
@@ -231,7 +233,7 @@ export default function LssDocs() {
               }`}
           >
             <Terminal className="w-4 h-4 shrink-0" />
-            Variables
+            {t('LSSVariables')}
             {activeSection === "variables" && <ChevronRight className="w-4 h-4 ml-auto" />}
           </button>
 
@@ -245,7 +247,7 @@ export default function LssDocs() {
               }`}
           >
             <Info className="w-4 h-4 shrink-0" />
-            Notes
+            {t('LSSNotes')}
             {activeSection === "notes" && <ChevronRight className="w-4 h-4 ml-auto" />}
           </button>
         </div>
@@ -255,13 +257,13 @@ export default function LssDocs() {
           {activeSection === "notes" && (
             <Card className="p-6 rounded-3xl border border-border shadow-xl space-y-4">
               <h3 className="text-lg font-black tracking-tight text-foreground flex items-center gap-2">
-                <Info className="w-5 h-5 text-primary" /> Notes & Constraints
+                <Info className="w-5 h-5 text-primary" /> {t('LSSNCons')}
               </h3>
               <div className="divide-y divide-border">
                 {notes.map((n) => (
                   <div key={n.label} className="flex items-start gap-4 py-3">
                     <span className="text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full shrink-0 border border-primary/20">
-                      {n.label}
+                      {t(n.label)}
                     </span>
                     <code className="text-sm text-foreground/80 font-mono">{n.value}</code>
                   </div>
@@ -273,10 +275,10 @@ export default function LssDocs() {
           {activeSection === "variables" && (
             <Card className="p-6 rounded-3xl border border-border shadow-xl space-y-4">
               <h3 className="text-lg font-black tracking-tight text-foreground flex items-center gap-2">
-                <Terminal className="w-5 h-5 text-primary" /> Variables
+                <Terminal className="w-5 h-5 text-primary" /> {t('LSSVariables')}
               </h3>
               <p className="text-sm text-muted-foreground">
-                You can assign values to variables and reuse them in commands.
+                {t('LSSAssign')}
               </p>
               <div className="bg-muted/40 rounded-2xl p-4 border border-border">
                 {variables.map((v, i) => (
@@ -291,12 +293,12 @@ export default function LssDocs() {
 
           {current && current.commands.map((cmd) => (
             <Card key={cmd.title} className="p-6 rounded-3xl border border-border shadow-xl space-y-4">
-              <h3 className="text-lg font-black tracking-tight text-foreground">{cmd.title}</h3>
+              <h3 className="text-lg font-black tracking-tight text-foreground">{t(cmd.title)}</h3>
 
               {/* Syntax */}
               <div>
                 <span className="text-xs uppercase font-extrabold tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20 inline-block mb-2">
-                  Syntax
+                  {t('LSSSyntax')}
                 </span>
                 <div className="bg-muted/40 rounded-2xl px-4 py-3 border border-border">
                   <code className="text-sm font-mono text-foreground">{cmd.syntax}</code>
@@ -306,7 +308,7 @@ export default function LssDocs() {
               {/* Examples */}
               <div>
                 <span className="text-xs uppercase font-extrabold tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20 inline-block mb-2">
-                  Examples
+                  {t('LSSExamples')}
                 </span>
                 <div className="bg-muted/40 rounded-2xl px-4 py-3 border border-border space-y-1">
                   {cmd.examples.map((ex, i) => (
