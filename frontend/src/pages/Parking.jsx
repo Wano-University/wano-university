@@ -120,24 +120,24 @@ const HARDCODED_SPACES = [
 ];
 
 const getResourceIcon = (status, isRegistered) => {
-  let colorVar, statusClass;
+  let bgColor, statusClass;
 
   if (!isRegistered) {
-    colorVar = 'var(--muted-foreground)';
+    bgColor = '#6b7280';               // gray-500 — unregistered
     statusClass = 'opacity-80 border-dashed animate-pulse';
   } else {
     switch (status) {
       case 'FREE':
-        colorVar = 'var(--swordsman-color)';
+        bgColor = '#22c55e';           // green
         statusClass = '';
         break;
       case 'OCCUPIED':
-        colorVar = 'var(--meat)';  // red — matches your existing color system
+        bgColor = '#ef4444';           // red
         statusClass = '';
         break;
       case 'INACTIVE':
       default:
-        colorVar = 'var(--muted-foreground)';
+        bgColor = 'var(--muted-foreground)';           // gray
         statusClass = 'opacity-80 border-dashed';
         break;
     }
@@ -146,13 +146,22 @@ const getResourceIcon = (status, isRegistered) => {
   return L.divIcon({
     className: 'custom-resource-icon',
     html: `
-      <div class="flex items-center justify-center w-5 h-5 rounded-xl border-2 border-primary-foreground shadow-lg transition-all ${statusClass}"
-           style="background-color: ${colorVar}; color: var(--primary-foreground);">
-        <svg .../>
+      <div class="flex items-center justify-center w-5 h-5 rounded-xl border-2 border-white/80 shadow-lg transition-all ${statusClass}"
+           style="background-color: ${bgColor}; color:white ;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+          <circle cx="7" cy="17" r="2"/>
+          <path d="M9 17h6"/>
+          <circle cx="17" cy="17" r="2"/>
+        </svg>
       </div>`,
-    iconSize: [20, 20], iconAnchor: [18, 18], popupAnchor: [0, -16],
+    iconSize: [20, 20],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -16],
   });
 };
+
+const simulateAndFetch = () => simulateParkingOccupancy();
 
 export default function InteractiveMap() {
   const {
@@ -315,7 +324,13 @@ const handleRegisterResource = async (e, space) => {
                                   <strong className="block text-sm font-bold text-foreground">{space.dbData.identifier}</strong>
                                   <span className="text-[11px] text-muted-foreground/80 capitalize">{space.dbData.type?.toLowerCase()}</span>
                                 </div>
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold text-swordsman/80 bg-swordsman/10">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  space.dbData.status === 'FREE'
+                                    ? 'text-green-600 bg-green-100'
+                                    : space.dbData.status === 'OCCUPIED'
+                                    ? 'text-red-500 bg-red-100'
+                                    : 'text-muted-foreground bg-muted'
+                                }`}>
                                   {space.dbData.status}
                                 </span>
                               </div>
