@@ -70,6 +70,10 @@ tokens = [
     'FLOOR',
     'HCID'
 ] + list(reserved.values())
+t_COLON  = r':'
+t_COMMA  = r','
+t_ASSIGN = r'='
+
 
 
 HARDCODED_PARKING_SPACES = {
@@ -210,7 +214,7 @@ def reservations_to_text(reservations):
 
         lines.append(
             f"Reservation {r['id']} — User {r['userId']} "
-            f"({start} → {end}), status {r.get('status', 'ACTIVE')}."
+            f"({start} -> {end}), status {r.get('status', 'ACTIVE')}."
         )
 
     return "\n".join(lines)
@@ -275,7 +279,7 @@ def t_STRING(t):
     return t
 
 def t_USERTYPE(t):
-    r'[Aa]dmin|[Rr]egular'
+    r'[Aa]dmin|[Ss](tudent|taff)|[Tt]eacher'
     return t
 
 #def t_MEAL(t):
@@ -423,16 +427,13 @@ def t_NUMBER(t):
     return t
 
 
-t_COLON  = r':'
-t_COMMA  = r','
-t_ASSIGN = r'='
-
 def t_error(t):
     print(f"Illegal character '{t.value[0]}'")
     t.lexer.skip(1)
 
 
 def resolveVariable(name):
+
     if name not in variables:
         print(f"Semantic error: undefined variable '{name}'")
         return None
@@ -506,7 +507,7 @@ def p_instruction_rent_resource(p):
     end_hour    = p[8]
     date        = p[10]
 
-    start_dt = f"{date}T{start_hour}:00"  # ISO format for new Date() in JS
+    start_dt = f"{date}T{start_hour}:00"  
     end_dt   = f"{date}T{end_hour}:00"
 
     payload = {
@@ -519,7 +520,7 @@ def p_instruction_rent_resource(p):
     response = requests.post(
         f"{API_URL}/api/reservations/",
         json=payload,
-        headers=get_headers()  # token carries userId, Node extracts it
+        headers=get_headers()  
     )
 
     data = response.json()
@@ -546,8 +547,9 @@ def p_instruction_get_reservations(p):
 
     response = requests.get(
             f"{API_URL}/api/reservations/",
-            headers=get_headers()  # token carries userId, Node extracts it
-        )
+            headers=get_headers()
+            )
+
     if(response.status_code == 200):
         p[0] = reservations_to_text(response.json())
         return
@@ -557,7 +559,7 @@ def p_instruction_get_reservations_by_user(p):
     '''instruction : GET RESERVATIONS number_or_var'''
     response = requests.get(
             f"{API_URL}/api/reservations/user/{p[3]}",
-            headers=get_headers()  # token carries userId, Node extracts it
+            headers=get_headers()  
         )
     if(response.status_code == 200):
         p[0] = reservations_to_text(response.json())
@@ -574,7 +576,7 @@ def p_instruction_update_reservation(p):
     response = requests.patch(
             f"{API_URL}/api/reservations/{p[3]}",
             json=status,
-            headers=get_headers()  # token carries userId, Node extracts it
+            headers=get_headers()  
         )
     if(response.status_code == 200):
         p[0] = "Update successfull" 
@@ -633,12 +635,7 @@ def p_instruction_register_user(p):
         json=p[0],
         headers=get_headers()
     )
-    if(response.status_code == 201):
-        p[0]="Success: " ,response.status_code
-    else:
-        p[0] = "Failed to create user" + response.text
-    print(response)
-
+    
 #RESOURCES
 def p_instruction_register_resource(p):
     '''instruction :  REGISTER EQUIPMENT COLON HCID COMMA number_or_var'''
@@ -663,7 +660,12 @@ def p_instruction_register_resource(p):
         json=resource,
         headers=get_headers()
     )
-    print(response.json())
+    if(response.status_code == 201):
+            p[0]="Success: " ,response.status_code
+    else:
+            p[0] = "Failed to create resource" + response.text
+    print(response)
+
 def p_instruction_get_resources(p):
     '''instruction : GET RESOURCES'''
     response = requests.get(
@@ -671,7 +673,11 @@ def p_instruction_get_resources(p):
                 headers=get_headers()
                 )
 
-    p[0] = resources_to_text(response.json())
+
+    if(response.status_code == 200):
+        p[0] = resources_to_text(response.json())
+    else: 
+        p[0] = "Failed to get resources"
     print(resources_to_text(response.json()))
 
 
@@ -686,7 +692,10 @@ def p_instruction_get_resources_by_floor(p):
                 headers=get_headers()
                 )
 
-    p[0] = resources_to_text(response.json())
+    if(response.status_code == 200):
+        p[0] = resources_to_text(response.json())
+    else:
+        p[0] = "Failed to get resources by floor"
     print(resources_to_text(response.json()))
 
 def p_instruction_get_resources_by_type(p):
@@ -708,8 +717,10 @@ def p_instruction_get_resources_by_type(p):
     if isinstance(data, str):
         p[0] = data
         return
-
-    p[0] = resources_to_text(data)
+    if(response.status_code == 200):
+        p[0] = resources_to_text(response.json())
+    else:
+        p[0] = "Failed to get resources by floor"
 
 #SENSORS
 def p_instruction_register_sensor(p):
