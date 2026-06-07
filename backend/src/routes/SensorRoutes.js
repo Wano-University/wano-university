@@ -23,4 +23,8 @@ router.get('/:id/readings',verifyToken,requireRole(['ADMIN','STAFF']), getReadin
 //router.get('/floor/:floor', verifyToken, requireRole(['ADMIN', 'STAFF']), checkPermission('VER_DASHBOARD_TEMPERATURA'), getSensorsByfloor);
 //router.get('/data/alerts', verifyToken, requireRole(['ADMIN', 'STAFF']), checkPermission('GERIR_SENSOR_TEMPERATURA'), getAllAlerts);
 
+router.get('/',verifyToken, requireRole(['STAFF']), getAllActiveSensors);
+router.get('/floor/:floor',verifyToken, requireRole(['STAFF']), getAllActiveSensorsByFloor);
+router.get('/type/:type',verifyToken, requireRole(['STAFF']), getAllActiveSensorsByType);
+
 export default router;
