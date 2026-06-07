@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom"
 import { useTheme } from "../providers/ThemeProvider"
 import { Card } from "../components/ui/card"
 import { ArrowLeft, ArrowRight, Download, Thermometer, Settings, Info, AlertTriangle, Zap, Wind } from "lucide-react"
-// FIX 1: Imported getTemperatureTrend
 import { simulateTemperature, updateTemperatureLimits, getTemperatureReport, getTemperatureTrend } from "../lib/sensors"
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip as ChartTooltip, Filler } from 'chart.js';
 import { Line } from 'react-chartjs-2';
