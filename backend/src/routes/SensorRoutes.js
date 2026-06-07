@@ -1,25 +1,37 @@
 import { Router } from 'express';
-import { registerSensor, sensorStatus, getSensorsByfloor, getAllSensors, getSensorsByType, getAlerts,  getReadings, getAllAlerts,  getAllReadings,getAllActiveSensors,getAllActiveSensorsByFloor,getAllActiveSensorsByType} from '../controllers/SensorController.js';
-import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMiddleware.js';
+import {
+  registerSensor,
+  sensorStatus,
+  getSensorsByfloor,
+  getAllSensors,
+  getSensorsByType,
+  getAlerts,
+  getReadings,
+  getAllAlerts,
+  getAllReadings,
+  getAllActiveSensors,
+  getAllActiveSensorsByFloor,
+  getAllActiveSensorsByType
+} from '../controllers/SensorController.js';
+import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
 const router = Router();
 
-router.get('/',verifyToken, requireRole(['ADMIN','STAFF']), getAllSensors);
+router.get('/', verifyToken, requireRole(['ADMIN', 'STAFF']), getAllSensors);
 router.post('/', verifyToken, requireRole(['ADMIN']), registerSensor);
+router.patch('/:id', verifyToken, requireRole(['ADMIN']), sensorStatus);
 
-router.get('/floor/:floor',verifyToken,requireRole(['ADMIN','STAFF']), getSensorsByfloor);
-router.get('/type/:type',verifyToken, requireRole(['ADMIN','STAFF']), getSensorsByType);
+router.get('/floor/:floor', verifyToken, requireRole(['ADMIN', 'STAFF']), getSensorsByfloor);
+router.get('/type/:type', verifyToken, requireRole(['ADMIN', 'STAFF']), getSensorsByType);
 
-router.get('/data/alerts',verifyToken,requireRole(['ADMIN','STAFF']), getAllAlerts);
-router.get('/data/readings',verifyToken,requireRole(['ADMIN','STAFF']), getAllReadings);
+router.get('/active/all', verifyToken, requireRole(['ADMIN', 'STAFF']), getAllActiveSensors);
+router.get('/active/floor/:floor', verifyToken, requireRole(['ADMIN', 'STAFF']), getAllActiveSensorsByFloor);
+router.get('/active/type/:type', verifyToken, requireRole(['ADMIN', 'STAFF']), getAllActiveSensorsByType);
 
-router.patch('/:id', verifyToken,requireRole(['ADMIN']), sensorStatus);
-router.get('/:id/alerts',verifyToken,requireRole(['ADMIN','STAFF']), getAlerts);
-router.get('/:id/readings',verifyToken,requireRole(['ADMIN','STAFF']), getReadings);
+router.get('/data/alerts', verifyToken, requireRole(['ADMIN', 'STAFF']), getAllAlerts);
+router.get('/data/readings', verifyToken, requireRole(['ADMIN', 'STAFF']), getAllReadings);
 
-
-router.get('/',verifyToken, requireRole(['STAFF']), getAllActiveSensors);
-router.get('/floor/:floor',verifyToken, requireRole(['STAFF']), getAllActiveSensorsByFloor);
-router.get('/type/:type',verifyToken, requireRole(['STAFF']), getAllActiveSensorsByType);
+router.get('/:id/alerts', verifyToken, requireRole(['ADMIN', 'STAFF']), getAlerts);
+router.get('/:id/readings', verifyToken, requireRole(['ADMIN', 'STAFF']), getReadings);
 
 export default router;

@@ -4,10 +4,11 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^1.16.0",
     "motion": "^12.40.0",
+    "node-cron": "^4.2.1",
     "react-leaflet": "^5.0.0",
     "react-stripe": "^0.1.0",
+    "recharts": "^3.8.1",
     "stripe": "^22.2.0",
-    "node-cron": "^4.2.1",
     "swr": "^2.4.1"
   }
 }

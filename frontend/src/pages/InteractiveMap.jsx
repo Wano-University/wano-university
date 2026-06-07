@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { MapContainer, ImageOverlay, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {Thermometer, Zap, Wind, Users, Layers, Wrench, Settings, Filter, Power, AlertTriangle } from 'lucide-react';
-import { getSensorsByFloor, registerSensor, updateSensorStatus} from '../lib/sensor.js'; 
+import { useTranslation } from "react-i18next";
+
+import { Thermometer, Zap, Wind, Users, Layers, Wrench, Settings, Filter, Power, AlertTriangle } from 'lucide-react';
+import { getSensorsByFloor, registerSensor, updateSensorStatus } from '../lib/sensors.js';
 
 const bounds = [[0, 0], [1100, 2000]];
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -13,6 +16,7 @@ const getSensorIcon = (type, isActive) => {
   let colorVar = 'var(--foreground)';
   let iconHtml = '';
   const activeClass = isActive ? '' : 'opacity-40 grayscale';
+
 
   switch (type) {
     case 'TEMPERATURE':
@@ -53,7 +57,7 @@ function MapTracker({ clickedCoords, setPixelCoords }) {
       setPixelCoords({ x: point.x, y: point.y });
     };
 
-    updatePosition(); 
+    updatePosition();
     map.on('zoom', updatePosition);
     map.on('move', updatePosition);
 
@@ -71,10 +75,12 @@ export default function InteractiveMap() {
   const [filteredSensors, setFilteredSensors] = useState([]);
   const [currentFloor, setCurrentFloor] = useState('FLOOR_1');
   const [selectedTypeFilter, setSelectedTypeFilter] = useState('ALL');
-  
+
   const [clickedCoords, setClickedCoords] = useState(null);
   const [pixelCoords, setPixelCoords] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
+  const { t } = useTranslation();
+
   
   const [formData, setFormData] = useState({
     type: 'TEMPERATURE',
@@ -88,7 +94,7 @@ export default function InteractiveMap() {
       setSensors(data || []);
     } catch (error) {
       console.error("Failed to load sensors from database:", error);
-      setSensors([]); 
+      setSensors([]);
     }
   };
 
@@ -122,7 +128,7 @@ export default function InteractiveMap() {
 
   const handleRegisterSensor = async (e) => {
     e.preventDefault();
-    
+
     const newSensorPayload = {
       type: formData.type,
       floor: currentFloor,
@@ -136,7 +142,7 @@ export default function InteractiveMap() {
     try {
       const savedSensor = await registerSensor(newSensorPayload);
       setSensors([...sensors, savedSensor]);
-      
+
       closeForm();
       setFormData({ type: 'TEMPERATURE', space: '', alertLimit: '' });
     } catch (err) {
@@ -150,9 +156,9 @@ export default function InteractiveMap() {
       click(e) {
         const clickedX = Math.round(e.latlng.lng);
         const clickedY = Math.round(e.latlng.lat);
-        
-        const existingNode = sensors.find(s => 
-          Math.abs(s.xCoordinates - clickedX) < 25 && 
+
+        const existingNode = sensors.find(s =>
+          Math.abs(s.xCoordinates - clickedX) < 25 &&
           Math.abs(s.yCoordinates - clickedY) < 25 &&
           (s.floor || 'FLOOR_1') === currentFloor
         );
@@ -170,15 +176,15 @@ export default function InteractiveMap() {
 
   return (
     <section className="py-12 max-w-400 mx-auto px-6 space-y-6">
-      
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-primary-foreground">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">Wano University Spaces Map</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">{t('IMapTitle')}</h1>
           <p className="text-sm text-muted-foreground/80">
-            Review real-time sensor distribution.
+            {t('IMapDesc')}
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3 mt-4 md:mt-0">
           {isAdmin && (
   <button
@@ -190,17 +196,15 @@ export default function InteractiveMap() {
           >
 
             <Settings size={16} />
-
             Admin Panel
-
           </button>
 )}
         </div>
       </div>
 
-    {/* Map container */}
+      {/* Map container */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
+
         <div className="lg:col-span-8 bg-primary-foreground p-4 rounded-3xl border border-muted-foreground/20 shadow-xl relative overflow-hidden min-h-150 lg:50">
           <div className="relative w-full h-full">
             <MapContainer
@@ -211,9 +215,9 @@ export default function InteractiveMap() {
               style={{ width: '100%', height: '100%', minHeight: '600px', backgroundColor: 'transparent' }}
               className="rounded-2xl z-10 border border-primary-foreground shadow-sm"
             >
-              <ImageOverlay 
-                url={currentFloor === 'FLOOR_1' ? '/floor1.png' : '/floor2.png'} 
-                bounds={bounds} 
+              <ImageOverlay
+                url={currentFloor === 'FLOOR_1' ? '/floor1.png' : '/floor2.png'}
+                bounds={bounds}
               />
 
               <MapEventsHandler />
@@ -221,8 +225,8 @@ export default function InteractiveMap() {
 
               {/* Existing sensors */}
               {filteredSensors.map((sensor) => (
-                <Marker 
-                  key={sensor.id} 
+                <Marker
+                  key={sensor.id}
                   position={[sensor.yCoordinates, sensor.xCoordinates]}
                   icon={getSensorIcon(sensor.type, sensor.isActive)}
                 >
@@ -238,12 +242,12 @@ export default function InteractiveMap() {
                       </div>
 
                       <div className="text-xs space-y-1.5">
-                        <p><span className="font-semibold text-muted-foreground">Class Type:</span> {sensor.type}</p>
-                        <p><span className="font-semibold text-muted-foreground">Alert Threshold:</span> {sensor.alertLimit}</p>
-                        <p><span className="font-semibold text-muted-foreground">Coordinates:</span> X:{sensor.xCoordinates} | Y:{sensor.yCoordinates}</p>
+                        <p><span className="font-semibold text-muted-foreground">{t('IMapClassType')}:</span> {sensor.type}</p>
+                        <p><span className="font-semibold text-muted-foreground">{t('IMapAlert')}:</span> {sensor.alertLimit}</p>
+                        <p><span className="font-semibold text-muted-foreground">{t('IMapCoords')}:</span> X:{sensor.xCoordinates} | Y:{sensor.yCoordinates}</p>
                         
                         <div className="pt-2 flex items-center justify-between border-t border-muted-foreground/20 mt-2">
-                          <span className="text-[11px] text-muted-foreground">Toggle Operations State:</span>
+                          <span className="text-[11px] text-muted-foreground">{t('IMapOpState')}:</span>
                           <button
                             type="button"
                             onClick={() => handleToggleActive(sensor.id, sensor.isActive)}
@@ -261,27 +265,27 @@ export default function InteractiveMap() {
 
             {/* Register sensor*/}
             {isRegistering && clickedCoords && pixelCoords && (
-              <div 
+              <div
                 className="absolute bg-primary-foreground shadow-xl rounded-xl border border-muted-foreground/20 z-1000 transition-all duration-100"
                 style={{
                   left: pixelCoords.x,
                   top: pixelCoords.y,
-                  transform: 'translate(-50%, -100%)', 
-                  marginTop: '-15px', 
+                  transform: 'translate(-50%, -100%)',
+                  marginTop: '-15px',
                 }}
-                onClick={(e) => e.stopPropagation()} 
+                onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-2 w-64">
                   <form onSubmit={handleRegisterSensor} className="font-sans space-y-3">
                     <div className="flex justify-between items-start border-b pb-2">
                       <div>
-                        <h3 className="text-sm font-bold text-foreground/80">New Sensor</h3>
+                        <h3 className="text-sm font-bold text-foreground/80">{t('IMapNewSensor')}</h3>
                         <span className="text-[10px] font-mono px-1.5 py-0.5 bg-background rounded text-muted-foreground block mt-0.5 w-max">
                           X: {clickedCoords.x} | Y: {clickedCoords.y}
                         </span>
                       </div>
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         onClick={closeForm}
                         className="text-muted-foreground hover:text-foreground p-1"
                       >
@@ -290,45 +294,46 @@ export default function InteractiveMap() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">Type</label>
+                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapType')}</label>
                       <select 
                         value={formData.type}
-                        onChange={(e) => setFormData({...formData, type: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                         className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
                       >
-                        <option value="TEMPERATURE">Temperature</option>
-                        <option value="ENERGY_CONSUMPTION">Energy consumption</option>
-                        <option value="AIR_QUALITY">Air quality</option>
+                        <option value="TEMPERATURE">{t('IMapTemp')}</option>
+                        <option value="ENERGY_CONSUMPTION">{t('IMapEnergy')}</option>
+                        <option value="AIR_QUALITY">{t('IMapAir')}</option>
+                        <option value="OCCUPANCY">{t('IMapOccup')}</option>
                       </select>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">Location</label>
+                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapLocal')}</label>
                       <input 
                         type="text" 
                         value={formData.space}
-                        onChange={(e) => setFormData({...formData, space: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, space: e.target.value })}
                         className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
                         required
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">Trigger limit</label>
+                      <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapTrigger')}</label>
                       <input 
                         type="number" 
                         value={formData.alertLimit}
-                        onChange={(e) => setFormData({...formData, alertLimit: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, alertLimit: e.target.value })}
                         className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
                         required
                       />
                     </div>
 
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="w-full mt-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm"
                     >
-                      Save to database
+                      {t('IMapSaveDB')}
                     </button>
                   </form>
                 </div>
@@ -337,12 +342,12 @@ export default function InteractiveMap() {
           </div>
         </div>
 
-      {/* Floor change */}
+        {/* Floor change */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-primary-foreground p-5 rounded-3xl border border-primary-foreground shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Layers size={14} />
-              Floor Navigation
+              {t('IMapFloorNav')}
             </h2>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -350,32 +355,32 @@ export default function InteractiveMap() {
                 onClick={() => setCurrentFloor('FLOOR_1')}
                 className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                Floor 01 
+                {t('IMapFloor1')} 
               </button>
               <button
                 type="button"
                 onClick={() => setCurrentFloor('FLOOR_2')}
                 className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                Floor 02 
+                {t('IMapFloor2')}
               </button>
             </div>
           </div>
 
-        {/* Filter */}
+          {/* Filter */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-primary-foreground shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Filter size={14} />
-              Filter by type
+              {t('IMapFilter')}
             </h2>
-            
+
             <div className="flex flex-col gap-1.5">
               <button
                 type="button"
                 onClick={() => setSelectedTypeFilter('ALL')}
                 className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground border-foreground text-primary-foreground' : 'bg-muted-foreground/10 border-primary-foreground text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                <span>All Sensors</span>
+                <span>{t('IMapActiveS')}</span>
                 <span className="px-2 py-0.5 rounded bg-primary-foreground/80 text-muted-foreground text-[10px] font-bold">
                   {sensors.filter(s => (s.floor || 'FLOOR_1') === currentFloor).length}
                 </span>
@@ -388,7 +393,7 @@ export default function InteractiveMap() {
                 style={selectedTypeFilter === 'TEMPERATURE' ? { backgroundColor: 'var(--fire-color)' } : {}}
               >
                 <Thermometer size={16} style={selectedTypeFilter === 'TEMPERATURE' ? {color: 'primary-foreground'} : {color: 'var(--fire-color)'}} />
-                <span>Temperature</span>
+                <span>{t('IMapFTemp')}</span>
               </button>
 
               <button
@@ -398,7 +403,7 @@ export default function InteractiveMap() {
                 style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? { backgroundColor: 'var(--nika-color)' } : {}}
               >
                 <Zap size={16} style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? {color: 'primary-foreground'} : {color: 'var(--nika-color)'}} />
-                <span>Energy Consumption</span>
+                <span>{t('IMapFEC')}</span>
               </button>
 
               <button
@@ -408,7 +413,17 @@ export default function InteractiveMap() {
                 style={selectedTypeFilter === 'AIR_QUALITY' ? { backgroundColor: 'var(--surgeon-color)' } : {}}
               >
                 <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? {color: 'primary-foreground'} : {color: 'var(--surgeon-color)'}} />
-                <span>Air Quality</span>
+                <span>{t('IMapFAQ')}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedTypeFilter('OCCUPANCY')}
+                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'OCCUPANCY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
+                style={selectedTypeFilter === 'OCCUPANCY' ? { backgroundColor: 'var(--swordsman-color)' } : {}}
+              >
+                <Users size={16} style={selectedTypeFilter === 'OCCUPANCY' ? {color: 'primary-foreground'} : {color: 'var(--swordsman-color)'}} />
+                <span>{t('IMapFOcc')}</span>
               </button>
             </div>
           </div>
@@ -416,7 +431,7 @@ export default function InteractiveMap() {
           <div className="p-4 bg-muted-foreground/10 border border-muted-foreground/60 text-muted-foreground/60 rounded-2xl flex gap-3 text-xs leading-relaxed">
             <AlertTriangle className="shrink-0 text-muted-foreground" size={18} />
             <p>
-              <strong>Deployment Hint:</strong> Click directly anywhere on the map layout to register or visualize sensor data.
+              <strong>{t('IMapDH')}:</strong> {t('IMapDHDesc')}
             </p>
           </div>
 

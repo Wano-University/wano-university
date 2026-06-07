@@ -14,6 +14,10 @@ import StaffHome from './pages/StaffHome';
 import StudentHome from './pages/StudentHome';
 import AdminHome from './pages/AdminHome';
 import Equipments from './pages/Equipments';
+import TemperatureDashboard from './pages/TemperatureDashboard';
+import AirQualityDashboard from './pages/AirQualityDashboard';
+import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
+import NotFound from './components/NotFound';
 import Parking from './pages/Parking';
 import Bikes from './pages/Bikes';
 import ForgotPassword from './pages/ForgotPassword';
@@ -25,13 +29,10 @@ import Unauthorized from './pages/Unauthorized';
 import NoPerms from './pages/NoPerms';
 
 import MyReservations from './pages/MyReservations';
-import TemperatureDashboard from './pages/TemperatureDashboard';
-import AirQualityDashboard from './pages/AirQualityDashboard';
-import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
+import LssDocs from './pages/Lssdocs';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
-import NotFound from './components/NotFound';
-import Footer from './components/Footer';
 import ValidateReservation from './pages/ValidateReservation';
+import './i18n';
 
 function RootLayout() {
   return (
@@ -44,7 +45,6 @@ function RootLayout() {
           <main className="flex-1">
             <Outlet />
           </main>
-          <Footer />
         </div>
       </TerminalProvider>
     </ThemeProvider>
@@ -58,21 +58,23 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/lssdocs" element={<LssDocs />} />
         <Route path="/changepw" element={<ForgotPassword />} />
         <Route path="/spaces" element={<Spaces />} />
         <Route path="/parking" element={<Parking />} />
-        <Route path='/bikes' element={<Bikes/>}/>
+        <Route path='/bikes' element={<Bikes />} />
 
         <Route path="/home" element={<HomeRedirection />} />
 
         <Route path="/cafeteria" element={<ProtectedRoute requiredPermission="VER_EMENTA_COMPRAS"> <Cafeteria /> </ProtectedRoute>} />
+        <Route path="/lssdocs" element={<ProtectedRoute> <LssDocs /> </ProtectedRoute>} />
         <Route path="/equipments" element={<ProtectedRoute> <Equipments /> </ProtectedRoute>} />
 
         <Route path="/tickets" element={<ProtectedRoute> <MyTickets /> </ProtectedRoute>} />
         <Route path="/changepassword" element={<ProtectedRoute> <ChangePassword /> </ProtectedRoute>} />
 
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminHome /> </ProtectedRoute>} />
-<Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']} requiredPermission="GERIR_USERS"> <AdminUsers /> </ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']} requiredPermission="GERIR_USERS"> <AdminUsers /> </ProtectedRoute>} />
 
         <Route path="/staff" element={<ProtectedRoute allowedRoles={['STAFF']}> <StaffHome /> </ProtectedRoute>} />
         <Route path="/validate-ticket/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateTicket /> </ProtectedRoute>} />
@@ -90,6 +92,7 @@ export default function App() {
         <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_CONSUMO_ENERGETICO"> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/NoPerms" element={<NoPerms />} />
+
 
         <Route path="*" element={<NotFound />} />
       </Route>

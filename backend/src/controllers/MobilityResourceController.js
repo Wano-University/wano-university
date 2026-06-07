@@ -123,3 +123,31 @@ export const deleteMobilityResource = async (req, res) => {
     res.status(400).json({ error: "Failed to delete resource." });
   }
 };
+
+export const simulateParkingOccupancy = async (req, res) => {
+  try {
+    const activeSpots = await prisma.mobilityResource.findMany({
+      where: {
+        type: 'PARKING_SPOT',
+        NOT: { status: 'INACTIVE' }, 
+      },
+    });
+
+    await prisma.$transaction(
+      activeSpots.map(spot =>
+        prisma.mobilityResource.update({
+          where: { id: spot.id },
+          data: { status: Math.random() > 0.45 ? 'FREE' : 'OCCUPIED' },
+        })
+      )
+    );
+
+    const all = await prisma.mobilityResource.findMany({
+      include: { sensor: true, reservations: true },
+    });
+    res.status(200).json(all);
+  } catch (error) {
+    console.error('Error simulating parking occupancy:', error);
+    res.status(500).json({ error: 'Failed to simulate occupancy.' });
+  }
+};

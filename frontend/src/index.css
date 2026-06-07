@@ -194,6 +194,352 @@
   --color-ramen: var(--ramen-color);
 }
 
+.pink {
+  /* Neutral / Base Tones (Kept as is) */
+  --background: oklch(0.9564 0.0094 279.6878);
+  --foreground: oklch(0.65 0.22 350);
+  --card: oklch(0.9886 0.0026 286.3515);
+  --card-foreground: oklch(48.659% 0.1794 351.913);
+  --popover: oklch(0.9886 0.0026 286.3515);
+  --popover-foreground: oklch(44.246% 0.15836 350.794);
+  --muted: oklch(0.9309 0.0134 286.1359);
+  --muted-foreground: oklch(67.948% 0.19503 348.452);
+  --border: oklch(0.8695 0.0357 287.3978);
+  --input: oklch(0.9113 0.0244 283.3633);
+
+  /* Pink Accents (Light Mode) */
+  --primary: oklch(0.65 0.22 350);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.92 0.08 350);
+  --secondary-foreground: oklch(0.4 0.15 350);
+  --accent: oklch(0.90 0.12 350);
+  --accent-foreground: oklch(0.35 0.15 350);
+  --destructive: oklch(0.6 0.25 20);
+  --destructive-foreground: oklch(1 0 0);
+  --ring: oklch(0.65 0.22 350);
+  
+  /* Charts */
+  --chart-1: oklch(0.65 0.22 350);
+  --chart-2: oklch(0.70 0.18 340);
+  --chart-3: oklch(0.75 0.15 330);
+  --chart-4: oklch(0.80 0.12 320);
+  --chart-5: oklch(0.85 0.08 310);
+
+  /* Sidebar */
+  --sidebar: oklch(0.95 0.02 350);
+  --sidebar-foreground: oklch(0.22 0.05 350);
+  --sidebar-primary: oklch(0.65 0.22 350);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.90 0.12 350);
+  --sidebar-accent-foreground: oklch(0.35 0.15 350);
+  --sidebar-border: oklch(0.86 0.03 350);
+  --sidebar-ring: oklch(0.65 0.22 350);
+
+  /* Typography & Layout */
+  --font-sans: Poppins, ui-sans-serif, sans-serif, system-ui;
+  --font-serif: Courier New, monospace;
+  --font-mono: JetBrains Mono, ui-monospace, monospace;
+  --radius: 0.85rem;
+
+  /* Shadows (Tinged with Pink) */
+  --shadow-color: #9e0033;
+  --shadow-2xs: 1px 1px 2px 0px hsl(350 100% 30% / 0.07);
+  --shadow-xs: 1px 1px 2px 0px hsl(350 100% 30% / 0.07);
+  --shadow-sm: 1px 1px 2px 0px hsl(350 100% 30% / 0.15), 1px 1px 2px -1px hsl(350 100% 30% / 0.15);
+  --shadow: 1px 1px 2px 0px hsl(350 100% 30% / 0.15), 1px 1px 2px -1px hsl(350 100% 30% / 0.15);
+  --shadow-md: 1px 1px 2px 0px hsl(350 100% 30% / 0.15), 1px 2px 4px -1px hsl(350 100% 30% / 0.15);
+  --shadow-lg: 1px 1px 2px 0px hsl(350 100% 30% / 0.15), 1px 4px 6px -1px hsl(350 100% 30% / 0.15);
+  --shadow-xl: 1px 1px 2px 0px hsl(350 100% 30% / 0.15), 1px 8px 10px -1px hsl(350 100% 30% / 0.15);
+  --shadow-2xl: 1px 1px 2px 0px hsl(350 100% 30% / 0.38);
+
+  /* Custom Color Mapping */
+  --nika-color: oklch(0.65 0.22 340);    
+  --surgeon-color: oklch(0.60 0.16 220);   
+  --fire-color: oklch(0.65 0.24 45);     
+  --ohara-color: oklch(0.55 0.14 280);     
+  --tanuki-color: oklch(0.68 0.19 140);
+  --meat-color: oklch(0.60 0.20 28);      
+  --swordsman-color: oklch(0.62 0.16 155); 
+  --chef-color: oklch(0.58 0.15 250);     
+  --navigator-color: oklch(0.66 0.21 70);  
+  --ramen-color: oklch(0.55 0.15 300);
+}
+
+.darkPink {
+  /* Neutral / Base Tones (Kept as is) */
+  --background: oklch(0.2288 0.0505 275.0895);
+  --foreground: oklch(0.8907 0.0339 259.4174);
+  --card: oklch(0.2314 0.0488 273.4668);
+  --card-foreground: oklch(0.8907 0.0339 259.4174);
+  --popover: oklch(0.2314 0.0488 273.4668);
+  --popover-foreground: oklch(0.8907 0.0339 259.4174);
+  --muted: oklch(0.2799 0.0722 272.2376);
+  --muted-foreground: oklch(0.6708 0.0752 258.3229);
+  --border: oklch(0.3633 0.0980 269.7136);
+  --input: oklch(0.3633 0.0980 269.7136);
+
+  /* Pink Accents (Dark Mode) */
+  --primary: oklch(0.75 0.12 350);
+  --primary-foreground: oklch(0.2 0.05 350);
+  --secondary: oklch(0.35 0.08 350);
+  --secondary-foreground: oklch(0.85 0.05 350);
+  --accent: oklch(0.35 0.08 350);
+  --accent-foreground: oklch(0.9 0.05 350);
+  --destructive: oklch(0.7 0.15 20);
+  --destructive-foreground: oklch(0.95 0 0);
+  --ring: oklch(0.75 0.12 350);
+
+  /* Charts */
+  --chart-1: oklch(0.75 0.12 350);
+  --chart-2: oklch(0.65 0.10 340);
+  --chart-3: oklch(0.55 0.08 330);
+  --chart-4: oklch(0.45 0.06 320);
+  --chart-5: oklch(0.35 0.04 310);
+
+  /* Sidebar */
+  --sidebar: oklch(0.23 0.05 350);
+  --sidebar-foreground: oklch(0.9 0.03 350);
+  --sidebar-primary: oklch(0.75 0.12 350);
+  --sidebar-primary-foreground: oklch(0.2 0.05 350);
+  --sidebar-accent: oklch(0.35 0.08 350);
+  --sidebar-accent-foreground: oklch(0.9 0.05 350);
+  --sidebar-border: oklch(0.35 0.08 350);
+  --sidebar-ring: oklch(0.75 0.12 350);
+
+  /* Shadows (Tinged with Pink) */
+  --shadow-color: #620020;
+  --shadow-2xs: 1px 1px 10px 0px hsl(350 100% 50% / 0.22);
+  --shadow-xs: 1px 1px 10px 0px hsl(350 100% 50% / 0.22);
+  --shadow-sm: 1px 1px 10px 0px hsl(350 100% 50% / 0.44), 1px 1px 2px -1px hsl(350 100% 50% / 0.44);
+  --shadow: 1px 1px 10px 0px hsl(350 100% 50% / 0.44), 1px 1px 2px -1px hsl(350 100% 50% / 0.44);
+  --shadow-md: 1px 1px 10px 0px hsl(350 100% 50% / 0.44), 1px 2px 4px -1px hsl(350 100% 50% / 0.44);
+  --shadow-lg: 1px 1px 10px 0px hsl(350 100% 50% / 0.44), 1px 4px 6px -1px hsl(350 100% 50% / 0.44);
+  --shadow-xl: 1px 1px 10px 0px hsl(350 100% 50% / 0.44), 1px 8px 10px -1px hsl(350 100% 50% / 0.44);
+  --shadow-2xl: 1px 1px 10px 0px hsl(350 100% 50% / 1.10);
+
+  /* Custom Color Mapping */
+  --nika-color: oklch(0.48 0.16 340);      
+  --surgeon-color: oklch(0.45 0.12 220);   
+  --fire-color: oklch(0.48 0.18 45);       
+  --ohara-color: oklch(0.42 0.10 280);     
+  --tanuki-color: oklch(0.48 0.13 140);
+  --meat-color: oklch(0.46 0.15 28);       
+  --swordsman-color: oklch(0.45 0.11 155); 
+  --chef-color: oklch(0.44 0.12 250);     
+  --navigator-color: oklch(0.48 0.15 70);  
+  --ramen-color: oklch(0.42 0.11 300);
+}
+
+.teal {
+  /* Teal-infused Neutrals (Light Mode) */
+  --background: oklch(0.96 0.01 190);
+  --foreground: oklch(0.20 0.05 190);
+  --card: oklch(0.98 0.005 190);
+  --card-foreground: oklch(0.20 0.05 190);
+  --popover: oklch(0.98 0.005 190);
+  --popover-foreground: oklch(0.20 0.05 190);
+  
+  /* Teal Accents */
+  --primary: oklch(0.60 0.18 185);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.90 0.03 190);
+  --secondary-foreground: oklch(0.30 0.08 190);
+  --muted: oklch(0.92 0.02 190);
+  --muted-foreground: oklch(0.40 0.06 190);
+  --accent: oklch(0.85 0.05 190);
+  --accent-foreground: oklch(0.25 0.06 190);
+  --destructive: oklch(0.60 0.18 30);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.85 0.03 190);
+  --input: oklch(0.90 0.02 190);
+  --ring: oklch(0.60 0.18 185);
+
+  /* Teal Chart Palette */
+  --chart-1: oklch(0.60 0.18 185);
+  --chart-2: oklch(0.65 0.15 175);
+  --chart-3: oklch(0.70 0.12 165);
+  --chart-4: oklch(0.75 0.10 155);
+  --chart-5: oklch(0.80 0.08 145);
+
+  /* Teal Sidebar */
+  --sidebar: oklch(0.94 0.02 190);
+  --sidebar-foreground: oklch(0.20 0.05 190);
+  --sidebar-primary: oklch(0.60 0.18 185);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.85 0.05 190);
+  --sidebar-accent-foreground: oklch(0.25 0.06 190);
+  --sidebar-border: oklch(0.85 0.03 190);
+  --sidebar-ring: oklch(0.60 0.18 185);
+
+  /* Fonts */
+  --font-sans: Poppins, ui-sans-serif, sans-serif, system-ui;
+  --font-serif: Courier New, monospace;
+  --font-mono: JetBrains Mono, ui-monospace, monospace;
+  --radius: 0.85rem;
+
+  /* Teal Tinted Shadows */
+  --shadow-color: #004d5a;
+  --shadow-2xs: 1px 1px 2px 0px hsl(185 100% 15% / 0.07);
+  --shadow-xs: 1px 1px 2px 0px hsl(185 100% 15% / 0.07);
+  --shadow-sm: 1px 1px 2px 0px hsl(185 100% 15% / 0.15), 1px 1px 2px -1px hsl(185 100% 15% / 0.15);
+  --shadow: 1px 1px 2px 0px hsl(185 100% 15% / 0.15), 1px 1px 2px -1px hsl(185 100% 15% / 0.15);
+  --shadow-md: 1px 1px 2px 0px hsl(185 100% 15% / 0.15), 1px 2px 4px -1px hsl(185 100% 15% / 0.15);
+  --shadow-lg: 1px 1px 2px 0px hsl(185 100% 15% / 0.15), 1px 4px 6px -1px hsl(185 100% 15% / 0.15);
+  --shadow-xl: 1px 1px 2px 0px hsl(185 100% 15% / 0.15), 1px 8px 10px -1px hsl(185 100% 15% / 0.15);
+  --shadow-2xl: 1px 1px 2px 0px hsl(185 100% 15% / 0.38);
+
+  /* Character Palette (Teal Edition) */
+  --nika-color: oklch(0.65 0.22 340);    
+  --surgeon-color: oklch(0.60 0.16 220);   
+  --fire-color: oklch(0.65 0.24 45);     
+  --ohara-color: oklch(0.55 0.14 280);     
+  --tanuki-color: oklch(0.68 0.19 140);
+  --meat-color: oklch(0.60 0.20 28);      
+  --swordsman-color: oklch(0.62 0.16 155); 
+  --chef-color: oklch(0.58 0.15 250);     
+  --navigator-color: oklch(0.66 0.21 70);  
+  --ramen-color: oklch(0.55 0.15 300);
+}
+
+.darkTeal {
+  /* Teal-infused Neutrals (Dark Mode) */
+  --background: oklch(0.20 0.04 190);
+  --foreground: oklch(0.90 0.03 190);
+  --card: oklch(0.22 0.04 190);
+  --card-foreground: oklch(0.90 0.03 190);
+  --popover: oklch(0.22 0.04 190);
+  --popover-foreground: oklch(0.90 0.03 190);
+  
+  /* Teal Accents */
+  --primary: oklch(0.75 0.12 185);
+  --primary-foreground: oklch(0.20 0.04 190);
+  --secondary: oklch(0.35 0.05 190);
+  --secondary-foreground: oklch(0.90 0.03 190);
+  --muted: oklch(0.28 0.04 190);
+  --muted-foreground: oklch(0.65 0.04 190);
+  --accent: oklch(0.35 0.05 190);
+  --accent-foreground: oklch(0.90 0.03 190);
+  --destructive: oklch(0.70 0.12 30);
+  --destructive-foreground: oklch(0.95 0 0);
+  --border: oklch(0.35 0.05 190);
+  --input: oklch(0.35 0.05 190);
+  --ring: oklch(0.75 0.12 185);
+
+  /* Teal Chart Palette */
+  --chart-1: oklch(0.75 0.12 185);
+  --chart-2: oklch(0.65 0.10 175);
+  --chart-3: oklch(0.55 0.08 165);
+  --chart-4: oklch(0.45 0.06 155);
+  --chart-5: oklch(0.35 0.04 145);
+
+  /* Teal Sidebar */
+  --sidebar: oklch(0.20 0.04 190);
+  --sidebar-foreground: oklch(0.90 0.03 190);
+  --sidebar-primary: oklch(0.75 0.12 185);
+  --sidebar-primary-foreground: oklch(0.20 0.04 190);
+  --sidebar-accent: oklch(0.35 0.05 190);
+  --sidebar-accent-foreground: oklch(0.90 0.03 190);
+  --sidebar-border: oklch(0.35 0.05 190);
+  --sidebar-ring: oklch(0.75 0.12 185);
+
+  /* Shadows (Tinged with Teal) */
+  --shadow-color: #002d35;
+  --shadow-2xs: 1px 1px 10px 0px hsl(185 100% 50% / 0.22);
+  --shadow-xs: 1px 1px 10px 0px hsl(185 100% 50% / 0.22);
+  --shadow-sm: 1px 1px 10px 0px hsl(185 100% 50% / 0.44), 1px 1px 2px -1px hsl(185 100% 50% / 0.44);
+  --shadow: 1px 1px 10px 0px hsl(185 100% 50% / 0.44), 1px 1px 2px -1px hsl(185 100% 50% / 0.44);
+  --shadow-md: 1px 1px 10px 0px hsl(185 100% 50% / 0.44), 1px 2px 4px -1px hsl(185 100% 50% / 0.44);
+  --shadow-lg: 1px 1px 10px 0px hsl(185 100% 50% / 0.44), 1px 4px 6px -1px hsl(185 100% 50% / 0.44);
+  --shadow-xl: 1px 1px 10px 0px hsl(185 100% 50% / 0.44), 1px 8px 10px -1px hsl(185 100% 50% / 0.44);
+  --shadow-2xl: 1px 1px 10px 0px hsl(185 100% 50% / 1.10);
+
+  /* Character Palette (Teal Edition) */
+  --nika-color: oklch(0.48 0.16 340);      
+  --surgeon-color: oklch(0.45 0.12 220);   
+  --fire-color: oklch(0.48 0.18 45);       
+  --ohara-color: oklch(0.42 0.10 280);     
+  --tanuki-color: oklch(0.48 0.13 140);
+  --meat-color: oklch(0.46 0.15 28);       
+  --swordsman-color: oklch(0.45 0.11 155); 
+  --chef-color: oklch(0.44 0.12 250);     
+  --navigator-color: oklch(0.48 0.15 70);  
+  --ramen-color: oklch(0.42 0.11 300);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+
+  --color-nika: var(--nika-color);
+  --color-surgeon: var(--surgeon-color);
+  --color-fire: var(--fire-color);
+  --color-ohara: var(--ohara-color);
+  --color-tanuki: var(--tanuki-color);
+  --color-meat: var(--meat-color);
+  --color-swordsman: var(--swordsman-color);
+  --color-chef: var(--chef-color);
+  --color-navigator: var(--navigator-color);
+  --color-ramen: var(--ramen-color);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

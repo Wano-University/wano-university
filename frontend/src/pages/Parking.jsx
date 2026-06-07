@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { MapContainer, ImageOverlay, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Settings, AlertTriangle, ShieldAlert, Bike } from 'lucide-react';
-import { registerMobilityResource, getAllMobilityResources, updateMobilityStatus } from '../lib/mobilityResource.js';
+import { registerMobilityResource, getAllMobilityResources, updateMobilityStatus, simulateParkingOccupancy } from '../lib/mobilityResource.js';
 import { Link } from "react-router-dom"
 
 const bounds = [[0, 0], [1100, 2000]];
@@ -121,35 +122,54 @@ const HARDCODED_SPACES = [
 ];
 
 const getResourceIcon = (status, isRegistered) => {
-  const isDisplayActive = isRegistered && status === 'FREE';
-  
-  const colorVar = isDisplayActive ? ' var(--swordsman-color)' : 'var(--muted-foreground)';
-  const statusClass = isDisplayActive
-    ? ''
-    : 'opacity-80 border-dashed animate-pulse';
+  let colorVar, statusClass;
+
+  if (!isRegistered) {
+    colorVar = 'var(--muted-foreground)';
+    statusClass = 'opacity-80 border-dashed animate-pulse';
+  } else {
+    switch (status) {
+      case 'FREE':
+        colorVar = 'var(--swordsman-color)';
+        statusClass = '';
+        break;
+      case 'OCCUPIED':
+        colorVar = 'var(--meat)';  // red — matches your existing color system
+        statusClass = '';
+        break;
+      case 'INACTIVE':
+      default:
+        colorVar = 'var(--muted-foreground)';
+        statusClass = 'opacity-80 border-dashed';
+        break;
+    }
+  }
 
   return L.divIcon({
     className: 'custom-resource-icon',
     html: `
-      <div class="flex items-center justify-center w-5 h-5 rounded-xl border-2 border-primary-foreground shadow-lg transition-all ${statusClass}" style="background-color: ${colorVar}; color: var(--primary-foreground);">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-car">
-          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-          <circle cx="7" cy="17" r="2"/>
-          <path d="M9 17h6"/>
-          <circle cx="17" cy="17" r="2"/>
-        </svg>
-      </div>
-    `,
-    iconSize: [20, 20], iconAnchor: [18, 18],popupAnchor: [0, -16]
+      <div class="flex items-center justify-center w-5 h-5 rounded-xl border-2 border-primary-foreground shadow-lg transition-all ${statusClass}"
+           style="background-color: ${colorVar}; color: var(--primary-foreground);">
+        <svg .../>
+      </div>`,
+    iconSize: [20, 20], iconAnchor: [18, 18], popupAnchor: [0, -16],
   });
 };
 
 export default function InteractiveMap() {
-  const [resources, setResources] = useState([]);
+  const {
+    data: resources = [],
+    error: swrError,
+    mutate,
+  } = useSWR('parking-resources', simulateAndFetch, {
+    refreshInterval: 25000,    
+    revalidateOnFocus: false,   
+  });
+
   const [displayLayout, setDisplayLayout] = useState([]);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [resourceForm, setResourceForm] = useState({ status: 'FREE', identifier: '' });
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState(swrError?.message || '');
 
   const fetchResources = async () => {
     try {
@@ -190,32 +210,33 @@ export default function InteractiveMap() {
     setErrorMessage('');
   };
 
-  const handleRegisterResource = async (e, space) => {
+const handleRegisterResource = async (e, space) => {
     e.preventDefault();
     setErrorMessage('');
     try {
-      const saved = await registerMobilityResource({
+      await registerMobilityResource({
         type: 'PARKING_SPOT',
         identifier: resourceForm.identifier,
         status: resourceForm.status,
         xCoordinates: space.x,
         yCoordinates: space.y,
       });
-      setResources(prev => [...prev, saved]);
-      alert("Space activated successfully!");
+      mutate(); 
+      alert('Space activated successfully!');
     } catch (err) {
-      setErrorMessage(err.message || "Failed to save resource.");
+      setErrorMessage(err.message || 'Failed to save resource.');
     }
   };
+
 
   const handleStatusChange = async (id, newStatus) => {
     setErrorMessage('');
     try {
       await updateMobilityStatus(id, newStatus);
-      await fetchResources();
-      alert("Parking status updated successfully!");
+      mutate(); // same here
+      alert('Parking status updated successfully!');
     } catch (err) {
-      setErrorMessage(err.message || "Failed to update status.");
+      setErrorMessage(err.message || 'Failed to update status.');
     }
   };
 

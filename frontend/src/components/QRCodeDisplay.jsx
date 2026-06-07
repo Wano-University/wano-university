@@ -3,13 +3,13 @@ import { QrCode } from 'lucide-react';
 
 export default function QRCodeDisplay({ url, title = "Scan to Validate" }) {
   return (
-    <div className="flex flex-col items-center justify-center p-6 bg-white rounded-3xl shadow-sm border border-border">
+    <div className="flex flex-col items-center justify-center p-6 bg-primary-foreground rounded-3xl shadow-sm border border-border">
       <div className="flex items-center gap-2 mb-6 text-foreground">
         <QrCode className="w-5 h-5" />
         <span className="font-bold text-sm tracking-tight">{title}</span>
       </div>
 
-      <div className="p-4 bg-white rounded-2xl shadow-inner border border-muted">
+      <div className="p-4 bg-primary-foreground rounded-2xl shadow-inner border border-muted">
         <QRCodeSVG
           value={url}
           size={200}

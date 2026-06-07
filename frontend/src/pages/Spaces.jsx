@@ -5,7 +5,13 @@ import 'leaflet/dist/leaflet.css';
 import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Calendar as CalendarIcon, Users, ShieldAlert, Clock } from 'lucide-react';
 import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js'; 
 import { createReservation } from '../lib/reservation.js'; 
+<<<<<<< HEAD
 import { Link } from "react-router-dom";
+=======
+import { useTranslation } from "react-i18next";
+
+import { Link } from "react-router-dom"
+>>>>>>> main
 
 const bounds = [[0, 0], [1100, 2000]];
 
@@ -65,11 +71,11 @@ const getResourceIcon = (type, isAvailable, isRegistered) => {
 const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit }) => (
   <form onSubmit={(e) => onSubmit(e, space.id)} className="space-y-3 pt-3 border-t border-muted mt-2">
     <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-      <CalendarIcon size={14} /> Schedule reservation
+      <CalendarIcon size={14} /> {t('SpaceSchedule')}
     </h4>
     <div className="space-y-2">
       <div>
-        <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Date</label>
+        <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">{t('SpaceTarget')}</label>
         <input 
           type="date" 
           required 
@@ -80,7 +86,7 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit }) => (
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Start time</label>
+          <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">{t('SpaceStart')}</label>
           <div className="relative">
             <Clock size={12} className="absolute left-2 top-2.5 text-muted-foreground/80" />
             <input 
@@ -93,7 +99,7 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit }) => (
           </div>
         </div>
         <div>
-          <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">End time</label>
+          <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">{t('SpaceEnd')}</label>
           <div className="relative">
             <Clock size={12} className="absolute left-2 top-2.5 text-muted-foreground/80" />
             <input 
@@ -128,6 +134,8 @@ export default function InteractiveMap() {
   const [bookingForm, setBookingForm] = useState({ date: '', startTime: '', endTime: '', userId: '1' });
   const [activeResourceReservations, setActiveResourceReservations] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const { t } = useTranslation();
+
 
   // Vai buscar os dados do utilizador logado
   const userString = localStorage.getItem('user');
@@ -254,7 +262,7 @@ export default function InteractiveMap() {
     <section className="py-12 max-w-400 mx-auto px-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-primary-foreground">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">Wano University Spaces Map</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">{t('SpaceTitle')}</h1>
           <p className="text-sm text-muted-foreground/80">
             {isAdminMode 
               ? "Admin privileges enabled: Space management." 
@@ -332,8 +340,8 @@ export default function InteractiveMap() {
 
                           <div className="text-xs space-y-1 mb-2 bg-background p-2 rounded-lg border border-muted">
                             <p className="flex justify-between">
-                              <span className="text-muted-foreground">Max Room Capacity:</span> 
-                              <span className="font-semibold flex items-center gap-1 text-foreground"><Users size={12}/>{space.dbData.capacity} seats</span>
+                              <span className="text-muted-foreground">{t('SpaceRoomCap')}:</span> 
+                              <span className="font-semibold flex items-center gap-1 text-foreground"><Users size={12}/>{space.dbData.capacity} [t('SpaceSeats')]</span>
                             </p>
                           </div>
 
@@ -347,11 +355,11 @@ export default function InteractiveMap() {
                           ) : (
                             <div className="mt-3 pt-3 border-t border-muted space-y-2">
                               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <ShieldAlert size={14} className="text-swordsman" /> Admin Visualization
+                                <ShieldAlert size={14} className="text-amber-500" /> {t('SpaceAdminView')}
                               </h4>
                               <div className="bg-background p-2.5 rounded-xl border border-muted">
                                 <p className="text-xs text-muted-foreground leading-relaxed">
-                                  Registered space.
+                                  {t('SpaceView')}
                                 </p>
                               </div>
                             </div>
@@ -362,36 +370,36 @@ export default function InteractiveMap() {
                           <form onSubmit={(e) => handleRegisterResource(e, space)} className="space-y-3">
                             <div className="border-b border-muted pb-2">
                               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                                <ShieldAlert size={16} className="text-swordsman"/> Activate Space
+                                <ShieldAlert size={16} className="text-swordsman"/> {t('SpaceActivate')}
                               </h3>
-                              <span className="text-[10px] text-muted-foreground block mt-0.5">Register this physical space to the system.</span>
+                              <span className="text-[10px] text-muted-foreground block mt-0.5">{t('SpaceRegister')}</span>
                             </div>
 
                             <div>
-                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">Space Class</label>
+                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceClass')}</label>
                               <select value={resourceForm.type} onChange={(e) => setResourceForm({...resourceForm, type: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground">
-                                <option value="ROOM">Classroom</option>
-                                <option value="LABORATORY">Laboratory</option>
+                                <option value="ROOM">{t('SpaceRoomHall')}</option>
+                                <option value="LABORATORY">{t('SpaceLab')}</option>
                               </select>
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">Room Information</label>
-                              <input type="text" value={resourceForm.name} onChange={(e) => setResourceForm({...resourceForm, name: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
+                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceResource')}</label>
+                              <input type="text" placeholder="e.g. Amphitheater B" value={resourceForm.name} onChange={(e) => setResourceForm({...resourceForm, name: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">Seating Capacity</label>
+                              <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceCap')}</label>
                               <input type="number" value={resourceForm.capacity} onChange={(e) => setResourceForm({...resourceForm, capacity: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
                             </div>
 
                             <button type="submit" className="w-full bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm">
-                              Register & Activate Space
+                              {t('SpaceRegister')}
                             </button>
                           </form>
                         ) : (
                           <div className="text-center py-4 space-y-2">
                             <ShieldAlert size={24} className="mx-auto text-muted-foreground/50 mb-2"/>
-                            <strong className="block text-sm font-bold text-foreground">Space Unavailable</strong>
-                            <p className="text-xs text-muted-foreground leading-relaxed">This facility location has not yet been registered. Reservations disabled.</p>
+                            <strong className="block text-sm font-bold text-foreground">{t('SpaceUnavailable')}</strong>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{t('SpaceLocalReg')}</p>
                           </div>
                         )
                       )}
@@ -407,29 +415,29 @@ export default function InteractiveMap() {
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Layers size={14} /> Floor Navigation
+              <Layers size={14} /> {t('SpaceLvlMatrix')}
             </h2>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => setCurrentFloor('FLOOR_1')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}>Floor 01</button>
-              <button onClick={() => setCurrentFloor('FLOOR_2')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}>Floor 02</button>
+              <button onClick={() => setCurrentFloor('FLOOR_1')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-foreground text-primary-foreground shadow-md' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>{t('SpaceFloor1')}</button>
+              <button onClick={() => setCurrentFloor('FLOOR_2')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-foreground text-primary-foreground shadow-md' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>{t('SpaceFloor2')}</button>
             </div>
           </div>
 
         {/* Filter by room type */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Filter size={14} /> Filter by type
+              <Filter size={14} /> {t('SpaceFilter')}
             </h2>
             <div className="flex flex-col gap-1.5">
-              <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all  ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
-                <span>Display All Spaces</span>
+              <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
+                <span>{t('SpaceDisplay')}</span>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${selectedTypeFilter === 'ALL' ? 'bg-primary-foreground/20 border-primary-foreground/30' : 'bg-muted border-muted-foreground/20'}`}>{displayLayout.length}</span>
               </button>
-              <button onClick={() => setSelectedTypeFilter('ROOM')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ROOM' ? 'bg-chef/60 border-chef/70 text-primary-foreground' : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'}`}>
-                <Home size={16} style={selectedTypeFilter === 'ROOM' ?{color: 'primary-foreground'} : {color: 'var(--chef-color)'}}/> <span>Rooms & Halls</span>
+              <button onClick={() => setSelectedTypeFilter('ROOM')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ROOM' ? 'bg-blue-600 border-blue-600 text-white' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
+                <Home size={16} /> <span>{t('SpaceRoomsHalls')}</span>
               </button>
-              <button onClick={() => setSelectedTypeFilter('LABORATORY')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'LABORATORY' ? 'bg-swordsman/60 border-swordsman/70 text-primary-foreground' : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'}`}>
-                <FlaskConical size={16} style={selectedTypeFilter === 'LABORATORY' ?{color: 'primary-foreground'} : {color: 'var(--swordsman-color)'}} /> <span>Laboratories</span>
+              <button onClick={() => setSelectedTypeFilter('LABORATORY')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'LABORATORY' ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
+                <FlaskConical size={16} /> <span>{t('SpaceLabs')}</span>
               </button>
             </div>
           </div>
