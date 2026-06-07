@@ -44,7 +44,7 @@ export default function Navbar() {
           <>
             <Link to="/spaces" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
             <Link to="/parking" className={desktopLinkStyle}>{t('NavbarMobility')}</Link>
-            <Link to="/sensors" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
+            <Link to="/map" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
             <Link to="/energydashboard" className={desktopLinkStyle}>{t('NavbarDashboards')}</Link>
             <Link to="/admin/users" className={desktopLinkStyle}>{t('NavbarUserManagement')}</Link>
@@ -61,7 +61,7 @@ export default function Navbar() {
           </>
         )}
 
-        {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
+        {(user?.type === 'STUDENT' || user?.type === 'TEACHER') && (
           <>
             <Link to="/map" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
@@ -129,7 +129,7 @@ export default function Navbar() {
               <>
                 <Link to="/map" className={mobileLinkStyle}>{t('NavbarSpaces')}</Link>
                 <Link to="/parking" className={mobileLinkStyle}>{t('NavbarMobility')}</Link>
-                <Link to="/sensors" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
+                <Link to="/map" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
                 <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
                 <Link to="/energydashboard" className={mobileLinkStyle}>{t('NavbarDashboards')}</Link>
                 <Link to="/admin/users" className={mobileLinkStyle}>{t('NavbarUserManagement')}</Link>
@@ -139,14 +139,14 @@ export default function Navbar() {
             {user?.type === 'STAFF' && (
               <>
                 <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
-                <Link to="/sensors" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
+                <Link to="/map" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
                 <Link to="/temperaturedashboard" className={mobileLinkStyle}>{t('NavbarTemperature')}</Link>
                 <Link to="/airqualitydashboard" className={mobileLinkStyle}>{t('NavbarAir')}</Link>
                 <Link to="/energydashboard" classname={mobileLinkStyle}>{t('NavbarEnergy')}</Link>
               </>
             )}
 
-            {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
+            {(user?.type === 'STUDENT' || user?.type === 'TEACHER') && (
               <>
                 <Link to="/map" className={mobileLinkStyle}>{t('NavbarSpaces')}</Link>
                 <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
