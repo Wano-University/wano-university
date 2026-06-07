@@ -14,6 +14,10 @@ import StaffHome from './pages/StaffHome';
 import StudentHome from './pages/StudentHome';
 import AdminHome from './pages/AdminHome';
 import Equipments from './pages/Equipments';
+import TemperatureDashboard from './pages/TemperatureDashboard';
+import AirQualityDashboard from './pages/AirQualityDashboard';
+import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
+import NotFound from './components/NotFound';
 import Parking from './pages/Parking';
 import Bikes from './pages/Bikes';
 import ForgotPassword from './pages/ForgotPassword';
@@ -46,11 +50,11 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/lssdocs" element={<LssDocs/>} />
+        <Route path="/lssdocs" element={<LssDocs />} />
         <Route path="/changepw" element={<ForgotPassword />} />
         <Route path="/spaces" element={<Spaces />} />
         <Route path="/parking" element={<Parking />} />
-        <Route path='/bikes' element={<Bikes/>}/>
+        <Route path='/bikes' element={<Bikes />} />
 
         <Route path="/home" element={<HomeRedirection />} />
         <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
