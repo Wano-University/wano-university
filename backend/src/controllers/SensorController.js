@@ -255,3 +255,32 @@ export const resolveAlert = async (req, res) => {
     });
   }
 };
+
+export const updateSensor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { upperLimit, lowerLimit, isActive } = req.body;
+
+    const updated = await prisma.sensor.update({
+      where: { id: parseInt(id) },
+      data: { upperLimit, lowerLimit, isActive }
+    });
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error("Error updating sensor:", error);
+    res.status(400).json({ error: "Failed to update sensor." });
+  }
+};
+
+export const deleteSensor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.sensor.delete({
+      where: { id: parseInt(id) }
+    });
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting sensor:", error);
+    res.status(400).json({ error: "Failed to delete sensor." });
+  }
+};

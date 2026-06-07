@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Wrench, Plus, PlusCircle, Palette, Type, Check, X, Trash2, Shield, ShieldAlert, Layers, CalendarDays } from "lucide-react";
+import { Pencil, Wrench, Plus, PlusCircle, Palette, Type, Check, X, Trash2, Shield, ShieldAlert, Layers, CalendarDays, Map } from "lucide-react";
 import { getAllEquipment, registerEquipment, updateResource, deleteResource } from '../lib/resource.js';
 import { createReservation } from '../lib/reservation.js';
 import { ReservationCalendarForm } from '../components/ReservationCalendarForm.jsx';
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -107,7 +108,7 @@ export default function EquipmentConfig() {
 
   return (
     <section className="py-24 max-w-7xl mx-auto px-6 space-y-6 bg-background font-sans relative">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-border pb-4 gap-4">
+      <div className="grid grid-cols-3 md:flex-row items-start md:items-center justify-between border-b border-border pb-4 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
             <Wrench className="w-6 h-6" />
@@ -117,20 +118,28 @@ export default function EquipmentConfig() {
             <h2 className="text-xs text-muted-foreground">{t('EquipDesc')}</h2>
           </div>
         </div>
+        <div className ="flex justify-center">
 
-{isAdmin && (
-        <button 
-          onClick={() => setIsAdmin(!isAdmin)}
-          className={`text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border transition-all flex items-center gap-2 cursor-pointer ${
-            isAdmin
-              ? 'bg-foreground text-primary-foreground border-foreground/80'
-              : 'bg-muted text-muted-foreground border-transparent'
-          }`}
-        >
-          {isAdmin ? <ShieldAlert className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
-          {isAdmin ? 'Admin Mode: ON' : 'Admin Mode: OFF'}
-        </button>
-)}
+          <Link to="/spaces" className="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground text-sm font-medium rounded-xl transition">
+            <Map className="w-4 h-4" />
+            {t('EquipBtSpace')}
+          </Link>
+       </div> 
+       <div className= "flex justify-end">
+          {user?.type === 'ADMIN' && (
+          <button 
+            onClick={() => setIsAdmin(!isAdmin)}
+            className={`text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border transition-all flex items-center gap-2 cursor-pointer ${
+              isAdmin
+                ? 'bg-foreground text-primary-foreground border-foreground/80'
+                : 'bg-muted text-muted-foreground border-transparent'
+            }`}
+          >
+            {isAdmin ? <ShieldAlert className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
+            {isAdmin ? 'Admin Mode: ON' : 'Admin Mode: OFF'}
+          </button>
+        )}
+        </div>
       </div>
       {isAdmin && (
         <div className="flex items-center justify-end">
@@ -160,7 +169,7 @@ export default function EquipmentConfig() {
               >
                 {!item.isAvailable && (
                   <div className="absolute top-0 right-0 bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-1 rounded-bl-lg z-10 uppercase tracking-wider">
-                    Unavailable
+                    {t('EquipUna')}
                   </div>
                 )}
                 <div className="p-2 rounded-lg bg-current/10">
