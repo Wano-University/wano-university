@@ -86,7 +86,6 @@ export default function App() {
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="GERIR_EMENTA"> <MenuConfig /> </ProtectedRoute>} />
 
-        <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <StudentHome /> </ProtectedRoute>} />
         <Route path="/TemperatureDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_TEMPERATURE"> <TemperatureDashboard /> </ProtectedRoute>} />
         <Route path="/AirQualityDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_QUALIDADE_AR"> <AirQualityDashboard /> </ProtectedRoute>} />
         <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_CONSUMO_ENERGETICO"> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
