@@ -1,24 +1,24 @@
 import prisma from '../config/db.js';
 
 const VALID_SPACES = [
-  { x: 410,  y: 835 }, { x: 480,  y: 835 }, { x: 550,  y: 835 }, { x: 620,  y: 835 }, { x: 690,  y: 835 }, { x: 760, y: 835 },
-  { x: 1270, y: 835 }, { x: 1340, y: 835 }, { x: 1410, y: 835 }, { x: 1480,  y: 835 }, { x: 1550,  y: 835 }, { x: 1620, y: 835 },
-  { x: 1753, y: 810 }, { x: 1753, y: 760 }, { x: 1753, y: 710 }, { x: 1753,  y: 660 }, { x: 1753,  y: 610 },
-  { x: 1753, y: 460 }, { x: 1753, y: 410 }, { x: 1753, y: 360 }, { x: 1753,  y: 310 }, { x: 1753,  y: 260 }, { x: 1753, y: 210 },
-  { x: 1540, y: 710 }, { x: 1540, y: 660 }, { x: 1540, y: 610  }, { x: 1540,  y: 560  }, { x: 1540,  y: 510 }, { x: 1540, y: 460 }, { x: 1540, y: 410 }, { x: 1540,  y: 360 }, { x: 1540,  y: 310 }, { x: 1540, y: 260 },
-  { x: 1415, y: 710 }, { x: 1415, y: 660 }, { x: 1415, y: 610 }, { x: 1415,  y: 560 }, { x: 1415,  y: 510 }, { x: 1415, y: 460 }, { x: 1415, y: 410 }, { x: 1415,  y: 360 }, { x: 1415,  y: 310 }, { x: 1415, y: 260 },
-  { x: 1190, y: 760 }, { x: 1190, y: 710 }, { x: 1190, y: 660 }, { x: 1190, y: 610 }, { x: 1190,  y: 560 }, { x: 1190,  y: 510 }, { x: 1190, y: 460 }, { x: 1190, y: 410 }, { x: 1190,  y: 360 }, { x: 1190,  y: 310 }, { x: 1190, y: 260 },
-  { x: 840, y: 760 }, { x: 840, y: 710 }, { x: 840, y: 660 }, { x: 840, y: 610 }, { x: 840,  y: 560 }, { x: 840,  y: 510 }, { x: 840, y: 460 }, { x: 840, y: 410 }, { x: 840,  y: 360 }, { x: 840,  y: 310 }, { x: 840, y: 260 },
-  { x: 615, y: 710}, { x: 615, y: 660 }, { x: 615, y: 610 }, { x: 615,  y: 560 }, { x: 615,  y: 510 }, { x: 615, y: 460 }, { x: 615, y: 410 }, { x: 615,  y: 360 }, { x: 615,  y: 310 }, { x: 615, y: 260 },
-  { x: 490, y: 710 }, { x: 490, y: 660 }, { x: 490, y: 610 }, { x: 490,  y: 560 }, { x: 490,  y: 510 }, { x: 490, y: 460 }, { x: 490, y: 410}, { x: 490,  y: 360 }, { x: 490,  y: 310 }, { x: 490, y: 260 },
-  { x: 277, y: 810 }, { x: 277, y: 760 }, { x:  277, y: 710}, { x: 277,  y: 660 }, { x: 277,  y: 610 },
-  { x: 277, y: 460 }, { x: 277, y: 410}, { x: 277, y: 360 }, { x: 277,  y: 310}, { x: 277,  y: 260 }, { x: 277, y: 210 },
+  { x: 410, y: 835 }, { x: 480, y: 835 }, { x: 550, y: 835 }, { x: 620, y: 835 }, { x: 690, y: 835 }, { x: 760, y: 835 },
+  { x: 1270, y: 835 }, { x: 1340, y: 835 }, { x: 1410, y: 835 }, { x: 1480, y: 835 }, { x: 1550, y: 835 }, { x: 1620, y: 835 },
+  { x: 1753, y: 810 }, { x: 1753, y: 760 }, { x: 1753, y: 710 }, { x: 1753, y: 660 }, { x: 1753, y: 610 },
+  { x: 1753, y: 460 }, { x: 1753, y: 410 }, { x: 1753, y: 360 }, { x: 1753, y: 310 }, { x: 1753, y: 260 }, { x: 1753, y: 210 },
+  { x: 1540, y: 710 }, { x: 1540, y: 660 }, { x: 1540, y: 610 }, { x: 1540, y: 560 }, { x: 1540, y: 510 }, { x: 1540, y: 460 }, { x: 1540, y: 410 }, { x: 1540, y: 360 }, { x: 1540, y: 310 }, { x: 1540, y: 260 },
+  { x: 1415, y: 710 }, { x: 1415, y: 660 }, { x: 1415, y: 610 }, { x: 1415, y: 560 }, { x: 1415, y: 510 }, { x: 1415, y: 460 }, { x: 1415, y: 410 }, { x: 1415, y: 360 }, { x: 1415, y: 310 }, { x: 1415, y: 260 },
+  { x: 1190, y: 760 }, { x: 1190, y: 710 }, { x: 1190, y: 660 }, { x: 1190, y: 610 }, { x: 1190, y: 560 }, { x: 1190, y: 510 }, { x: 1190, y: 460 }, { x: 1190, y: 410 }, { x: 1190, y: 360 }, { x: 1190, y: 310 }, { x: 1190, y: 260 },
+  { x: 840, y: 760 }, { x: 840, y: 710 }, { x: 840, y: 660 }, { x: 840, y: 610 }, { x: 840, y: 560 }, { x: 840, y: 510 }, { x: 840, y: 460 }, { x: 840, y: 410 }, { x: 840, y: 360 }, { x: 840, y: 310 }, { x: 840, y: 260 },
+  { x: 615, y: 710 }, { x: 615, y: 660 }, { x: 615, y: 610 }, { x: 615, y: 560 }, { x: 615, y: 510 }, { x: 615, y: 460 }, { x: 615, y: 410 }, { x: 615, y: 360 }, { x: 615, y: 310 }, { x: 615, y: 260 },
+  { x: 490, y: 710 }, { x: 490, y: 660 }, { x: 490, y: 610 }, { x: 490, y: 560 }, { x: 490, y: 510 }, { x: 490, y: 460 }, { x: 490, y: 410 }, { x: 490, y: 360 }, { x: 490, y: 310 }, { x: 490, y: 260 },
+  { x: 277, y: 810 }, { x: 277, y: 760 }, { x: 277, y: 710 }, { x: 277, y: 660 }, { x: 277, y: 610 },
+  { x: 277, y: 460 }, { x: 277, y: 410 }, { x: 277, y: 360 }, { x: 277, y: 310 }, { x: 277, y: 260 }, { x: 277, y: 210 },
 ];
 
 export const getMobilityResources = async (req, res) => {
   try {
     const mobilityResources = await prisma.mobilityResource.findMany({
-      include: { sensor: true, reservations: true }
+      include: { reservations: true }
     });
     res.status(200).json(mobilityResources);
   } catch (error) {
@@ -83,7 +83,7 @@ export const getMobilityResourcesByType = async (req, res) => {
 
 export const updateMobilityStatus = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
     const { status } = req.body;
     const { identifier } = req.body;
 
@@ -91,11 +91,11 @@ export const updateMobilityStatus = async (req, res) => {
       return res.status(400).json({ error: "A status must be provided to update." });
     }
     const updatedResource = await prisma.mobilityResource.update({
-      where: { 
-        id: parseInt(id) 
+      where: {
+        id: parseInt(id)
       },
-      data: { 
-        status: status, 
+      data: {
+        status: status,
         identifier: req.body.identifier
       }
     });
@@ -106,7 +106,7 @@ export const updateMobilityStatus = async (req, res) => {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: "Mobility resource not found." });
     }
-    
+
     res.status(400).json({ error: "Failed to update mobility resource." });
   }
 };
@@ -129,7 +129,7 @@ export const simulateParkingOccupancy = async (req, res) => {
     const activeSpots = await prisma.mobilityResource.findMany({
       where: {
         type: 'PARKING_SPOT',
-        NOT: { status: 'INACTIVE' }, 
+        NOT: { status: 'INACTIVE' },
       },
     });
 
@@ -143,7 +143,7 @@ export const simulateParkingOccupancy = async (req, res) => {
     );
 
     const all = await prisma.mobilityResource.findMany({
-      include: { sensor: true, reservations: true },
+      include: { reservations: true },
     });
     res.status(200).json(all);
   } catch (error) {
