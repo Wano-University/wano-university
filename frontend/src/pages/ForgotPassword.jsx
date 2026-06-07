@@ -9,6 +9,8 @@ import lgimg from '@/assets/wanouni.png';
 import smimg from '@/assets/wanoportrait.png';
 import logoimg from '@/assets/logowanouni.png';
 import { resetPassword } from '../lib/auth';
+import { useTranslation } from "react-i18next";
+
 
 export default function ChangePassword() {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ export default function ChangePassword() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { t } = useTranslation();
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
@@ -72,28 +75,28 @@ export default function ChangePassword() {
 
             <div className="flex-1 p-10 flex flex-col justify-center items-center md:items-start overflow-y-auto">
               <Link to="/login" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
-                <ArrowLeft size={16} /> Back to login
+                <ArrowLeft size={16} /> {t('ForgotPasswordBack')}
               </Link>
 
               <img src={logoimg} alt="Wano University" className="w-16 h-16 mb-4 rounded-full" />
-              <h1 className="text-2xl font-bold mb-2">Reset Password</h1>
-              <p className="text-sm text-muted-foreground mb-6">Enter your login and email to verify your identity.</p>
+              <h1 className="text-2xl font-bold mb-2">{t('ForgotPasswordTitle')}</h1>
+              <p className="text-sm text-muted-foreground mb-6">{t('ForgotPasswordDesc')}</p>
 
               <form onSubmit={handlePasswordReset} className="w-full space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel htmlFor="login">Login:</FieldLabel>
+                    <FieldLabel htmlFor="login">{t('ForgotPasswordLogin')}:</FieldLabel>
                     <Input id="login" name="login" type="text" required />
                   </Field>
 
                   <Field>
-                    <FieldLabel htmlFor="email">Email:</FieldLabel>
+                    <FieldLabel htmlFor="email">{t('ForgotPasswordEmail')}:</FieldLabel>
                     <Input id="email" name="email" type="email" required />
                   </Field>
                 </div>
 
                 <Field>
-                  <FieldLabel htmlFor="newPassword">New Password:</FieldLabel>
+                  <FieldLabel htmlFor="newPassword">{t('ForgotPasswordNewPass')}:</FieldLabel>
                   <div className="relative">
                     <Input
                       id="newPassword"
@@ -113,7 +116,7 @@ export default function ChangePassword() {
                 </Field>
 
                 <Field>
-                  <FieldLabel htmlFor="confirmPassword">Confirm Password:</FieldLabel>
+                  <FieldLabel htmlFor="confirmPassword">{t('ForgotPasswordConfirmPass')}:</FieldLabel>
                   <div className="relative">
                     <Input
                       id="confirmPassword"
@@ -144,7 +147,7 @@ export default function ChangePassword() {
                   {status === 'loading' && 'Verifying...'}
                   {status === 'success' && 'Password Updated ✓'}
                   {status === 'error' && 'Error. Try Again.'}
-                  {status === 'idle' && 'Change Password'}
+                  {status === 'idle' && t('ForgotPasswordButton')}
                 </Button>
               </form>
             </div>

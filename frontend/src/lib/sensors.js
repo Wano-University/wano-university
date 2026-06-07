@@ -224,3 +224,57 @@ export const getAirQualityReport = async () => {
   const text = await response.text();
   return new Blob([text], { type: 'text/csv;charset=utf-8;' });
 };
+
+export const getTemperatureTrend = async () => {
+  const response = await fetch(`${API_URL}/api/temperature/trend`, {
+    headers: getHeaders()
+  });
+  if (!response.ok) throw new Error("Failed to fetch trend");
+  return response.json();
+};
+
+export const getPendingAlerts = async () => {
+  const token = localStorage.getItem('token');
+
+  const response = await fetch(
+    `${API_URL}/api/sensors/alerts/pending`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to load alerts.');
+  }
+
+  return data;
+};
+
+
+export const resolveAlert = async (id) => {
+  const token = localStorage.getItem('token');
+
+  const response = await fetch(
+    `${API_URL}/api/sensors/alerts/${id}/resolve`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to resolve alert.');
+  }
+
+  return data;
+};

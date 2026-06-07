@@ -2,7 +2,7 @@ import prisma from '../config/db.js';
 
 export const registerSensor = async (req, res) => {
   try {
-    const { type, floor, space, resourceId, mobilityResourceId, alertLimit, isActive, xCoordinates, yCoordinates } = req.body;
+    const { type, floor, space, upperLimit, lowerLimit, isActive, xCoordinates, yCoordinates } = req.body;
 
     const existingSensor = await prisma.sensor.findFirst({
       where: {
@@ -19,7 +19,7 @@ export const registerSensor = async (req, res) => {
     }
 
     const sensor = await prisma.sensor.create({
-      data: { type, floor, space, resourceId, mobilityResourceId, alertLimit, isActive, xCoordinates, yCoordinates }
+      data: { type, floor, space, upperLimit, lowerLimit, isActive, xCoordinates, yCoordinates }
     });
 
     res.status(201).json(sensor);
@@ -122,27 +122,45 @@ export const getSensorsByType = async (req, res) => {
 
 export const getAlerts = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
+
     const sensors = await prisma.sensor.findMany({
-      where: { id: parseInt(id) },
-      include: { alerts: true }
+      where: {
+        id: parseInt(id)
+      },
+      include: {
+        alerts: true
+      }
     });
-    res.status(200).json(sensors);
+
+    return res.status(200).json(serializeBigInts(sensors));
+
   } catch (error) {
-    res.status(500).json({ error: "Failed to load alerts." });
+    return res.status(500).json({
+      error: "Failed to load alerts."
+    });
   }
 };
 
 export const getReadings = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
+
     const sensors = await prisma.sensor.findMany({
-      where: { id: parseInt(id) },
-      include: { readings: true }
+      where: {
+        id: parseInt(id)
+      },
+      include: {
+        readings: true
+      }
     });
-    res.status(200).json(sensors);
+
+    return res.status(200).json(serializeBigInts(sensors));
+
   } catch (error) {
-    res.status(500).json({ error: "Failed to load readings." });
+    return res.status(500).json({
+      error: "Failed to load readings."
+    });
   }
 };
 
@@ -168,3 +186,59 @@ export const getAllReadings = async (req, res) => {
   }
 };
 
+export const getPendingAlerts = async (req, res) => {
+  try {
+    const alerts = await prisma.sensorAlert.findMany({
+      where: {
+        isResolved: false
+      },
+      include: {
+        sensor: true
+      },
+      orderBy: {
+        alertDate: 'desc'
+      }
+    });
+
+    const serializedAlerts = alerts.map(alert => ({
+      ...alert,
+      id: alert.id.toString()
+    }));
+
+    return res.status(200).json(serializedAlerts);
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Failed to load alerts."
+    });
+  }
+};
+
+export const resolveAlert = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const alert = await prisma.sensorAlert.update({
+      where: {
+        id: BigInt(id)
+      },
+      data: {
+        isResolved: true
+      }
+    });
+
+    return res.status(200).json({
+      ...alert,
+      id: alert.id.toString()
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Failed to resolve alert."
+    });
+  }
+};

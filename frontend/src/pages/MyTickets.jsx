@@ -5,6 +5,8 @@ import { X, TicketCheck, Loader2, UtensilsCrossed, Calendar } from 'lucide-react
 import { getMyTickets } from '../lib/tickets';
 import { getImageUrl } from '../lib/utils';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
+import { useTranslation } from "react-i18next";
+
 
 export default function MyTickets() {
   const navigate = useNavigate();
@@ -14,6 +16,8 @@ export default function MyTickets() {
   const [selectedTicketUrl, setSelectedTicketUrl] = useState(null);
   const [pollingTicketId, setPollingTicketId] = useState(null);
   const [isScanSuccessful, setIsScanSuccessful] = useState(false);
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -129,8 +133,8 @@ export default function MyTickets() {
           <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary border border-primary/20">
             <TicketCheck className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-black tracking-tight">My Tickets</h2>
-          <p className="text-sm text-muted-foreground mt-1">Select a ticket to redeem your meal.</p>
+          <h2 className="text-2xl font-black tracking-tight">{t('TicketMy')}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t('TicketSelect')}</p>
         </div>
 
         {/* Scrollable Content Area */}
@@ -139,7 +143,7 @@ export default function MyTickets() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 space-y-3">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground font-medium animate-pulse">Loading tickets...</p>
+              <p className="text-sm text-muted-foreground font-medium animate-pulse">{t('TicketLoading')}</p>
             </div>
           ) : error ? (
             <div className="text-center py-8 px-4 bg-destructive/10 rounded-2xl border border-destructive/20">
@@ -148,8 +152,8 @@ export default function MyTickets() {
           ) : groupedTickets.length === 0 ? (
             <div className="text-center py-12 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-2xl bg-muted/10">
               <UtensilsCrossed className="w-10 h-10 text-muted-foreground/30 mb-3" />
-              <h4 className="text-base font-bold text-foreground">No Tickets Found</h4>
-              <p className="text-sm text-muted-foreground max-w-[200px] mt-1">You don't have any active meal tickets right now.</p>
+              <h4 className="text-base font-bold text-foreground">{t('TicketNo')}</h4>
+              <p className="text-sm text-muted-foreground max-w-[200px] mt-1">{t('TicketNoActive')}</p>
             </div>
           ) : (
             groupedTickets.map((group, index) => {
@@ -216,8 +220,8 @@ export default function MyTickets() {
               {isScanSuccessful ? (
                 <div className="flex flex-col items-center p-8 bg-white rounded-3xl shadow-sm border border-green-200 animate-in zoom-in duration-300">
                   <CheckCircle2 className="w-24 h-24 text-green-500 mb-4" />
-                  <h2 className="text-2xl font-black text-foreground">Ticket Redeemed!</h2>
-                  <p className="text-muted-foreground mt-1">Enjoy your meal.</p>
+                  <h2 className="text-2xl font-black text-foreground">{t('TicketRedeem')}</h2>
+                  <p className="text-muted-foreground mt-1">{t('TicketMsg')}</p>
                 </div>
               ) : (
                 <>
@@ -226,7 +230,7 @@ export default function MyTickets() {
                     onClick={() => { setSelectedTicketUrl(null); setPollingTicketId(null); }}
                     className="mt-6 w-full max-w-[200px] py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg transition-all active:scale-95"
                   >
-                    Close
+                    {t('TicketClose')}
                   </button>
                 </>
               )}

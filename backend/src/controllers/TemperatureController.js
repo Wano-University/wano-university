@@ -171,3 +171,35 @@ export const updateTempSensorLimits = async (req, res) => {
     return res.status(500).json({ error: "Failed to update sensor limits." });
   }
 };
+
+export const getTemperatureTrend = async (req, res) => {
+  try {
+    const twentyFourHoursAgo = new Date(Date.now() - (24 * 60 * 60 * 1000));
+
+    const historicalReadings = await prisma.sensorReading.findMany({
+      where: {
+        readingDate: { gte: twentyFourHoursAgo },
+        sensor: { type: "TEMPERATURE" }
+      },
+      select: { value: true, readingDate: true },
+      orderBy: { readingDate: 'asc' }
+    });
+
+    const hourlyGroups = {};
+    historicalReadings.forEach(reading => {
+      const hour = reading.readingDate.toISOString().slice(0, 13); // "YYYY-MM-DDTHH"
+      if (!hourlyGroups[hour]) hourlyGroups[hour] = { sum: 0, count: 0 };
+      hourlyGroups[hour].sum += reading.value;
+      hourlyGroups[hour].count += 1;
+    });
+
+    const chartData = Object.keys(hourlyGroups).map(hour => ({
+      hour: hour.slice(11) + ":00",
+      temperature: Math.round(hourlyGroups[hour].sum / hourlyGroups[hour].count)
+    }));
+
+    return res.status(200).json(chartData);
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to fetch trend" });
+  }
+};

@@ -9,11 +9,15 @@ import lgimg from '@/assets/wanouni.png';
 import smimg from '@/assets/wanoportrait.png';
 import logoimg from '@/assets/logowanouni.png';
 import { loginUser } from '../lib/auth';
+import { useTranslation } from "react-i18next";
+
 
 export default function Login() {
   const [status, setStatus] = useState('idle');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const { t } = useTranslation();
+
 
   const login = async (e) => {
     e.preventDefault();
@@ -82,7 +86,7 @@ export default function Login() {
                   </Field>
 
                   <Field>
-                    <FieldLabel htmlFor="password">Password:</FieldLabel>
+                    <FieldLabel htmlFor="password">{t('LoginPass')}:</FieldLabel>
                     <div className="relative">
                       <Input
                         id="password"
@@ -109,10 +113,10 @@ export default function Login() {
                         onChange={(e) => setRememberMe(e.target.checked)}
                         className="accent-primary"
                       />
-                      Remember Me
+                      {t('LoginRemember')}
                     </label>
                     <a href="/changepw" className="text-muted-foreground hover:text-foreground">
-                      Forgot Your Password?
+                      {t('LoginForgot')}
                     </a>
                   </div>
 

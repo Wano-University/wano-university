@@ -2,38 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, ImageOverlay, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Users, ShieldAlert } from 'lucide-react';
+
+import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Calendar as CalendarIcon, Users, ShieldAlert, Clock } from 'lucide-react';
 import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js';
 import { createReservation } from '../lib/reservation.js';
-import { Link } from "react-router-dom";
-import { ReservationCalendarForm } from '../components/ReservationCalendarForm.jsx';
-
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom"
 const bounds = [[0, 0], [1100, 2000]];
 
 const HARDCODED_SPACES = [
-  { hcId: 'F1_R1',  floor: 'FLOOR_1', x: 477,  y: 828, defaultType: 'ROOM' },
-  { hcId: 'F1_R2',  floor: 'FLOOR_1', x: 151,  y: 576, defaultType: 'ROOM' },
-  { hcId: 'F1_R4',  floor: 'FLOOR_1', x: 284,  y: 400, defaultType: 'ROOM' },
-  { hcId: 'F1_R5',  floor: 'FLOOR_1', x: 725,  y: 128, defaultType: 'ROOM' },
-  { hcId: 'F1_R6',  floor: 'FLOOR_1', x: 338,  y: 148, defaultType: 'ROOM' },
-  { hcId: 'F1_R7',  floor: 'FLOOR_1', x: 1490, y: 266, defaultType: 'ROOM' },
-  { hcId: 'F1_R8',  floor: 'FLOOR_1', x: 1798, y: 146, defaultType: 'ROOM' },
-  { hcId: 'F1_R9',  floor: 'FLOOR_1', x: 1486, y: 792, defaultType: 'ROOM' },
+  { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM' },
+  { hcId: 'F1_R2', floor: 'FLOOR_1', x: 151, y: 576, defaultType: 'ROOM' },
+  { hcId: 'F1_R4', floor: 'FLOOR_1', x: 284, y: 400, defaultType: 'ROOM' },
+  { hcId: 'F1_R5', floor: 'FLOOR_1', x: 725, y: 128, defaultType: 'ROOM' },
+  { hcId: 'F1_R6', floor: 'FLOOR_1', x: 338, y: 148, defaultType: 'ROOM' },
+  { hcId: 'F1_R7', floor: 'FLOOR_1', x: 1490, y: 266, defaultType: 'ROOM' },
+  { hcId: 'F1_R8', floor: 'FLOOR_1', x: 1798, y: 146, defaultType: 'ROOM' },
+  { hcId: 'F1_R9', floor: 'FLOOR_1', x: 1486, y: 792, defaultType: 'ROOM' },
   { hcId: 'F1_R10', floor: 'FLOOR_1', x: 1832, y: 536, defaultType: 'ROOM' },
 
-  { hcId: 'F2_R1',  floor: 'FLOOR_2', x: 1544, y: 782,  defaultType: 'ROOM' },
-  { hcId: 'F2_R2',  floor: 'FLOOR_2', x: 1836, y: 532,  defaultType: 'ROOM' },
-  { hcId: 'F2_R3',  floor: 'FLOOR_2', x: 1650, y: 346,  defaultType: 'ROOM' },
-  { hcId: 'F2_R4',  floor: 'FLOOR_2', x: 1774, y: 174,  defaultType: 'ROOM' },
-  { hcId: 'F2_R5',  floor: 'FLOOR_2', x: 1364, y: 172,  defaultType: 'ROOM' },
-  { hcId: 'F2_R6',  floor: 'FLOOR_2', x: 729,  y: 170,  defaultType: 'ROOM' },
-  { hcId: 'F2_R7',  floor: 'FLOOR_2', x: 329,  y: 176,  defaultType: 'ROOM' },
-  { hcId: 'F2_R8',  floor: 'FLOOR_2', x: 291,  y: 420,  defaultType: 'ROOM' },
-  { hcId: 'F2_R9',  floor: 'FLOOR_2', x: 185,  y: 582,  defaultType: 'ROOM' },
-  { hcId: 'F2_R10', floor: 'FLOOR_2', x: 562,  y: 640,  defaultType: 'ROOM' },
-  { hcId: 'F2_R11', floor: 'FLOOR_2', x: 693,  y: 736,  defaultType: 'ROOM' },
-  { hcId: 'F2_R12', floor: 'FLOOR_2', x: 375,  y: 784,  defaultType: 'ROOM' },
-  { hcId: 'F2_R13', floor: 'FLOOR_2', x: 591,  y: 898,  defaultType: 'ROOM' },
+  { hcId: 'F2_R1', floor: 'FLOOR_2', x: 1544, y: 782, defaultType: 'ROOM' },
+  { hcId: 'F2_R2', floor: 'FLOOR_2', x: 1836, y: 532, defaultType: 'ROOM' },
+  { hcId: 'F2_R3', floor: 'FLOOR_2', x: 1650, y: 346, defaultType: 'ROOM' },
+  { hcId: 'F2_R4', floor: 'FLOOR_2', x: 1774, y: 174, defaultType: 'ROOM' },
+  { hcId: 'F2_R5', floor: 'FLOOR_2', x: 1364, y: 172, defaultType: 'ROOM' },
+  { hcId: 'F2_R6', floor: 'FLOOR_2', x: 729, y: 170, defaultType: 'ROOM' },
+  { hcId: 'F2_R7', floor: 'FLOOR_2', x: 329, y: 176, defaultType: 'ROOM' },
+  { hcId: 'F2_R8', floor: 'FLOOR_2', x: 291, y: 420, defaultType: 'ROOM' },
+  { hcId: 'F2_R9', floor: 'FLOOR_2', x: 185, y: 582, defaultType: 'ROOM' },
+  { hcId: 'F2_R10', floor: 'FLOOR_2', x: 562, y: 640, defaultType: 'ROOM' },
+  { hcId: 'F2_R11', floor: 'FLOOR_2', x: 693, y: 736, defaultType: 'ROOM' },
+  { hcId: 'F2_R12', floor: 'FLOOR_2', x: 375, y: 784, defaultType: 'ROOM' },
+  { hcId: 'F2_R13', floor: 'FLOOR_2', x: 591, y: 898, defaultType: 'ROOM' },
 ];
 
 const getResourceIcon = (type, isAvailable, isRegistered) => {
@@ -74,6 +74,10 @@ export default function InteractiveMap() {
   const [bookingForm, setBookingForm] = useState({ date: '', startTime: '', endTime: '', userId: '1' });
   const [activeResourceReservations, setActiveResourceReservations] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Vai buscar os dados do utilizador logado
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
 
   const fetchResources = async () => {
     try {
@@ -213,17 +217,21 @@ export default function InteractiveMap() {
             <Wrench size={16} />
             Equipments
           </Link>
-          <button
-            onClick={() => setIsAdminMode(!isAdminMode)}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
-              isAdminMode
-                ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10"
-                : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
-            }`}
-          >
-            <Settings size={16} />
-            {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
-          </button>
+          
+          {currentUser?.type === 'ADMIN' && (
+            <button 
+              onClick={() => setIsAdminMode(!isAdminMode)}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
+                isAdminMode 
+                  ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10" 
+                  : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
+              }`}
+            >
+              <Settings size={16} />
+              {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
+            </button>
+          )}
+
         </div>
       </div>
 
