@@ -47,7 +47,7 @@ export default function Navbar() {
             <Link to="/sensors" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
             <Link to="/admin/dashboard" className={desktopLinkStyle}>{t('NavbarDashboards')}</Link>
-            <Link to="/admin/users" className={desktopLinkStyle}>{t('NavbarDashboards')}</Link>
+            <Link to="/admin/users" className={desktopLinkStyle}>{t('NavbarUserManagement')}</Link>
           </>
         )}
 

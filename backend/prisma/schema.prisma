@@ -43,7 +43,6 @@ model Resource {
   yCoordinates Float?
   accesses     Access[]
   reservations Reservation[]
-  sensor       Sensor?
 }
 
 model MobilityResource {
@@ -54,8 +53,6 @@ model MobilityResource {
   status     MobilityStatus @default(FREE)
   xCoordinates Float?
   yCoordinates Float?
-
-  sensor       Sensor?
   reservations Reservation[]
 }
 
@@ -64,16 +61,13 @@ model Sensor {
   type               SensorType
   space              String
   floor              Floor?
-  resourceId         Int?              @unique
-  mobilityResourceId Int?              @unique
   upperLimit         Float?
   lowerLimit         Float?  
   isActive           Boolean           @default(true)
   isOccupied         Boolean           @default(true)
   xCoordinates       Float
   yCoordinates       Float
-  mobilityResource   MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
-  resource           Resource?         @relation(fields: [resourceId], references: [id])
+  UnityMeasure       String
   alerts             SensorAlert[]
   readings           SensorReading[]
 }
@@ -193,7 +187,6 @@ enum SensorType {
   TEMPERATURE
   ENERGY_CONSUMPTION
   AIR_QUALITY
-  OCCUPANCY
 }
 
 enum ReservationStatus {
