@@ -1,23 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import {
-  X,
-  Bell,
-  AlertTriangle,
-  Loader2,
-  Thermometer,
-  Zap,
-  Wind
-} from 'lucide-react';
-
-import {
-  getPendingAlerts,
-  resolveAlert
-} from '../lib/sensors';
+import { X, Bell, AlertTriangle, Loader2, Thermometer, Zap, Wind } from 'lucide-react';
+import { getPendingAlerts, resolveAlert } from '../lib/sensors';
+import { useTranslation } from 'react-i18next';
 
 export default function Alerts() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleKeyDown = (e) => {

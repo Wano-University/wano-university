@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
 import { MapContainer, ImageOverlay, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -81,6 +81,7 @@ export default function InteractiveMap() {
   const [isRegistering, setIsRegistering] = useState(false);
   const { t } = useTranslation();
 
+  const mapContainerRef = useRef(null);
 
   const [formData, setFormData] = useState({
     type: 'TEMPERATURE',
@@ -88,6 +89,20 @@ export default function InteractiveMap() {
     upperLimit: '',
     lowerLimit: ''
   });
+
+  const getPopupStyle = () => {
+    if (!pixelCoords) return {};
+    const container = mapContainerRef.current;
+    const w = container?.offsetWidth ?? 800;
+    const h = container?.offsetHeight ?? 600;
+    const xShift = pixelCoords.x < w / 2 ? '8px' : 'calc(-100% - 8px)';
+    const yShift = pixelCoords.y < h / 2 ? '8px' : 'calc(-100% - 8px)';
+    return {
+      left: pixelCoords.x,
+      top: pixelCoords.y,
+      transform: `translate(${xShift}, ${yShift})`,
+    };
+  };
 
   const fetchSensors = async () => {
     try {
@@ -194,7 +209,7 @@ export default function InteractiveMap() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         <div className="lg:col-span-8 bg-primary-foreground p-4 rounded-3xl border border-muted-foreground/20 shadow-xl relative overflow-hidden min-h-150 lg:50">
-          <div className="relative w-full h-full">
+          <div ref={mapContainerRef} className="relative w-full h-full">
             <MapContainer
               crs={L.CRS.Simple}
               bounds={bounds}
@@ -256,12 +271,7 @@ export default function InteractiveMap() {
             {isRegistering && clickedCoords && pixelCoords && (
               <div
                 className="absolute bg-primary-foreground shadow-xl rounded-xl border border-muted-foreground/20 z-1000 transition-all duration-100"
-                style={{
-                  left: pixelCoords.x,
-                  top: pixelCoords.y,
-                  transform: 'translate(-50%, -100%)',
-                  marginTop: '-15px',
-                }}
+                style={getPopupStyle()}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-2 w-64">
