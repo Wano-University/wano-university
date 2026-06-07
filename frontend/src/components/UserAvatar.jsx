@@ -10,8 +10,12 @@ import {
 import { Button } from "./ui/button";
 import { User } from "lucide-react";
 import { logoutUser } from "../lib/auth";
+import { useTranslation } from "react-i18next";
+
 
 export default function UserAvatar({ user }) {
+  const { t } = useTranslation();
+
   if (!user) return null;
 
   return (
@@ -35,24 +39,24 @@ export default function UserAvatar({ user }) {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link to="/profile/customize" className="cursor-pointer w-full">Customize</Link>
+          <Link to="/profile/customize" className="cursor-pointer w-full">{t('UserCustomize')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/tickets" className="cursor-pointer w-full">Tickets</Link>
+          <Link to="/tickets" className="cursor-pointer w-full">{t('UserTickets')}</Link>
         </DropdownMenuItem>
 
         {(user.type === 'STUDENT' || user.type === 'TEACHER') && (
           <DropdownMenuItem asChild>
-            <Link to="/reservations" className="cursor-pointer w-full">Reservations</Link>
+            <Link to="/reservations" className="cursor-pointer w-full">{t('UserReserv')}</Link>
           </DropdownMenuItem>
         )}
 
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link to="/changepassword" className="cursor-pointer w-full">Change Password</Link>
+          <Link to="/changepassword" className="cursor-pointer w-full">{t('UserChange')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={logoutUser} className="cursor-pointer w-full">
-          Log out
+          {t('UserLog')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

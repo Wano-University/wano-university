@@ -3,35 +3,11 @@ import useSWR, { mutate } from "swr"
 import { useNavigate } from "react-router-dom"
 import { useTheme } from "@/providers/ThemeProvider"
 import { Card } from "@/components/ui/card"
-import { ArrowLeft, ArrowRight, Download, Thermometer, Settings, Info, AlertTriangle, Zap, Wind } from "lucide-react"
-import { simulateTemperature, updateTemperatureLimits, getTemperatureReport, getTemperatureTrend } from "../lib/sensors"
+import { ArrowLeft, ArrowRight, Download, Thermometer } from "lucide-react"
+import { CartesianGrid, LabelList, Line, LineChart, XAxis, YAxis, Label } from "recharts"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useTranslation } from "react-i18next";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip as ChartTooltip,
-  Filler
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ChartTooltip, Filler);
-
-const SIMULATE_KEY = "temperature-simulate"
-const TREND_KEY = "temperature-trend"
-
-const SENSOR_TABS = [
-  { key: "energy", label: "Energy", icon: Zap, path: "/energydashboard" },
-  { key: "temperature", label: "Temperature", icon: Thermometer, path: "/temperaturedashboard" },
-  { key: "air", label: "Air Quality", icon: Wind, path: "/airqualitydashboard" },
-]
-
-const fetchSensors = async () => {
-  const result = await simulateTemperature();
-  return { sensors: result.sensors, stats: result.stats, alertsGenerated: result.alertsGenerated };
-};
 
 const fetchTrend = async () => {
   return await getTemperatureTrend();
@@ -46,6 +22,9 @@ export default function TemperatureDashboard() {
   const { data: trendData, isLoading: trendLoading } = useSWR(TREND_KEY, fetchTrend, { refreshInterval: 300000 });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const { t } = useTranslation();
+  
+  // NOVO ESTADO: Guarda qual sensor foi clicado/selecionado
   const [selectedSensorId, setSelectedSensorId] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [lowerLimitInput, setLowerLimitInput] = useState("")

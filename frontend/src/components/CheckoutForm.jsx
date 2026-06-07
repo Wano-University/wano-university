@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from "react-i18next";
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -9,6 +11,8 @@ export default function CheckoutForm({ clientSecret }) {
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const { t } = useTranslation();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,7 +78,7 @@ export default function CheckoutForm({ clientSecret }) {
       >
         {isProcessing ? (
           <span className="flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" /> Finalizing...
+            <Loader2 className="w-5 h-5 animate-spin" /> {t('CheckOutFinal')}
           </span>
         ) : (
           'Pay Now'

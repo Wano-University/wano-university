@@ -5,6 +5,7 @@ import { Combobox, ComboboxInput, ComboboxContent, ComboboxEmpty, ComboboxList, 
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { registerUser as registerUserAPI } from '../lib/auth';
+import { useTranslation } from "react-i18next";
 
 const types = ["Admin", "Student", "Professor", "Staff"];
 
@@ -12,6 +13,8 @@ export default function CreateAccount() {
 
   const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const { t } = useTranslation();
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -56,7 +59,7 @@ export default function CreateAccount() {
   return (
     <section id="create" className="py-24 max-w-7xl mx-auto px-6">
       <div className="mb-10 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mt-2">Register Account</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mt-2">{t('CreateAccountRegister')}</h2>
       </div>
 
       <Card className="max-w-4xl mx-auto p-8 shadow-lg border-border hover:shadow-xl transition-all mt-16">
@@ -65,7 +68,7 @@ export default function CreateAccount() {
             <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
               <Field className="col-span-2">
-                <FieldLabel htmlFor="type">Account Type:</FieldLabel>
+                <FieldLabel htmlFor="type">{t('CreateAccountType')}:</FieldLabel>
                 <Combobox items={types}>
                   <ComboboxInput
                     id="type"
@@ -74,7 +77,7 @@ export default function CreateAccount() {
                     required className="bg-white"
                   />
                   <ComboboxContent>
-                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                    <ComboboxEmpty>{t('CreateAccountNoItems')}</ComboboxEmpty>
                     <ComboboxList className="bg-white">
                       {(item) => (
                         <ComboboxItem key={item} value={item}>
@@ -87,37 +90,37 @@ export default function CreateAccount() {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="name">Name:</FieldLabel>
+                <FieldLabel htmlFor="name">{t('CreateAccountName')}:</FieldLabel>
                 <Input name="name" id="name" placeholder="Name" required />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="surname">Surname:</FieldLabel>
+                <FieldLabel htmlFor="surname">{t('CreateAccountSurname')}:</FieldLabel>
                 <Input name="surname" id="surname" placeholder="Surname" required />
               </Field>
 
               <Field className="col-span-2">
-                <FieldLabel htmlFor="address">Address:</FieldLabel>
+                <FieldLabel htmlFor="address">{t('CreateAccountAddress')}:</FieldLabel>
                 <Input name="address" id="address" placeholder="Address" required />
               </Field>
 
               <Field className="col-span-2">
-                <FieldLabel htmlFor="nif">NIF:</FieldLabel>
+                <FieldLabel htmlFor="nif">{t('CreateAccountNIF')}:</FieldLabel>
                 <Input name="nif" id="nif" placeholder="NIF" required minLength={9} maxLength={9} />
               </Field>
 
               <Field className="col-span-2">
-                <FieldLabel htmlFor="email">Email:</FieldLabel>
+                <FieldLabel htmlFor="email">{t('CreateAccountEmail')}:</FieldLabel>
                 <Input name="email" id="email" placeholder="Email" type="email" required />
               </Field>
 
               <Field className="col-span-2">
-                <FieldLabel htmlFor="login">Login:</FieldLabel>
+                <FieldLabel htmlFor="login">{t('CreateAccountLogin')}:</FieldLabel>
                 <Input name="login" id="login" placeholder="Login" type="text" required />
               </Field>
 
               <Field className="col-span-2">
-                <FieldLabel htmlFor="password">Password:</FieldLabel>
+                <FieldLabel htmlFor="password">{t('CreateAccountPass')}:</FieldLabel>
                 <Input name="password" id="password" placeholder="Password" type="password" required />
               </Field>
 

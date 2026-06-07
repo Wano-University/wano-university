@@ -10,6 +10,8 @@ import { ModeToggle } from "./ModeToggle";
 import { Button } from "./ui/button";
 import UserAvatar from "./UserAvatar";
 import { useTerminal } from "./TerminalPopup";
+import { useTranslation } from "react-i18next";
+
 
 const desktopLinkStyle = "text-base font-medium text-muted-foreground hover:text-primary hover:scale-105 px-3 py-2 transition-all duration-200 inline-block";
 const mobileLinkStyle = "block w-full px-4 py-3 text-lg font-medium text-muted-foreground hover:text-primary hover:scale-[1.02] transition-all duration-200 origin-left";
@@ -17,6 +19,8 @@ const mobileLinkStyle = "block w-full px-4 py-3 text-lg font-medium text-muted-f
 export default function Navbar() {
   const storedUser = localStorage.getItem('user');
   const user = storedUser ? JSON.parse(storedUser) : null;
+  const { t } = useTranslation();
+
 
   const { openTerminal } = useTerminal();
 
@@ -31,37 +35,37 @@ export default function Navbar() {
 
         {!user && (
           <>
-            <Link to="/createacc" className={desktopLinkStyle}>Create Account</Link>
-            <Link to="/login" className={desktopLinkStyle}>Login</Link>
+            <Link to="/createacc" className={desktopLinkStyle}>{t('NavbarCreate')}</Link>
+            <Link to="/login" className={desktopLinkStyle}>{t('NavbarLogin')}</Link>
           </>
         )}
 
         {user?.type === 'ADMIN' && (
           <>
-            <Link to="/map" className={desktopLinkStyle}>Spaces</Link>
-            <Link to="/parking" className={desktopLinkStyle}>Mobility</Link>
-            <Link to="/sensors" className={desktopLinkStyle}>Sensors</Link>
-            <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
-            <Link to="/energydashboard" className={desktopLinkStyle}>Dashboards</Link>
-            <Link to="/admin/users" className={desktopLinkStyle}>User Management</Link>
+            <Link to="/map" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
+            <Link to="/parking" className={desktopLinkStyle}>{t('NavbarMobility')}</Link>
+            <Link to="/sensors" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
+            <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
+            <Link to="/admin/dashboard" className={desktopLinkStyle}>{t('NavbarDashboards')}</Link>
+            <Link to="/admin/users" className={desktopLinkStyle}>{t('NavbarDashboards')}</Link>
           </>
         )}
 
         {user?.type === 'STAFF' && (
           <>
-            <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
-            <Link to="/sensors" className={desktopLinkStyle}>Sensors</Link>
-            <Link to="/energydashboard" className={desktopLinkStyle}>Energy</Link>
-            <Link to="/temperaturedashboard" className={desktopLinkStyle}>Temperature</Link>
-            <Link to="/airqualitydashboard" className={desktopLinkStyle}>Air Quality</Link>
+            <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
+            <Link to="/sensors" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
+            <Link to="/sensors/temperature" className={desktopLinkStyle}>{t('NavbarTemperature')}</Link>
+            <Link to="/sensors/air-quality" className={desktopLinkStyle}>{t('NavbarAir')}</Link>
+            <Link to="/sensors/energy" classname={desktopLinkStyle}>{t('NavbarEnergy')}</Link>
           </>
         )}
 
         {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
           <>
-            <Link to="/spaces" className={desktopLinkStyle}>Spaces</Link>
-            <Link to="/cafeteria" className={desktopLinkStyle}>Cafeteria</Link>
-            <Link to="/parking" className={desktopLinkStyle}>Mobility</Link>
+            <Link to="/map" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
+            <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
+            <Link to="/parking" className={desktopLinkStyle}>{t('NavbarMobility')}</Link>
           </>
         )}
 
@@ -104,11 +108,11 @@ export default function Navbar() {
         {user && <UserAvatar user={user} />}
 
         <Sheet>
-          <SheetTitle className="sr-only">Navigation</SheetTitle>
+          <SheetTitle className="sr-only">{t('NavbarNav')}</SheetTitle>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full text-foreground/80 hover:text-foreground cursor-pointer">
               <Menu className="h-6 w-6" />
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{t('NavbarOpen')}</span>
             </Button>
           </SheetTrigger>
 
@@ -116,37 +120,37 @@ export default function Navbar() {
 
             {!user && (
               <>
-                <Link to="/createacc" className={mobileLinkStyle}>Create Account</Link>
-                <Link to="/login" className={mobileLinkStyle}>Login</Link>
+                <Link to="/createacc" className={mobileLinkStyle}>{t('NavbarCreate')}</Link>
+                <Link to="/login" className={mobileLinkStyle}>{t('NavbarLogin')}</Link>
               </>
             )}
 
             {user?.type === 'ADMIN' && (
               <>
-                <Link to="/map" className={mobileLinkStyle}>Spaces</Link>
-                <Link to="/parking" className={mobileLinkStyle}>Mobility</Link>
-                <Link to="/sensors" className={mobileLinkStyle}>Sensors</Link>
-                <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
-                <Link to="/energydashboard" className={mobileLinkStyle}>Dashboards</Link>
-                <Link to="/admin/users" className={mobileLinkStyle}>User Management</Link>
+                <Link to="/map" className={mobileLinkStyle}>{t('NavbarSpaces')}</Link>
+                <Link to="/parking" className={mobileLinkStyle}>{t('NavbarMobility')}</Link>
+                <Link to="/sensors" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
+                <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
+                <Link to="/admin/dashboard" className={mobileLinkStyle}>{t('NavbarDashboards')}</Link>
+                <Link to="/admin/users" className={mobileLinkStyle}>{t('NavbarUserManagement')}</Link>
               </>
             )}
 
             {user?.type === 'STAFF' && (
               <>
-                <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
-                <Link to="/sensors" className={mobileLinkStyle}>Sensors</Link>
-                <Link to="/energydashboard" className={mobileLinkStyle}>Energy</Link>
-                <Link to="/temperaturedashboard" className={mobileLinkStyle}>Temperature</Link>
-                <Link to="/airqualitydashboard" className={mobileLinkStyle}>Air Quality</Link>
+                <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
+                <Link to="/sensors" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
+                <Link to="/sensors/temperature" className={mobileLinkStyle}>{t('NavbarTemperature')}</Link>
+                <Link to="/sensors/air-quality" className={mobileLinkStyle}>{t('NavbarAir')}</Link>
+                <Link to="/sensors/energy" classname={mobileLinkStyle}>{t('NavbarEnergy')}</Link>
               </>
             )}
 
             {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
               <>
-                <Link to="/spaces" className={mobileLinkStyle}>Spaces</Link>
-                <Link to="/cafeteria" className={mobileLinkStyle}>Cafeteria</Link>
-                <Link to="/parking" className={mobileLinkStyle}>Mobility</Link>
+                <Link to="/map" className={mobileLinkStyle}>{t('NavbarSpaces')}</Link>
+                <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
+                <Link to="/parking" className={mobileLinkStyle}>{t('NavbarMobility')}</Link>
               </>
             )}
           </SheetContent>
