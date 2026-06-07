@@ -57,7 +57,6 @@ model MobilityResource {
 
   sensor       Sensor?
   reservations Reservation[]
-  sensor       Sensor?
 }
 
 model Sensor {
