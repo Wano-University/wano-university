@@ -30,13 +30,15 @@ model Permission {
 }
 
 model Resource {
-  id           Int           @id @default(autoincrement())
-  type         ResourceType
-  name         String
-  floor        Floor
-  capacity     Int           @default(1)
-  isAvailable  Boolean       @default(true)
-  createdAt    DateTime      @default(now())
+  id          Int          @id @default(autoincrement())
+  type        ResourceType
+  name        String
+  floor       Floor?
+  desc        String?
+  capacity    Int          @default(1)
+  isAvailable Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  color       String?
   xCoordinates Float?
   yCoordinates Float?
   accesses     Access[]
@@ -45,13 +47,16 @@ model Resource {
 }
 
 model MobilityResource {
-  id           Int            @id @default(autoincrement())
-  type         MobilityType
-  identifier   String         @unique
-  location     String?
-  status       MobilityStatus @default(FREE)
-  reservations Reservation[]
+  id         Int            @id @default(autoincrement())
+  type       MobilityType
+  identifier String         @unique
+  location   String?
+  status     MobilityStatus @default(FREE)
+  xCoordinates Float?
+  yCoordinates Float?
+
   sensor       Sensor?
+  reservations Reservation[]
 }
 
 model Sensor {

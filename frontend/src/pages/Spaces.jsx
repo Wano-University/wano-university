@@ -3,19 +3,17 @@ import { MapContainer, ImageOverlay, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Calendar as CalendarIcon, Users, ShieldAlert, Clock } from 'lucide-react';
-
-// Import your services
 import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js'; 
 import { createReservation } from '../lib/reservation.js'; 
 import { useTranslation } from "react-i18next";
 
+import { Link } from "react-router-dom"
 
 const bounds = [[0, 0], [1100, 2000]];
 
 const HARDCODED_SPACES = [
   { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM'},
   { hcId: 'F1_R2', floor: 'FLOOR_1', x: 151, y: 576, defaultType: 'ROOM' },
-  { hcId: 'F1_R3', floor: 'FLOOR_1', x: 800, y: 400, defaultType: 'ROOM' },
   { hcId: 'F1_R4', floor: 'FLOOR_1', x: 284, y: 400, defaultType: 'ROOM' },
   { hcId: 'F1_R5', floor: 'FLOOR_1', x: 725, y: 128, defaultType: 'ROOM' },
   { hcId: 'F1_R6', floor: 'FLOOR_1', x: 338, y: 148, defaultType: 'ROOM' },
@@ -265,6 +263,13 @@ export default function InteractiveMap() {
         </div>
         
         <div className="flex items-center gap-3 mt-4 md:mt-0">
+          <Link 
+              to="/equipments" 
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
+            >
+            <Wrench size={16} />
+            Equipments
+          </Link>
           <button 
             onClick={() => setIsAdminMode(!isAdminMode)}
             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
@@ -329,7 +334,6 @@ export default function InteractiveMap() {
                             </p>
                           </div>
 
-                          {/* RENDER FORMS CONDITIONALLY BASED ON ADMIN MODE */}
                           {!isAdminMode ? (
                             <ReservationForm 
                               space={space.dbData} 
@@ -355,7 +359,7 @@ export default function InteractiveMap() {
                           <form onSubmit={(e) => handleRegisterResource(e, space)} className="space-y-3">
                             <div className="border-b border-muted pb-2">
                               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                                <ShieldAlert size={16} className="text-amber-500"/> {t('SpaceActivate')}
+                                <ShieldAlert size={16} className="text-swordsman"/> {t('SpaceActivate')}
                               </h3>
                               <span className="text-[10px] text-muted-foreground block mt-0.5">{t('SpaceRegister')}</span>
                             </div>
@@ -376,7 +380,7 @@ export default function InteractiveMap() {
                               <input type="number" value={resourceForm.capacity} onChange={(e) => setResourceForm({...resourceForm, capacity: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
                             </div>
 
-                            <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-sm">
+                            <button type="submit" className="w-full bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm">
                               {t('SpaceRegister')}
                             </button>
                           </form>
@@ -396,8 +400,8 @@ export default function InteractiveMap() {
           </div>
         </div>
 
+      {/* Filter by floors */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Level Switcher */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Layers size={14} /> {t('SpaceLvlMatrix')}
@@ -408,7 +412,7 @@ export default function InteractiveMap() {
             </div>
           </div>
 
-          {/* Filtering Workspace */}
+        {/* Filter by room type */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Filter size={14} /> {t('SpaceFilter')}
@@ -425,6 +429,13 @@ export default function InteractiveMap() {
                 <FlaskConical size={16} /> <span>{t('SpaceLabs')}</span>
               </button>
             </div>
+          </div>
+
+        <div className="p-4 bg-muted-foreground/10 border border-muted-foreground/60 text-muted-foreground/60 rounded-2xl flex gap-3 text-xs leading-relaxed">
+            <AlertTriangle className="shrink-0 text-muted-foreground" size={18} />
+            <p>
+              <strong>Deployment Hint:</strong> Click directly on the mapped rooms to make a reservation.
+            </p>
           </div>
         </div>
       </div>

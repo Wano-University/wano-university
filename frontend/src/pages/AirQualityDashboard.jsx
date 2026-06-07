@@ -1,253 +1,317 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import useSWR, { mutate } from "swr"
+import { useNavigate } from "react-router-dom"
 import { Card } from "@/components/ui/card"
-import { ArrowLeft, ArrowRight, Wind, Cloud, Leaf, AlertTriangle } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { ArrowLeft, ArrowRight, Download, Wind, Cloud, Leaf, Settings, Info, AlertTriangle, Thermometer, Zap } from "lucide-react"
+import { simulateAirQuality, updateAirQualityLimits, getAirQualityReport } from "../lib/sensors"
+
+const SIMULATE_KEY = "air-quality-simulate"
+
+const SENSOR_TABS = [
+  { key: "energy", label: "Energy", icon: Zap, path: "/energydashboard" },
+  { key: "temperature", label: "Temperature", icon: Thermometer, path: "/temperaturedashboard" },
+  { key: "air", label: "Air Quality", icon: Wind, path: "/airqualitydashboard" },
+]
+
+const fetcher = async () => {
+  const result = await simulateAirQuality()
+  return {
+    sensors: result?.sensors ?? [],
+    stats: result?.stats ?? [],
+    alertsGenerated: result?.alertsGenerated ?? 0,
+  }
+}
 
 export default function AirQualityDashboard() {
-  const [scale, setScale] = useState(1)
-  const [isMobile, setIsMobile] = useState(false)
-  const [data, setData] = useState({ sensors: [], stats: [] })
-  const [selectedId, setSelectedId] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { t } = useTranslation();
-  
-  const [page, setPage] = useState(0)
-  const sensorsPerPage = 4
-  const totalPages = Math.ceil(data.sensors.length / sensorsPerPage) || 1;
-  const currentPage = page + 1;
+  const navigate = useNavigate()
+  const activeTab = "air"
 
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [lowestInput, setLowestInput] = useState("");
-  const [highestInput, setHighestInput] = useState("");
+  const { data, isLoading } = useSWR(SIMULATE_KEY, fetcher, {
+    refreshInterval: 60000,
+    revalidateOnFocus: false,
+  })
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [selectedSensorId, setSelectedSensorId] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [lowerLimitInput, setLowerLimitInput] = useState("")
+  const [upperLimitInput, setUpperLimitInput] = useState("")
+  const [isExporting, setIsExporting] = useState(false)
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
+
+  const sensorsPerPage = 6
+  const sensors = data?.sensors ?? []
+  const stats = data?.stats ?? []
+  const alertsGenerated = data?.alertsGenerated ?? 0
+
+  const indexOfLastSensor = currentPage * sensorsPerPage
+  const indexOfFirstSensor = indexOfLastSensor - sensorsPerPage
+  const currentSensors = sensors.slice(indexOfFirstSensor, indexOfLastSensor)
+  const totalPages = Math.ceil(sensors.length / sensorsPerPage)
 
   const handleEditClick = () => {
-    if (!selectedId) return;
-    const sensor = data.sensors.find(s => s.id === selectedId);
-    
+    if (!selectedSensorId) return
+    const sensor = sensors.find(s => s.id === selectedSensorId)
     if (sensor) {
-      setLowestInput(sensor.lowerLimit != null ? String(sensor.lowerLimit) : "");
-      setHighestInput(sensor.upperLimit != null ? String(sensor.upperLimit) : "");
+      setLowerLimitInput(sensor.lowerLimit !== null ? sensor.lowerLimit.toString() : "")
+      setUpperLimitInput(sensor.upperLimit !== null ? sensor.upperLimit.toString() : "")
     }
-    
-    setIsEditModalOpen(true);
-  };
-
-  useEffect(() => {
-    const handleResize = () => {
-      const mobileCheck = window.innerWidth < 768
-      setIsMobile(mobileCheck)
-      if (!mobileCheck) {
-        const scaleX = window.innerWidth / 1400
-        const scaleY = (window.innerHeight - 80) / 800
-        setScale(Math.min(scaleX, scaleY, 1))
-      }
-    }
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("http://localhost:3000/api/dashboard/air-quality");
-        
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const json = await response.json();
-        
-        const processedSensors = (json.sensors || []).sort((a, b) => a.id - b.id).map(s => ({
-          id: s.id,
-          status: s.iqa > 80 ? t('AirDashboardStatusP') : s.iqa > 50 ? t('AirDashboardStatusM') : t('AirDashboardStatusE'),
-          iqa: s.iqa,
-          pm: Math.round(s.iqa / 10) + " µg/m³",
-          color: s.iqa > 80 ? "text-red-500" : s.iqa > 50 ? "text-yellow-500" : "text-green-500",
-          lowerLimit: s.lowerLimit,
-          upperLimit: s.upperLimit
-        }));
-
-        setData({
-          sensors: processedSensors,
-          stats: json.stats || []
-        });
-        setError(null);
-      } catch (err) {
-        console.error("Data fetch error:", err);
-        setError("Failed to load air quality data.");
-      } finally {
-        setLoading(false); 
-      }
-    };
-
-    fetchData();
-    const interval = setInterval(fetchData, 30000); 
-    return () => clearInterval(interval);
-  }, []);
-
-  const handlePrev = () => setPage(p => Math.max(0, p - 1))
-  const handleNext = () => {
-    const maxPage = Math.ceil(data.sensors.length / sensorsPerPage) - 1
-    setPage(p => Math.min(maxPage, p + 1))
+    setIsEditModalOpen(true)
   }
 
-  return (
-    <div className={isMobile ? "p-4 w-full h-full relative" : "w-full h-[calc(100vh-80px)] pt-25 relative flex items-center justify-center bg-background overflow-hidden"}>
-    <div style={!isMobile ? { transform: `scale(${scale})`, transformOrigin: "top" } : {}} className="w-[1400px]">
-      <Card className="relative overflow-hidden p-6 border shadow-lg rounded-[2.5rem]">
-          <h1 className="text-4xl font-bold text-center mb-4 text-[#320088]">
-            {t('AirDashboardTitle')}
-          </h1>
-          
-        {/* Summary Row */}
-        <div className="grid grid-cols-4 gap-12 mb-4">
-          {data.stats.map((item, i) => (
-            <div key={i} className="bg-[#6338AF]/60 p-4 rounded-3xl flex flex-row items-center justify-between px-6">
-              
-              {/* Text Container centered by flex-grow */}
-              <div className="flex flex-col items-center flex-grow">
-                <div className="text-[#320088] font-bold text-xl">{item.title}</div>
-                <span className="text-4xl font-bold text-white leading-none mt-2">
-                  {item.value}
-                </span>
-              </div>
-              
-              {item.title === "{t('AirDashboardIAvgIQA')}" && (
-                <div className="ml-4">
-                  <Wind className="w-14 h-14 text-black" />
-                </div>
-              )}
-              {item.title === "{t('AirDashboardIAvgPM')}" && (
-                <div className="ml-4">
-                  <Cloud className="w-14 h-14 text-black" />
-                </div>
-              )}
-              {item.title === "{t('AirDashboardIGIQA')}" && (
-                <div className="ml-4">
-                  <Leaf className="w-14 h-14 text-black" />
-                </div>
-              )}
-              {item.title === "{t('AirDashboardIWIQA')}" && (
-                <div className="ml-4">
-                  <AlertTriangle className="w-14 h-14 text-black" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+  const handleUpdateLimits = async () => {
+    try {
+      await updateAirQualityLimits(selectedSensorId, {
+        lowerLimit: lowerLimitInput ? parseFloat(lowerLimitInput) : null,
+        upperLimit: upperLimitInput ? parseFloat(upperLimitInput) : null,
+      })
+      setIsEditModalOpen(false)
+      mutate(SIMULATE_KEY)
+    } catch {
+      alert("Error updating limits")
+    }
+  }
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-10 md:gap-y-6 mb-8">
-            {data.sensors
-              .sort((a, b) => a.id - b.id)
-              .slice(page * sensorsPerPage, (page + 1) * sensorsPerPage)
-              .map((s) => (
-                <div 
-                  key={s.id} 
-                  onClick={() => setSelectedId(s.id)} 
-                  className={`cursor-pointer transition-all duration-300 p-6 md:p-8 rounded-3xl flex justify-between items-center 
-                    ${selectedId === s.id ? 'bg-[#4A2D7A] ring-4 ring-white' : 'bg-[#6338AF]/60'}`}
-                >
-                  <div>
-                    <div className="text-[#320088] dark:text-[#E0D0FF] font-bold text-xl md:text-3xl mb-1">Sensor {s.id}</div>
-                    <div className={`font-bold text-lg md:text-3xl ${s.color}`}>{s.status}</div>
-                    <div className="text-lg md:text-3xl font-semibold text-white/90">PM2.5 : {s.pm}</div>
-                  </div>
-                  <div className="text-2xl md:text-5xl font-bold text-white">{t('AirDashboardIQA')} {s.iqa}</div>
-                  <Wind className="w-10 h-10 md:w-16 md:h-16 text-black dark:text-[#E0D0FF] ml-4" />
-                </div>
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      const blob = await getAirQualityReport()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `air_quality_report_${new Date().toISOString().slice(0, 7)}.csv`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.URL.revokeObjectURL(url)
+    } catch (err) {
+      alert(err.message || "Failed to export report")
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  // Helper to assign specific icons and colors to the 4 stats returned by the backend
+  const getStatIcon = (title) => {
+    if (title.includes("PM2.5")) return <Cloud className="w-6 h-6 text-primary" />;
+    if (title.includes("Average IQA")) return <Wind className="w-6 h-6 text-primary" />;
+    if (title.includes("Good")) return <Leaf className="w-6 h-6 text-green-500" />;
+    if (title.includes("Worst")) return <AlertTriangle className="w-6 h-6 text-destructive" />;
+    return <Wind className="w-6 h-6 text-primary" />;
+  };
+
+  return (
+    <section className="py-12 max-w-7xl mx-auto px-6">
+
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight text-foreground flex items-center gap-3">
+            <Wind className="w-8 h-8 text-primary" /> Air Quality Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm">Real-time particle, IQA, and pollution monitoring.</p>
+        </div>
+        {alertsGenerated > 0 && (
+          <div className="flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-xl font-bold text-sm border border-destructive/20 cursor-default shadow-sm">
+            <AlertTriangle className="w-4 h-4" /> {alertsGenerated} Active Alert{alertsGenerated !== 1 ? "s" : ""}
+          </div>
+        )}
+      </div>
+
+      {/* Main Grid */}
+      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+
+        {/* 1. Tabs */}
+        <div className="order-1 lg:col-start-1 lg:col-span-7 lg:row-start-1">
+          <div className="flex gap-2 p-1 bg-card border border-border rounded-2xl shadow-sm">
+            {SENSOR_TABS.map(({ key, label, icon: Icon, path }) => (
+              <button
+                key={key}
+                onClick={() => navigate(path)}
+                className={`flex flex-1 items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${activeTab === key
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
+              >
+                <Icon className="w-4 h-4" /> {label}
+              </button>
             ))}
           </div>
+        </div>
 
-          <div className="grid grid-cols-3 items-center w-full px-4">
-            <div className="flex justify-start">
+        {/* 2. Right Column Stats (Fills the space where the chart usually is) */}
+        <div className="order-2 lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:row-span-3">
+          <div className="grid grid-cols-2 gap-4 h-full min-h-[400px]">
+            {stats.length > 0 ? (
+              stats.map((stat, i) => (
+                <Card key={i} className="p-6 flex flex-col justify-center items-center text-center hover:shadow-md transition-all duration-300 cursor-default border-border">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+                    {getStatIcon(stat.title)}
+                  </div>
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                    {stat.title}
+                  </span>
+                  <p className="text-3xl font-black text-foreground truncate w-full">
+                    {stat.value}
+                  </p>
+                </Card>
+              ))
+            ) : (
+              Array(4).fill(0).map((_, i) => <Card key={i} className="h-full animate-pulse" />)
+            )}
+          </div>
+        </div>
+
+        {/* 3. Sensors */}
+        <div className="order-3 lg:col-start-1 lg:col-span-7 lg:row-start-2">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 min-h-[300px]">
+            {isLoading
+              ? Array(6).fill(0).map((_, i) => <Card key={i} className="h-36 animate-pulse" />)
+              : currentSensors.length > 0
+                ? currentSensors.map(sensor => {
+                  const isSelected = selectedSensorId === sensor.id
+                  const isOverLimit = sensor.upperLimit !== null && sensor.iqa > sensor.upperLimit
+                  const isUnderLimit = sensor.lowerLimit !== null && sensor.iqa < sensor.lowerLimit
+                  const isAnomaly = isOverLimit || isUnderLimit
+
+                  const status = sensor.iqa > 80 ? "Poor" : sensor.iqa > 50 ? "Moderate" : "Excellent"
+                  const statusColor = sensor.iqa > 80 ? "text-destructive" : sensor.iqa > 50 ? "text-yellow-500" : "text-green-500"
+
+                  return (
+                    <Card
+                      key={sensor.id}
+                      onClick={() => setSelectedSensorId(isSelected ? null : sensor.id)}
+                      className={`p-5 cursor-pointer transition-all duration-300 border-2 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between ${isSelected ? "border-primary bg-primary/5 scale-[1.03] shadow-md"
+                        : isAnomaly ? "border-destructive/50 bg-destructive/5"
+                          : "border-border hover:border-primary/40"
+                        }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <Wind className={`w-5 h-5 ${isAnomaly ? "text-destructive" : "text-primary"}`} />
+                        <span className={`text-[10px] font-black uppercase tracking-wider ${statusColor}`}>{status}</span>
+                      </div>
+                      <div className="mt-4">
+                        <p className="text-2xl font-black text-foreground">{sensor.iqa} IQA</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold mt-1">ID: {sensor.id}</p>
+                      </div>
+                    </Card>
+                  )
+                })
+                : Array(6).fill(0).map((_, i) => (
+                  <Card key={i} className="h-36 border-2 border-dashed border-border opacity-40 bg-transparent" />
+                ))}
+          </div>
+        </div>
+
+        {/* 4. Pagination & Management Bar */}
+        <div className="order-4 lg:col-start-1 lg:col-span-7 lg:row-start-3">
+          <div className="flex flex-wrap items-center justify-between gap-4 p-3 bg-card rounded-2xl border border-border shadow-sm">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 hover:shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <span className="text-sm font-bold w-20 text-center">Page {currentPage}</span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                disabled={currentPage === totalPages || totalPages === 0}
+                className="p-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 hover:shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all cursor-pointer"
+              >
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-            
-            <div className="flex items-center justify-center gap-4">
-              <button onClick={handleEditClick} disabled={!selectedId} className={`px-10 py-3 rounded-full font-bold transition-colors ${selectedId ? "bg-foreground text-background" : "bg-gray-400 text-gray-200 cursor-not-allowed"}`}> 
-                  {t('AirDashboardEdit')} ✏️ 
+            <div className="flex items-center gap-2 ml-auto">
+              <button onClick={() => setIsInfoModalOpen(true)} className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground active:scale-95 transition-all cursor-pointer">
+                <Info className="w-5 h-5" />
               </button>
-              <button onClick={handlePrev} disabled={page === 0} className="bg-foreground text-background p-3 rounded-full disabled:opacity-50">
-                  <ArrowLeft />
+              <button
+                onClick={handleEditClick}
+                disabled={!selectedSensorId}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm font-bold hover:bg-secondary/80 hover:shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all cursor-pointer"
+              >
+                <Settings className="w-4 h-4" /> Edit
               </button>
-              <button onClick={handleNext} disabled={currentPage === totalPages} className="bg-foreground text-background p-3 rounded-full disabled:opacity-50">
-                  <ArrowRight />
+              <button
+                onClick={handleExport}
+                disabled={isExporting}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 hover:shadow-md active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all cursor-pointer"
+              >
+                <Download className="w-4 h-4" /> {isExporting ? "Exporting..." : "Export"}
               </button>
-              <button onClick={() => window.location.href = "http://localhost:3000/api/dashboard/air-quality/export"} className="bg-foreground text-background px-10 py-3 rounded-full font-bold"> 
-                  {t('AirDashboardExport')}
-              </button>
-            </div>
-            <div className="flex justify-end">
-              <span className="font-bold text-lg text-[#320088]">
-                {t('AirDashboardPage')} {currentPage} {t('AirDashboardPageOf')} {totalPages}
-              </span>
             </div>
           </div>
+        </div>
 
-          {isEditModalOpen && (
-            <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/20 backdrop-blur-md">
-              <div className="bg-white/40 backdrop-blur-2xl border border-white/30 w-[90%] max-w-md rounded-3xl p-6 shadow-2xl text-center">  
-                <h3 className="text-[#3B1E7B] font-bold text-xl mb-6">
-                  Sensor {selectedId}
-                </h3>
+      </div>
 
-                <div className="space-y-4 mb-8 text-left">
-                  <div>
-                    <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">
-                      {t('AirDashboardEditL')}:
-                    </label>
-                   <input 
-                      type="number"
-                      value={lowestInput}
-                      onChange={(e) => setLowestInput(e.target.value)}
-                      placeholder="N/A"
-                      className="w-full bg-white text-[#3B1E7B] font-medium px-4 py-3 rounded-full shadow-inner border border-transparent focus:outline-none focus:border-[#6338AF]/50 transition text-lg"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">
-                      {t('AirDashboardEditL')}:
-                    </label>
-                    <input 
-                      type="number"
-                      value={highestInput}
-                      onChange={(e) => setHighestInput(e.target.value)}
-                      placeholder="N/A"
-                      className="w-full bg-white text-[#3B1E7B] font-medium px-4 py-3 rounded-full shadow-inner border border-transparent focus:outline-none focus:border-[#6338AF]/50 transition text-lg"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex gap-4 justify-center">        
-                  <button 
-                    onClick={async () => {
-                      const payload = {
-                        lowest: lowestInput === "N/A" ? "" : lowestInput,
-                        highest: highestInput === "N/A" ? "" : highestInput
-                      };
-                        
-                      await fetch(`http://localhost:3000/api/dashboard/air-quality/${selectedId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                      });
-                      
-                      setIsEditModalOpen(false);
-                    }}
-                    className="bg-[#6338AF] hover:bg-[#522c94] text-white font-bold px-6 py-2.5 rounded-md shadow-md hover:shadow-lg active:scale-95 transition-all text-sm uppercase tracking-wider"
-                  >
-                    {t('AirDashboardEditY')}
-                  </button>
-                  <button onClick={() => setIsEditModalOpen(false)} className="bg-[#6338AF] hover:bg-[#522c94] text-white font-bold px-6 py-2.5 rounded-md shadow-md hover:shadow-lg active:scale-95 transition-all text-sm uppercase tracking-wider">
-                    {t('AirDashboardEditN')}
-                  </button>
-                </div>
+      {/* Edit Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+          <Card className="w-full max-w-md p-6 border-border shadow-2xl animate-in zoom-in-95">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <Settings className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-black text-lg">Sensor {selectedSensorId}</h3>
+                <p className="text-sm text-muted-foreground">Adjust trigger boundaries (IQA).</p>
               </div>
             </div>
-          )}  
-        </Card>
-      </div>
-    </div>
+            <div className="space-y-4 mb-8">
+              <div>
+                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">Lower Limit (IQA)</label>
+                <input
+                  type="number"
+                  value={lowerLimitInput}
+                  onChange={e => setLowerLimitInput(e.target.value)}
+                  placeholder="Min Limit"
+                  className="w-full bg-background border border-border px-4 py-3 rounded-xl focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">Upper Limit (IQA)</label>
+                <input
+                  type="number"
+                  value={upperLimitInput}
+                  onChange={e => setUpperLimitInput(e.target.value)}
+                  placeholder="Max Limit"
+                  className="w-full bg-background border border-border px-4 py-3 rounded-xl focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={handleUpdateLimits} className="flex-1 bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all cursor-pointer">
+                Save
+              </button>
+              <button onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-muted text-foreground font-bold py-3 rounded-xl hover:bg-muted/80 active:scale-95 transition-all cursor-pointer">
+                Cancel
+              </button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Info Modal */}
+      {isInfoModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+          <Card className="w-full max-w-sm p-6 border-border shadow-2xl animate-in zoom-in-95">
+            <h3 className="font-black text-xl mb-4 flex items-center gap-2">
+              <Info className="w-5 h-5 text-primary" /> Air Quality Tips
+            </h3>
+            <ul className="space-y-3 mb-6 text-sm text-muted-foreground font-medium">
+              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> An IQA under 50 is excellent. Anything above 100 requires ventilation.</li>
+              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> High PM2.5 levels can damage sensitive server cooling systems over time.</li>
+              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> Ensure sensors are not blocked by furniture to get accurate readings.</li>
+            </ul>
+            <button onClick={() => setIsInfoModalOpen(false)} className="w-full bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all cursor-pointer">
+              Close
+            </button>
+          </Card>
+        </div>
+      )}
+    </section>
   )
 }

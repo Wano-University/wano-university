@@ -3,7 +3,6 @@ import prisma from '../config/db.js';
 const VALID_SPACES = [
   { floor: 'FLOOR_1', x: 477, y: 828},
   { floor: 'FLOOR_1', x: 151, y: 576 },
-  { floor: 'FLOOR_1', x: 800, y: 400 },
   { floor: 'FLOOR_1', x: 284, y: 400 },
   { floor: 'FLOOR_1', x: 725, y: 128 },
   { floor: 'FLOOR_1', x: 338, y: 148 },
@@ -27,17 +26,9 @@ const VALID_SPACES = [
   { floor: 'FLOOR_2', x: 591, y: 898 },
 ];
 
-// 1. GET RESOURCES BY FLOOR (Patched)
 export const getResourcesByFloor = async (req, res) => {
   try {
-    console.log(
-      Object.keys(
-        prisma.resource.fields ?? {}
-      )
-    );
-
     const resources = await prisma.resource.findMany();
-
     res.json(resources);
   } catch (err) {
     console.error(err);
@@ -45,17 +36,31 @@ export const getResourcesByFloor = async (req, res) => {
   }
 };
 
-// 2. REGISTER RESOURCE (Patched)
 export const registerResource = async (req, res) => {
   try {
-    const { type, name, capacity, isAvailable, floor, xCoordinates, yCoordinates } = req.body;
-    console.log("BODY:", req.body);
+    const { type, name, capacity, isAvailable, floor, desc, xCoordinates, yCoordinates, color } = req.body;
+
+    if (type === 'EQUIPMENT') {
+      const resource = await prisma.resource.create({
+        data: {
+          type,
+          name,
+          desc,
+          capacity: capacity ? parseInt(capacity) : 1,
+          isAvailable: isAvailable !== undefined ? isAvailable : true,
+          floor: floor || null,
+          color: color || null,
+        }
+      });
+      return res.status(201).json(resource);
+    }
+
     const targetX = xCoordinates ? parseFloat(xCoordinates) : null;
     const targetY = yCoordinates ? parseFloat(yCoordinates) : null;
 
-    const isValidLocation = VALID_SPACES.some(space => 
-      space.floor === floor && 
-      Math.abs(space.x - targetX) < 20 && 
+    const isValidLocation = VALID_SPACES.some(space =>
+      space.floor === floor &&
+      Math.abs(space.x - targetX) < 20 &&
       Math.abs(space.y - targetY) < 20
     );
 
@@ -64,31 +69,26 @@ export const registerResource = async (req, res) => {
     }
 
     const resource = await prisma.resource.create({
-      data: { 
-        type, 
-        name, 
-        capacity: capacity ? parseInt(capacity) : 1, 
-        isAvailable, 
-        floor, 
-        xCoordinates: targetX, 
-        yCoordinates: targetY 
+      data: {
+        type,
+        name,
+        capacity: capacity ? parseInt(capacity) : 1,
+        isAvailable: isAvailable !== undefined ? isAvailable : true,
+        floor,
+        xCoordinates: targetX,
+        yCoordinates: targetY,
+        color: color || null,
       }
     });
 
     res.status(201).json(resource);
-   } catch (error) {
+  } catch (error) {
     console.error(error);
-
-    res.status(400).json({
-      error: error.message
-    });
+    res.status(400).json({ error: error.message });
   }
 };
 
-
-
-// 3. GET RESERVATIONS BY RESOURCE ID
-export const getReservations = async (req, res) => {
+const getReservations = async (req, res) => {
   try {
     const { id } = req.params; 
     const resource = await prisma.resource.findUnique({
@@ -102,7 +102,6 @@ export const getReservations = async (req, res) => {
   }
 };
 
-// 4. GET ACCESSES BY RESOURCE ID
 export const getAccesses = async (req, res) => {
   try {
     const { id } = req.params;
@@ -117,7 +116,6 @@ export const getAccesses = async (req, res) => {
   }
 };
 
-// 5. GET ALL RESOURCES
 export const getResources = async (req, res) => {
   try {
     const resources = await prisma.resource.findMany({
@@ -130,7 +128,6 @@ export const getResources = async (req, res) => {
   }
 };
 
-// 6. UPDATE RESOURCE STATUS
 export const resourceStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -146,7 +143,6 @@ export const resourceStatus = async (req, res) => {
   }
 };
 
-// 7. GET RESOURCES BY TYPE
 export const getResourcesByType = async (req, res) => {
   try {
     const { type } = req.params;
@@ -159,7 +155,6 @@ export const getResourcesByType = async (req, res) => {
   }
 };
 
-// 8. GET ALL RESERVATIONS DATA
 export const getAllReservations = async (req, res) => {
   try {
     const resources = await prisma.resource.findMany({
@@ -171,7 +166,6 @@ export const getAllReservations = async (req, res) => {
   }
 };
 
-// 9. GET ALL ACCESSES DATA
 export const getAllAccesses = async (req, res) => {
   try {
     const resources = await prisma.resource.findMany({
@@ -180,5 +174,49 @@ export const getAllAccesses = async (req, res) => {
     res.status(200).json(resources);
   } catch (error) {
     res.status(500).json({ error: "Failed to load accesses." });
+  }
+};
+
+export const updateResource = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { type, name, capacity, desc, isAvailable, floor, xCoordinates, yCoordinates, color } = req.body;
+
+    const updateData = {
+      name,
+      desc,
+      capacity: parseInt(capacity),
+      isAvailable,
+      floor: floor || null,
+      color: color || null,
+    };
+
+    if (type !== 'EQUIPMENT') {
+      updateData.xCoordinates = parseFloat(xCoordinates);
+      updateData.yCoordinates = parseFloat(yCoordinates);
+    }
+
+    const updatedResource = await prisma.resource.update({
+      where: { id: parseInt(id) },
+      data: updateData
+    });
+
+    res.status(200).json(updatedResource);
+  } catch (error) {
+    console.error("Error updating resource:", error);
+    res.status(400).json({ error: "Failed to update resource." });
+  }
+};
+
+export const deleteResource = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.resource.delete({
+      where: { id: parseInt(id) }
+    });
+    res.status(200).json({ message: "Resource deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting resource:", error);
+    res.status(400).json({ error: "Failed to delete resource." });
   }
 };
