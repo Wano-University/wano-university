@@ -23,6 +23,17 @@ export default function ValidateReservation() {
 
     try {
       const response = await validateReservation(id);
+      const token = localStorage.getItem('token');
+
+      await fetch('/api/access-logs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reservationId: id, status: 'SUCCESS' })
+      });
+
       setActionResult(response.action);
       setStatus('success');
     } catch (err) {

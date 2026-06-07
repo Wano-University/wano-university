@@ -30,6 +30,7 @@ import Footer from './components/Footer';
 import ValidateReservation from './pages/ValidateReservation';
 import './i18n';
 import Alerts from './pages/Alerts';
+import AccessLogs from './pages/AccessLogs';
 
 function RootLayout() {
   return (
@@ -80,6 +81,7 @@ export default function App() {
         <Route path="/airqualitydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
         <Route path="/energydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
         <Route path="/alerts" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <Alerts /> </ProtectedRoute>} />
+        <Route path="/accesslogs" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AccessLogs /> </ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
