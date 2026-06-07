@@ -62,6 +62,11 @@ export default function UserAvatar({ user }) {
             </DropdownMenuItem>
           )}
 
+          {(user.type === 'STAFF' || user.type === 'ADMIN') && (
+            <DropdownMenuItem asChild>
+              <Link to="/accesslogs" className="cursor-pointer w-full">{t('UserAccess')}</Link>
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
