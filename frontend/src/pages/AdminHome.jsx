@@ -99,13 +99,15 @@ export default function AdminHome() {
         </Card>
 
         <Card className="col-span-1 row-span-1 md:col-span-2 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Terminal className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">{t('Terminal')}</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {t('TerminalDesc')}
-          </p>
+          <Link to={"/lssdocs"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Terminal className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">Terminal</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              Learn our System-Specific language in order to perform complex tasks efficiently.
+            </p>
+          </Link>
         </Card>
 
       </div>
