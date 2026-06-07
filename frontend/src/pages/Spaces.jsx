@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, ImageOverlay, Marker, Popup } from 'react-leaflet';
+import { MapContainer, ImageOverlay, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const bounds = [[0, 0], [1100, 2000]];
+const MAP_H = 1100; // max latitude — high lat = near top of screen in CRS.Simple
 
 const HARDCODED_SPACES = [
   { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM' },
@@ -37,9 +38,52 @@ const HARDCODED_SPACES = [
   { hcId: 'F2_R13', floor: 'FLOOR_2', x: 591, y: 898, defaultType: 'ROOM' },
 ];
 
+// Listens to popupopen; for markers in the upper half of the image (high lat = near
+// top of screen in CRS.Simple), moves the popup below the marker and flips the tip.
+function PopupDirectionFixer() {
+  const map = useMap();
+  useEffect(() => {
+    function onPopupOpen(e) {
+      const popup = e.popup;
+      const latLng = popup.getLatLng();
+      if (!latLng) return;
+      const el = popup.getElement();
+      if (!el) return;
+      // High lat = near top of screen — popup would open off-screen upward
+      if (latLng.lat <= MAP_H / 2) return;
+
+      requestAnimationFrame(() => {
+        const height = el.offsetHeight;
+        const t = el.style.transform;
+        // Leaflet uses translate3d(X, Y, 0) or translate(X, Y)
+        const m = t.match(/translate(?:3d)?\(([^,]+),\s*([^,]+)/);
+        if (!m) return;
+        const tx = parseFloat(m[1]);
+        const ty = parseFloat(m[2]);
+        // Move popup below the marker:
+        // current ty = markerScreenY - height - popupAnchor.y (~16)
+        // target top = markerScreenY + ~20  →  displacement = height + 36
+        const newTy = ty + height + 40;
+        el.style.transform = t.includes('3d')
+          ? `translate3d(${tx}px, ${newTy}px, 0)`
+          : `translate(${tx}px, ${newTy}px)`;
+        // Flip tip to point upward
+        const tip = el.querySelector('.leaflet-popup-tip-container');
+        if (tip) {
+          tip.style.bottom = 'auto';
+          tip.style.top = '-19px';
+          tip.style.transform = 'rotate(180deg)';
+        }
+      });
+    }
+    map.on('popupopen', onPopupOpen);
+    return () => { map.off('popupopen', onPopupOpen); };
+  }, [map]);
+  return null;
+}
+
 const getResourceIcon = (type, isAvailable, isRegistered) => {
   let colorVar = isRegistered ? 'var(--foreground)' : 'var(--muted-foreground)';
-
   const statusClass = isRegistered
     ? (isAvailable ? '' : 'opacity-40 grayscale border-dashed')
     : 'opacity-80 border-dashed animate-pulse';
@@ -90,7 +134,7 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit, t }) =>
               required
               value={bookingForm.startTime}
               onChange={(e) => setBookingForm({ ...bookingForm, startTime: e.target.value })}
-              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:outline-none focus:ring-2 transition-all text-foreground"
+              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:outline-none focus:ring-2 focus:bg-muted-foreground/20 transition-all text-foreground"
             />
           </div>
         </div>
@@ -103,7 +147,7 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit, t }) =>
               required
               value={bookingForm.endTime}
               onChange={(e) => setBookingForm({ ...bookingForm, endTime: e.target.value })}
-              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:outline-none focus:ring-2 transition-all text-foreground"
+              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:outline-none focus:ring-2 focus:bg-muted-foreground/20 transition-all text-foreground"
             />
           </div>
         </div>
@@ -155,7 +199,6 @@ export default function InteractiveMap() {
 
   useEffect(() => {
     const activeFloorHardcoded = HARDCODED_SPACES.filter(s => s.floor === currentFloor);
-
     let combined = activeFloorHardcoded.map(hcSpace => {
       const dbMatch = resources.find(r =>
         Math.abs(r.xCoordinates - hcSpace.x) < 20 &&
@@ -168,11 +211,9 @@ export default function InteractiveMap() {
         displayType: dbMatch ? dbMatch.type : hcSpace.defaultType
       };
     });
-
     if (selectedTypeFilter !== 'ALL') {
       combined = combined.filter(space => space.displayType === selectedTypeFilter);
     }
-
     setDisplayLayout(combined);
   }, [resources, currentFloor, selectedTypeFilter]);
 
@@ -180,7 +221,6 @@ export default function InteractiveMap() {
     setResourceForm({ type: space.defaultType, name: '', capacity: '30' });
     setBookingForm({ date: '', startTime: '', endTime: '', userId: '1' });
     setErrorMessage('');
-
     if (space.isRegistered && space.dbData) {
       // Pre-load the editing data from the clicked room
       setEditingData({
@@ -208,6 +248,7 @@ export default function InteractiveMap() {
     e.preventDefault();
     if (!editingData) return;
     setErrorMessage('');
+
     try {
       const updated = await updateResource(editingData.id, {
         type: editingData.type,
@@ -228,6 +269,7 @@ export default function InteractiveMap() {
   const handleRegisterResource = async (e, space) => {
     e.preventDefault();
     setErrorMessage('');
+
     try {
       const savedResource = await registerResource({
         type: resourceForm.type,
@@ -248,27 +290,22 @@ export default function InteractiveMap() {
   const handleCreateReservation = async (e, resourceId) => {
     e.preventDefault();
     setErrorMessage('');
-
     const targetStart = new Date(`${bookingForm.date}T${bookingForm.startTime}:00`);
     const targetEnd = new Date(`${bookingForm.date}T${bookingForm.endTime}:00`);
-
     if (targetStart >= targetEnd) {
       setErrorMessage("Error: End time must occur after the start time.");
       return;
     }
-
     const hasOverlap = activeResourceReservations.some(booking => {
       if (booking.status === 'CANCELED') return false;
       const existingStart = new Date(booking.startTime);
       const existingEnd = new Date(booking.endTime);
       return targetStart < existingEnd && targetEnd > existingStart;
     });
-
     if (hasOverlap) {
       setErrorMessage("Can't finish reservation. This room is already reserved for the set time.");
       return;
     }
-
     try {
       await createReservation({
         userId: parseInt(bookingForm.userId),
@@ -293,7 +330,6 @@ export default function InteractiveMap() {
             {isAdminMode ? t('SpaceAdminDesc') : t('SpaceDesc')}
           </p>
         </div>
-
         <div className="flex items-center gap-3 mt-4 md:mt-0">
           <Link
             to="/equipments"
@@ -302,15 +338,13 @@ export default function InteractiveMap() {
             <Wrench size={16} />
             {t('SpaceEquip')}
           </Link>
-
           {currentUser?.type === 'ADMIN' && (
             <button
               onClick={() => setIsAdminMode(!isAdminMode)}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
-                isAdminMode
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${isAdminMode
                   ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10"
                   : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
-              }`}
+                }`}
             >
               <Settings size={16} />
               {isAdminMode ? t('SpaceAdminExitbt') : t('SpaceAdminbt')}
@@ -319,7 +353,6 @@ export default function InteractiveMap() {
         </div>
       </div>
 
-      {/* Map container */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-8 bg-primary-foreground p-4 rounded-3xl border border-muted-foreground/20 shadow-xl relative overflow-hidden min-h-150 lg:50">
           <div className="relative w-full h-full">
@@ -332,6 +365,7 @@ export default function InteractiveMap() {
               className="rounded-2xl z-10 border border-primary-foreground shadow-sm"
             >
               <ImageOverlay url={currentFloor === 'FLOOR_1' ? '/floor1.png' : '/floor2.png'} bounds={bounds} />
+              <PopupDirectionFixer />
 
               {displayLayout.map((space) => (
                 <Marker
@@ -340,16 +374,14 @@ export default function InteractiveMap() {
                   icon={getResourceIcon(space.displayType, space.dbData?.isAvailable ?? false, space.isRegistered)}
                   eventHandlers={{ click: () => handleMarkerClick(space) }}
                 >
-                  <Popup maxWidth={320}>
+                  <Popup autoPan={false} maxWidth={320}>
                     <div className="p-1 min-w-[280px] text-foreground/80 font-sans">
-
                       {errorMessage && (
                         <div className="mb-3 p-2 bg-meat/20 border-meat/50 text-meat text-xs rounded border flex items-start gap-1.5">
                           <AlertTriangle size={14} className="shrink-0 mt-0.5" />
                           <span>{errorMessage}</span>
                         </div>
                       )}
-
                       {space.isRegistered && space.dbData ? (
                         <>
                           {/* Room info — always visible */}
@@ -362,7 +394,6 @@ export default function InteractiveMap() {
                               {space.dbData.isAvailable ? t('SpaceOperational') : t('SpaceMaintenance')}
                             </span>
                           </div>
-
                           <div className="text-xs space-y-1 mb-2 bg-background p-2 rounded-lg border border-muted">
                             <p className="flex justify-between">
                               <span className="text-muted-foreground">{t('SpaceRoomCap')}:</span>
@@ -371,9 +402,7 @@ export default function InteractiveMap() {
                               </span>
                             </p>
                           </div>
-
-                          {/* Reservation form — only in non-admin mode */}
-                          {!isAdminMode && (
+                          {!isAdminMode ? (
                             <ReservationForm
                               space={space.dbData}
                               bookingForm={bookingForm}
@@ -389,6 +418,7 @@ export default function InteractiveMap() {
                               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                                 <ShieldAlert size={14} className="text-swordsman" /> Admin Actions
                               </h4>
+
                               <form onSubmit={handleUpdateResource} className="bg-background p-2.5 rounded-xl border border-muted space-y-2">
                                 <div>
                                   <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceClass')}</label>
@@ -451,7 +481,6 @@ export default function InteractiveMap() {
                               </h3>
                               <span className="text-[10px] text-muted-foreground block mt-0.5">{t('SpaceRegister')}</span>
                             </div>
-
                             <div>
                               <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceClass')}</label>
                               <select
@@ -483,11 +512,7 @@ export default function InteractiveMap() {
                                 required
                               />
                             </div>
-
-                            <button
-                              type="submit"
-                              className="w-full bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm cursor-pointer"
-                            >
+                            <button type="submit" className="w-full bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm cursor-pointer">
                               {t('SpaceRegister')}
                             </button>
                           </form>
@@ -507,7 +532,6 @@ export default function InteractiveMap() {
           </div>
         </div>
 
-        {/* Filter by floors */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
@@ -537,20 +561,12 @@ export default function InteractiveMap() {
             </div>
           </div>
 
-          {/* Filter by room type */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Filter size={14} /> {t('SpaceFilterType')}
             </h2>
             <div className="flex flex-col gap-1.5">
-              <button
-                onClick={() => setSelectedTypeFilter('ALL')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${
-                  selectedTypeFilter === 'ALL'
-                    ? 'bg-foreground/80 border-foreground text-primary-foreground'
-                    : 'bg-background border-muted text-muted-foreground hover:bg-muted'
-                }`}
-              >
+              <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
                 <span>{t('SpaceDisplay')}</span>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
                   selectedTypeFilter === 'ALL'
@@ -558,6 +574,7 @@ export default function InteractiveMap() {
                     : 'bg-muted border-muted-foreground/20'
                 }`}>{displayLayout.length}</span>
               </button>
+
               <button
                 onClick={() => setSelectedTypeFilter('ROOM')}
                 className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${
