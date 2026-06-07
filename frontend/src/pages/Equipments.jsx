@@ -7,24 +7,23 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const THEME_OPTIONS = [
-  { id: 'nika',      label: 'Pink' },
-  { id: 'surgeon',   label: 'Light blue' },
-  { id: 'fire',      label: 'Dark orange' },
-  { id: 'ohara',     label: 'Dark purple' },
-  { id: 'tanuki',    label: 'Light green' },
-  { id: 'meat',      label: 'Red' },
+  { id: 'nika', label: 'Pink' },
+  { id: 'surgeon', label: 'Light blue' },
+  { id: 'fire', label: 'Dark orange' },
+  { id: 'ohara', label: 'Dark purple' },
+  { id: 'tanuki', label: 'Light green' },
+  { id: 'meat', label: 'Red' },
   { id: 'swordsman', label: 'Dark green' },
-  { id: 'chef',      label: 'Dark blue' },
+  { id: 'chef', label: 'Dark blue' },
   { id: 'navigator', label: 'Light orange' },
-  { id: 'ramen',     label: 'Light purple' },
+  { id: 'ramen', label: 'Light purple' },
 ];
 
 export default function EquipmentConfig() {
   const [equipmentPool, setEquipmentPool] = useState({});
-  const [modalState, setModalState]       = useState(false);
-
+  const [modalState, setModalState] = useState(false);
   const [reservationTarget, setReservationTarget] = useState(null);
-  const [bookingForm, setBookingForm]             = useState({ date: '', startTime: '', endTime: '' });
+  const [bookingForm, setBookingForm] = useState({ date: '', startTime: '', endTime: '' });
   const { t } = useTranslation();
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -43,7 +42,7 @@ export default function EquipmentConfig() {
   const loadData = async () => {
     try {
       const catalogData = await getAllEquipment();
-      const sortedPool  = {};
+      const sortedPool = {};
       catalogData.forEach(item => { sortedPool[item.id] = item; });
       setEquipmentPool(sortedPool);
     } catch (error) {
@@ -83,15 +82,13 @@ export default function EquipmentConfig() {
     e.preventDefault();
     try {
       const startDateTime = `${bookingForm.date}T${bookingForm.startTime}:00`;
-      const endDateTime   = `${bookingForm.date}T${bookingForm.endTime}:00`;
-
+      const endDateTime = `${bookingForm.date}T${bookingForm.endTime}:00`;
       await createReservation({
         resourceId: equipmentId,
-        startTime:  startDateTime,
-        endTime:    endDateTime,
-        status:     'ACTIVE',
+        startTime: startDateTime,
+        endTime: endDateTime,
+        status: 'ACTIVE',
       });
-
       alert("Reservation successfully created!");
       closeReservationModal();
       await loadData();
@@ -113,7 +110,9 @@ export default function EquipmentConfig() {
 
   return (
     <section className="py-24 max-w-7xl mx-auto px-6 space-y-6 bg-background font-sans relative">
-      <div className="grid grid-cols-3 md:flex-row items-start md:items-center justify-between border-b border-border pb-4 gap-4">
+
+      {/* FIXED HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border pb-4 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
             <Wrench className="w-6 h-6" />
@@ -123,27 +122,26 @@ export default function EquipmentConfig() {
             <h2 className="text-xs text-muted-foreground">{t('EquipDesc')}</h2>
           </div>
         </div>
-        <div className ="flex justify-center">
-
-          <Link to="/spaces" className="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground text-sm font-medium rounded-xl transition">
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            to="/spaces"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground text-sm font-medium rounded-xl transition"
+          >
             <Map className="w-4 h-4" />
             {t('EquipBtSpace')}
           </Link>
-       </div> 
-       <div className= "flex justify-end">
           {user?.type === 'ADMIN' && (
-          <button 
-            onClick={() => setIsAdmin(!isAdmin)}
-            className={`text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border transition-all flex items-center gap-2 cursor-pointer ${
-              isAdmin
-                ? 'bg-foreground text-primary-foreground border-foreground/80'
-                : 'bg-muted text-muted-foreground border-transparent'
-            }`}
-          >
-            {isAdmin ? <ShieldAlert className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
-            {isAdmin ? 'Admin Mode: ON' : 'Admin Mode: OFF'}
-          </button>
-        )}
+            <button
+              onClick={() => setIsAdmin(!isAdmin)}
+              className={`text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border transition-all flex items-center gap-2 cursor-pointer ${isAdmin
+                  ? 'bg-foreground text-primary-foreground border-foreground/80'
+                  : 'bg-muted text-muted-foreground border-transparent'
+                }`}
+            >
+              {isAdmin ? <ShieldAlert className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
+              {isAdmin ? 'Admin Mode: ON' : 'Admin Mode: OFF'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -193,7 +191,6 @@ export default function EquipmentConfig() {
                     </span>
                   </div>
                 </div>
-
                 <div className="flex gap-2">
                   {isAdmin ? (
                     <>
@@ -232,7 +229,7 @@ export default function EquipmentConfig() {
             onClose={() => setModalState(false)}
             onSave={handleSaveEquipment}
             initialData={modalState !== true ? modalState : null}
-            t = {t}
+            t={t}
           />
         </div>
       )}
@@ -246,12 +243,10 @@ export default function EquipmentConfig() {
             >
               <X className="w-4 h-4" />
             </button>
-
             <div className="mb-2">
               <h3 className="text-xl font-black tracking-tight text-primary">{t('EquiptBookEquip')}</h3>
               <p className="text-sm font-semibold truncate mt-1">{reservationTarget.name}</p>
             </div>
-
             <ReservationCalendarForm
               key={reservationTarget.id}
               entityId={reservationTarget.id}
@@ -273,30 +268,27 @@ function EquipmentForm({ onClose, onSave, initialData, t }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-
-    const textColor        = formData.get('selTextColor');
-    const borderCol        = formData.get('selBorderColor');
-    const bgColor          = formData.get('selBgColor');
+    const textColor = formData.get('selTextColor');
+    const borderCol = formData.get('selBorderColor');
+    const bgColor = formData.get('selBgColor');
     const finalColorString = `text-${textColor} border-${borderCol} bg-${bgColor}/5`;
-
     const payload = {
-      name:        formData.get('name'),
-      desc:        formData.get('desc'),
-      capacity:    parseInt(formData.get('capacity') || 1, 10),
-      floor:       formData.get('floor') === 'NONE' ? null : formData.get('floor'),
+      name: formData.get('name'),
+      desc: formData.get('desc'),
+      capacity: parseInt(formData.get('capacity') || 1, 10),
+      floor: formData.get('floor') === 'NONE' ? null : formData.get('floor'),
       isAvailable: e.target.isAvailable.checked,
-      color:       finalColorString,
+      color: finalColorString,
     };
-
     onSave(payload, isEditing ? initialData.id : null);
   };
 
   const getExtractedColors = () => {
     if (!initialData || !initialData.color) return { text: 'meat', border: 'meat', bg: 'meat' };
     const segments = initialData.color.split(' ');
-    const text   = segments.find(s => s.startsWith('text-'))?.split('-')[1]              || 'meat';
-    const border = segments.find(s => s.startsWith('border-'))?.split('-')[1]            || 'meat';
-    const bg     = segments.find(s => s.startsWith('bg-'))?.split('-')[1]?.split('/')[0] || 'meat';
+    const text = segments.find(s => s.startsWith('text-'))?.split('-')[1] || 'meat';
+    const border = segments.find(s => s.startsWith('border-'))?.split('-')[1] || 'meat';
+    const bg = segments.find(s => s.startsWith('bg-'))?.split('-')[1]?.split('/')[0] || 'meat';
     return { text, border, bg };
   };
 
@@ -335,6 +327,7 @@ function EquipmentForm({ onClose, onSave, initialData, t }) {
             className="w-full bg-muted/40 border border-border rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all text-foreground"
           />
         </div>
+
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-primary flex items-center gap-1.5">
             <Type className="w-3.5 h-3.5" /> {t('EquipEquipDesc')}:

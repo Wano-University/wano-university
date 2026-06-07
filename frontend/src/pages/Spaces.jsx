@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const bounds = [[0, 0], [1100, 2000]];
-const MAP_H = 1100; // max latitude — high lat = near top of screen in CRS.Simple
+const MAP_H = 1100;
 
 const HARDCODED_SPACES = [
   { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM' },
@@ -38,8 +38,6 @@ const HARDCODED_SPACES = [
   { hcId: 'F2_R13', floor: 'FLOOR_2', x: 591, y: 898, defaultType: 'ROOM' },
 ];
 
-// Listens to popupopen; for markers in the upper half of the image (high lat = near
-// top of screen in CRS.Simple), moves the popup below the marker and flips the tip.
 function PopupDirectionFixer() {
   const map = useMap();
   useEffect(() => {
@@ -49,25 +47,19 @@ function PopupDirectionFixer() {
       if (!latLng) return;
       const el = popup.getElement();
       if (!el) return;
-      // High lat = near top of screen — popup would open off-screen upward
       if (latLng.lat <= MAP_H / 2) return;
 
       requestAnimationFrame(() => {
         const height = el.offsetHeight;
         const t = el.style.transform;
-        // Leaflet uses translate3d(X, Y, 0) or translate(X, Y)
         const m = t.match(/translate(?:3d)?\(([^,]+),\s*([^,]+)/);
         if (!m) return;
         const tx = parseFloat(m[1]);
         const ty = parseFloat(m[2]);
-        // Move popup below the marker:
-        // current ty = markerScreenY - height - popupAnchor.y (~16)
-        // target top = markerScreenY + ~20  →  displacement = height + 36
         const newTy = ty + height + 40;
         el.style.transform = t.includes('3d')
           ? `translate3d(${tx}px, ${newTy}px, 0)`
           : `translate(${tx}px, ${newTy}px)`;
-        // Flip tip to point upward
         const tip = el.querySelector('.leaflet-popup-tip-container');
         if (tip) {
           tip.style.bottom = 'auto';
@@ -156,7 +148,7 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit, t }) =>
     <button
       type="submit"
       disabled={!space.isAvailable}
-      className="w-full mt-3 bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      className="w-full mt-3 bg-muted-foreground/60 hover:bg-muted-foreground/80 cursor-pointer text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
     >
       {space.isAvailable ? 'Confirm reservation' : 'Space Unavailable'}
     </button>
@@ -222,7 +214,6 @@ export default function InteractiveMap() {
     setBookingForm({ date: '', startTime: '', endTime: '', userId: '1' });
     setErrorMessage('');
     if (space.isRegistered && space.dbData) {
-      // Pre-load the editing data from the clicked room
       setEditingData({
         id: space.dbData.id,
         name: space.dbData.name,
@@ -323,14 +314,14 @@ export default function InteractiveMap() {
 
   return (
     <section className="py-12 max-w-400 mx-auto px-6 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-primary-foreground">
-        <div className="space-y-1">
+      <div className="flex flex-col items-center gap-6 border-b pb-6 border-primary-foreground sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="space-y-1 text-center sm:text-left">
           <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">{t('SpaceTitle')}</h1>
           <p className="text-sm text-muted-foreground/80">
             {isAdminMode ? t('SpaceAdminDesc') : t('SpaceDesc')}
           </p>
         </div>
-        <div className="flex items-center gap-3 mt-4 md:mt-0">
+        <div className="flex items-center gap-3 shrink-0">
           <Link
             to="/equipments"
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
@@ -341,9 +332,9 @@ export default function InteractiveMap() {
           {currentUser?.type === 'ADMIN' && (
             <button
               onClick={() => setIsAdminMode(!isAdminMode)}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${isAdminMode
-                  ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10"
-                  : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
+              className={`flex items-center cursor-pointer gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${isAdminMode
+                ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10"
+                : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
                 }`}
             >
               <Settings size={16} />
@@ -384,7 +375,6 @@ export default function InteractiveMap() {
                       )}
                       {space.isRegistered && space.dbData ? (
                         <>
-                          {/* Room info — always visible */}
                           <div className="flex justify-between items-center border-b border-muted pb-2 mb-3">
                             <div>
                               <strong className="block text-sm font-bold text-foreground">{space.dbData.name}</strong>
@@ -402,7 +392,7 @@ export default function InteractiveMap() {
                               </span>
                             </p>
                           </div>
-                          {!isAdminMode ? (
+                          {!isAdminMode && (
                             <ReservationForm
                               space={space.dbData}
                               bookingForm={bookingForm}
@@ -412,7 +402,6 @@ export default function InteractiveMap() {
                             />
                           )}
 
-                          {/* Admin Actions — same pattern as Parking.jsx */}
                           {isAdminMode && (
                             <div className="mt-3 pt-3 border-t border-muted space-y-2">
                               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -540,21 +529,19 @@ export default function InteractiveMap() {
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setCurrentFloor('FLOOR_1')}
-                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${
-                  currentFloor === 'FLOOR_1'
-                    ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md'
-                    : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'
-                }`}
+                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1'
+                  ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md cursor-pointer'
+                  : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'
+                  }`}
               >
                 {t('SpaceFloor1')}
               </button>
               <button
                 onClick={() => setCurrentFloor('FLOOR_2')}
-                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${
-                  currentFloor === 'FLOOR_2'
-                    ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md'
-                    : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'
-                }`}
+                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2'
+                  ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md cursor-pointer'
+                  : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'
+                  }`}
               >
                 {t('SpaceFloor2')}
               </button>
@@ -566,33 +553,30 @@ export default function InteractiveMap() {
               <Filter size={14} /> {t('SpaceFilterType')}
             </h2>
             <div className="flex flex-col gap-1.5">
-              <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
+              <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted cursor-pointer'}`}>
                 <span>{t('SpaceDisplay')}</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                  selectedTypeFilter === 'ALL'
-                    ? 'bg-primary-foreground/20 border-primary-foreground/30'
-                    : 'bg-muted border-muted-foreground/20'
-                }`}>{displayLayout.length}</span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${selectedTypeFilter === 'ALL'
+                  ? 'bg-primary-foreground/20 border-primary-foreground/30'
+                  : 'bg-muted border-muted-foreground/20'
+                  }`}>{displayLayout.length}</span>
               </button>
 
               <button
                 onClick={() => setSelectedTypeFilter('ROOM')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${
-                  selectedTypeFilter === 'ROOM'
-                    ? 'bg-chef/60 border-chef/70 text-primary-foreground'
-                    : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'
-                }`}
+                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl cursor-pointer text-xs font-semibold border transition-all ${selectedTypeFilter === 'ROOM'
+                  ? 'bg-chef/60 border-chef/70 text-primary-foreground'
+                  : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'
+                  }`}
               >
                 <Home size={16} style={selectedTypeFilter === 'ROOM' ? { color: 'primary-foreground' } : { color: 'var(--chef-color)' }} />
                 <span>{t('SpaceRoomsHalls')}</span>
               </button>
               <button
                 onClick={() => setSelectedTypeFilter('LABORATORY')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${
-                  selectedTypeFilter === 'LABORATORY'
-                    ? 'bg-swordsman/60 border-swordsman/70 text-primary-foreground'
-                    : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'
-                }`}
+                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl cursor-pointer text-xs font-semibold border transition-all ${selectedTypeFilter === 'LABORATORY'
+                  ? 'bg-swordsman/60 border-swordsman/70 text-primary-foreground'
+                  : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'
+                  }`}
               >
                 <FlaskConical size={16} style={selectedTypeFilter === 'LABORATORY' ? { color: 'primary-foreground' } : { color: 'var(--swordsman-color)' }} />
                 <span>{t('SpaceLabs')}</span>

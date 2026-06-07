@@ -3,30 +3,38 @@ import prisma from '../config/db.js';
 import jwt from 'jsonwebtoken';
 
 const MAPA_PERMISSOES = [
-  { id: 'VER_EMENTA_COMPRAS',            label: 'Ementa',                roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_PARKING',                   label: 'Parking',               roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_SALAS_LABORATORIOS',        label: 'Ver Salas',             roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_EQUIPAMENTOS',              label: 'Ver Equipamentos',      roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_BICICLETAS_TROTINETES',     label: 'Ver Bicicletas',        roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_DASHBOARD',                 label: 'Dashboards',            roles: ['STAFF', 'ADMIN'] },
-  { id: 'GERIR_USERS',                   label: 'Gestão Users',          roles: ['ADMIN'] },
-  { id: 'GERIR_EQUIPAMENTOS',            label: 'Gestão Equipamentos',   roles: ['ADMIN'] },
-  { id: 'GERIR_BICICLETAS_TROTINETES',   label: 'Gestão Bicicletas',     roles: ['ADMIN'] },
-  { id: 'GERIR_EMENTA',                  label: 'Gestão Ementa',         roles: ['ADMIN', 'STAFF'] },
-  { id: 'GERIR_SENSORES',                label: 'Gestão Sensores',       roles: ['ADMIN'] }
+  { id: 'VER_EMENTA_COMPRAS', label: 'Ementa', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_PARKING', label: 'Parking', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_SALAS_LABORATORIOS', label: 'Ver Salas', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_EQUIPAMENTOS', label: 'Ver Equipamentos', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_BICICLETAS_TROTINETES', label: 'Ver Bicicletas', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_DASHBOARD', label: 'Dashboards', roles: ['STAFF', 'ADMIN'] },
+  { id: 'GERIR_USERS', label: 'Gestão Users', roles: ['ADMIN'] },
+  { id: 'GERIR_EQUIPAMENTOS', label: 'Gestão Equipamentos', roles: ['ADMIN'] },
+  { id: 'GERIR_BICICLETAS_TROTINETES', label: 'Gestão Bicicletas', roles: ['ADMIN'] },
+  { id: 'GERIR_EMENTA', label: 'Gestão Ementa', roles: ['ADMIN', 'STAFF'] },
+  { id: 'GERIR_SENSORES', label: 'Gestão Sensores', roles: ['ADMIN', 'STAFF'] }
 ];
 
-const isValidPassword = (password) => {
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  return passwordRegex.test(password);
+const getPasswordErrors = (password) => {
+  const errors = [];
+  if (password.length < 8) errors.push("at least 8 characters");
+  if (!/[a-z]/.test(password)) errors.push("at least one lowercase letter");
+  if (!/[A-Z]/.test(password)) errors.push("at least one uppercase letter");
+  if (!/\d/.test(password)) errors.push("at least one number");
+  if (!/[@$!%*?&]/.test(password)) errors.push("at least one special character (@$!%*?&)");
+  return errors;
 };
 
 export const registerUser = async (req, res) => {
   try {
     const { name, address, nif, email, login, password, type } = req.body;
 
-    if (!isValidPassword(password)) {
-      return res.status(400).json({ error: "Password policy violation." });
+    const passwordErrors = getPasswordErrors(password);
+    if (passwordErrors.length > 0) {
+      return res.status(400).json({
+        error: `Password must contain: ${passwordErrors.join(", ")}.`
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

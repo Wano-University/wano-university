@@ -57,11 +57,11 @@ export default function Navbar() {
             <Link to="/map" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
             <Link to="/temperaturedashboard" className={desktopLinkStyle}>{t('NavbarTemperature')}</Link>
             <Link to="/airqualitydashboard" className={desktopLinkStyle}>{t('NavbarAir')}</Link>
-            <Link to="/energydashboard" classname={desktopLinkStyle}>{t('NavbarEnergy')}</Link>
+            <Link to="/energydashboard" className={desktopLinkStyle}>{t('NavbarEnergy')}</Link>
           </>
         )}
 
-        {(user?.type === 'STUDENT' || user?.type === 'TEACHER') && (
+        {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
           <>
             <Link to="/spaces" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
@@ -127,7 +127,7 @@ export default function Navbar() {
 
             {user?.type === 'ADMIN' && (
               <>
-                <Link to="/map" className={mobileLinkStyle}>{t('NavbarSpaces')}</Link>
+                <Link to="/spaces" className={mobileLinkStyle}>{t('NavbarSpaces')}</Link>
                 <Link to="/parking" className={mobileLinkStyle}>{t('NavbarMobility')}</Link>
                 <Link to="/map" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
                 <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
@@ -146,9 +146,9 @@ export default function Navbar() {
               </>
             )}
 
-            {(user?.type === 'STUDENT' || user?.type === 'TEACHER') && (
+            {(user?.type === 'STUDENT' || user?.type === 'PROFESSOR') && (
               <>
-                <Link to="/map" className={mobileLinkStyle}>{t('NavbarSpaces')}</Link>
+                <Link to="/spaces" className={mobileLinkStyle}>{t('NavbarSpaces')}</Link>
                 <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
                 <Link to="/parking" className={mobileLinkStyle}>{t('NavbarMobility')}</Link>
               </>

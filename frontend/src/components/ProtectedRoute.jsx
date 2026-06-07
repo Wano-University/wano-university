@@ -17,10 +17,6 @@ export default function ProtectedRoute({ children, requiredPermission, allowedRo
       return <Navigate to="/NoPerms" replace />;
     }
 
-    // Suporta ambos os formatos:
-    // 1. String simples:                   "VER_EQUIPAMENTOS"
-    // 2. Objeto Prisma raw:                { permission: { description: "VER_EQUIPAMENTOS" } }
-    // 3. Objeto com description direto:    { description: "VER_EQUIPAMENTOS" }
     const permissoesDoUtilizador = user.permissions.map(p => {
       if (typeof p === 'string') return p;
       return p?.permission?.description || p?.description || null;
