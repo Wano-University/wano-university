@@ -77,7 +77,7 @@ export default function Login() {
 
               <div className="flex-1 p-10 flex flex-col justify-center items-center md:items-start">
                 <img src={logoimg} alt="Wano University" className="w-20 h-20 mb-6 rounded-full" />
-                <h1 className="text-2xl font-bold mb-6">Wano University</h1>
+                <h1 className="text-2xl font-bold mb-6">{t('LoginTitle')}</h1>
 
                 <form onSubmit={login} className="w-full space-y-4">
                   <Field>

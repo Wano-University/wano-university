@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { X, Palette, Check } from 'lucide-react';
 import { useTheme } from '../providers/ThemeProvider.jsx';
 
-const ALL_THEME_CLASSES = ['light', 'dark', 'pink', 'darkPink', 'teal', 'darkTeal', 'darkBlackAndWhite','blackAndWhite','darKBlue','blue','darkWine','wine'];
+const ALL_THEME_CLASSES = ['light', 'dark', 'pink', 'darkPink', 'teal', 'darkTeal', 'darkBlackAndWhite', 'blackAndWhite', 'darKBlue', 'blue', 'darkWine', 'wine'];
 
 const THEMES = [
   {
@@ -200,7 +201,6 @@ const THEMES = [
   },
 ];
 
-
 function applyThemeToDOM(id) {
   const root = document.documentElement;
   root.classList.remove(...ALL_THEME_CLASSES);
@@ -208,42 +208,20 @@ function applyThemeToDOM(id) {
 }
 
 function resolveTheme(theme) {
-  if (theme === 'system') {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
+  if (theme === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   return theme;
 }
 
 function MiniPreview({ p, isSelected }) {
   return (
-    <div
-      style={{
-        backgroundColor: p.bg,
-        borderRadius: '12px',
-        padding: '8px',
-        border: `2.5px solid ${isSelected ? p.primary : p.border}`,
-        transition: 'border-color 0.15s ease',
-      }}
-    >
-      <div style={{
-        backgroundColor: p.card,
-        borderRadius: '7px',
-        padding: '5px 6px',
-        marginBottom: '5px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '4px',
-      }}>
+    <div style={{ backgroundColor: p.bg, borderRadius: '12px', padding: '8px', border: `2.5px solid ${isSelected ? p.primary : p.border}`, transition: 'border-color 0.15s ease' }}>
+      <div style={{ backgroundColor: p.card, borderRadius: '7px', padding: '5px 6px', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '4px' }}>
         <div style={{ width: 12, height: 12, borderRadius: 4, backgroundColor: p.primary, flexShrink: 0 }} />
         <div style={{ height: 5, flex: 1, borderRadius: 3, backgroundColor: p.muted }} />
-        <div style={{ width: 14, height: 5, borderRadius: 3, backgroundColor: p.primary, opacity: 0.45 }} />
       </div>
-
       <div style={{ backgroundColor: p.card, borderRadius: '7px', padding: '6px' }}>
         <div style={{ height: 5, width: '58%', borderRadius: 3, backgroundColor: p.primary, marginBottom: 4 }} />
-        <div style={{ height: 4, width: '88%', borderRadius: 3, backgroundColor: p.muted, marginBottom: 3 }} />
-        <div style={{ height: 4, width: '68%', borderRadius: 3, backgroundColor: p.muted, marginBottom: 7 }} />
-        <div style={{ height: 13, width: '44%', borderRadius: 5, backgroundColor: p.primary }} />
+        <div style={{ height: 4, width: '88%', borderRadius: 3, backgroundColor: p.muted, marginBottom: 7 }} />
       </div>
     </div>
   );
@@ -251,14 +229,19 @@ function MiniPreview({ p, isSelected }) {
 
 export function ThemeSwitcher({ onClose }) {
   const { theme, setTheme } = useTheme();
-  const [pending, setPending]   = useState(() => resolveTheme(theme));
-  const submittedRef            = useRef(false);
+  const navigate = useNavigate();
+  const [pending, setPending] = useState(() => resolveTheme(theme));
+  const submittedRef = useRef(false);
 
   useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') handleCancel(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        navigate(-1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
 
   useEffect(() => {
     applyThemeToDOM(pending);
@@ -266,98 +249,56 @@ export function ThemeSwitcher({ onClose }) {
 
   useEffect(() => {
     return () => {
-      if (!submittedRef.current) {
-        applyThemeToDOM(resolveTheme(theme));
-      }
+      if (!submittedRef.current) applyThemeToDOM(resolveTheme(theme));
     };
   }, [theme]);
 
   function handleApply() {
-    submittedRef.current = true; 
-    setTheme(pending);         
+    submittedRef.current = true;
+    setTheme(pending);
+    navigate(-1);
     onClose();
   }
 
   function handleCancel() {
+    navigate(-1);
     onClose();
   }
 
   const selected = THEMES.find((t) => t.id === pending);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 overflow-y-auto"
-      onClick={(e) => { if (e.target === e.currentTarget) handleCancel(); }}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="bg-card text-card-foreground w-full max-w-md p-6 rounded-[2rem] shadow-2xl relative border border-border"
-      >
-        <button
-          onClick={handleCancel}
-          className="absolute top-5 right-5 p-2 bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-all cursor-pointer z-10"
-        >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 overflow-y-auto" onClick={(e) => { if (e.target === e.currentTarget) handleCancel(); }}>
+      <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} transition={{ duration: 0.25 }} className="bg-card text-card-foreground w-full max-w-md p-6 rounded-[2rem] shadow-2xl relative border border-border">
+        <button onClick={handleCancel} className="absolute top-5 right-5 p-2 bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-all cursor-pointer z-10">
           <X className="w-5 h-5" />
         </button>
-
         <div className="mb-6 pr-8">
           <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary border border-primary/20">
             <Palette className="w-6 h-6" />
           </div>
           <h2 className="text-2xl font-black tracking-tight">Appearance</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Previewing{' '}
-            <span className="font-semibold text-foreground">
-              {selected?.label} {selected?.mode}
-            </span>{' '}
-            — apply to save.
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">Previewing <span className="font-semibold text-foreground">{selected?.label} {selected?.mode}</span> — apply to save.</p>
         </div>
-
         <div className="grid grid-cols-3 gap-3 mb-6">
           {THEMES.map((t) => {
             const isSelected = pending === t.id;
             return (
-              <button
-                key={t.id}
-                onClick={() => setPending(t.id)}
-                className="flex flex-col gap-1.5 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
-              >
-                <motion.div
-                  animate={{ scale: isSelected ? 1.05 : 1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-                  className="w-full"
-                >
+              <button key={t.id} onClick={() => setPending(t.id)} className="flex flex-col gap-1.5 cursor-pointer focus:outline-none rounded-xl">
+                <motion.div animate={{ scale: isSelected ? 1.05 : 1 }} className="w-full">
                   <MiniPreview p={t.p} isSelected={isSelected} />
                 </motion.div>
-
                 <div className="flex flex-col items-center leading-tight">
-                  <span className={`text-xs font-bold ${isSelected ? 'text-primary' : 'text-foreground'}`}>
-                    {t.label}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">{t.mode}</span>
+                  <span className={`text-xs font-bold ${isSelected ? 'text-primary' : 'text-foreground'}`}>{t.label}</span>
                 </div>
               </button>
             );
           })}
         </div>
-
         <div className="flex gap-3">
-          <button
-            onClick={handleCancel}
-            className="flex-1 py-3 bg-muted/80 hover:bg-muted text-foreground font-bold rounded-xl transition-all cursor-pointer active:scale-95"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleApply}
-            className="flex-1 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <Check className="w-4 h-4" />
-            Apply
+          <button onClick={handleCancel} className="flex-1 py-3 bg-muted/80 hover:bg-muted text-foreground font-bold rounded-xl transition-all cursor-pointer active:scale-95">Cancel</button>
+          <button onClick={handleApply} className="flex-1 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+            <Check className="w-4 h-4" /> Apply
           </button>
         </div>
       </motion.div>

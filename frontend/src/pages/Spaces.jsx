@@ -253,11 +253,11 @@ export default function InteractiveMap() {
     <section className="py-12 max-w-400 mx-auto px-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-primary-foreground">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">Wano University Spaces Map</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">{t('SpaceTitle')}</h1>
           <p className="text-sm text-muted-foreground/80">
-            {isAdminMode
-              ? "Admin privileges enabled: Space management."
-              : "Click on icons for information and occupancy details. Make your reservations!"}
+            {isAdminMode 
+              ? t('SpaceAdminDesc')
+              : t('SpaceDesc')}
           </p>
         </div>
 
@@ -267,21 +267,22 @@ export default function InteractiveMap() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
           >
             <Wrench size={16} />
-            Equipments
+            {t('SpaceEquip')}
           </Link>
 
 
           {currentUser?.type === 'ADMIN' && (
-            <button
-              onClick={() => setIsAdminMode(!isAdminMode)}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${isAdminMode
-                ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10 cursor-pointer"
-                : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground cursor-pointer"
-                }`}
-            >
-              <Settings size={16} />
-              {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
-            </button>
+          <button 
+            onClick={() => setIsAdminMode(!isAdminMode)}
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
+              isAdminMode 
+                ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10" 
+                : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
+            }`}
+          >
+            <Settings size={16} />
+            {isAdminMode ? t('SpaceAdminExitbt') : t('SpaceAdminbt')}
+          </button>
           )}
 
         </div>
@@ -326,7 +327,7 @@ export default function InteractiveMap() {
                               <span className="text-[11px] text-muted-foreground/80 capitalize">{space.dbData.type.toLowerCase()}</span>
                             </div>
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${space.dbData.isAvailable ? 'text-swordsman/80 hover:bg-swordsman/20' : 'text-muted-foreground hover:bg-primary-foreground/20'}`}>
-                              {space.dbData.isAvailable ? 'OPERATIONAL' : 'MAINTENANCE'}
+                              {space.dbData.isAvailable ? t('SpaceOperational') : t('SpaceMaintenance')}
                             </span>
                           </div>
 
@@ -347,11 +348,11 @@ export default function InteractiveMap() {
                           ) : (
                             <div className="mt-3 pt-3 border-t border-muted space-y-2">
                               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <ShieldAlert size={14} className="text-swordsman" /> Admin Visualization
+                                <ShieldAlert size={14} className="text-swordsman" /> {t('SpaceAdminView')}
                               </h4>
                               <div className="bg-background p-2.5 rounded-xl border border-muted">
                                 <p className="text-xs text-muted-foreground leading-relaxed">
-                                  Registered space.
+                                  {t('SpaceRegistered')}
                                 </p>
                               </div>
                             </div>
@@ -364,7 +365,7 @@ export default function InteractiveMap() {
                               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                                 <ShieldAlert size={16} className="text-swordsman" /> {t('SpaceActivate')}
                               </h3>
-                              <span className="text-[10px] text-muted-foreground block mt-0.5">Register this physical space to the system.</span>
+                              <span className="text-[10px] text-muted-foreground block mt-0.5">{t('SpaceRegister')}</span>
                             </div>
 
                             <div>
@@ -389,9 +390,9 @@ export default function InteractiveMap() {
                           </form>
                         ) : (
                           <div className="text-center py-4 space-y-2">
-                            <ShieldAlert size={24} className="mx-auto text-muted-foreground/50 mb-2" />
-                            <strong className="block text-sm font-bold text-foreground">Space Unavailable</strong>
-                            <p className="text-xs text-muted-foreground leading-relaxed">This facility location has not yet been registered. Reservations disabled.</p>
+                            <ShieldAlert size={24} className="mx-auto text-muted-foreground/50 mb-2"/>
+                            <strong className="block text-sm font-bold text-foreground">{t('SpaceUnavailable')}</strong>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{t('SpaceLocalReg')}</p>
                           </div>
                         )
                       )}
@@ -407,29 +408,29 @@ export default function InteractiveMap() {
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Layers size={14} /> Floor Navigation
+              <Layers size={14} /> {t('SpaceFloorNav')}
             </h2>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => setCurrentFloor('FLOOR_1')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'}`}>Floor 01</button>
-              <button onClick={() => setCurrentFloor('FLOOR_2')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'}`}>Floor 02</button>
+              <button onClick={() => setCurrentFloor('FLOOR_1')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}>{t('SpaceFloor1')}</button>
+              <button onClick={() => setCurrentFloor('FLOOR_2')} className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}>{t('SpaceFloor2')}</button>
             </div>
           </div>
 
           {/* Filter by room type */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Filter size={14} /> Filter by type
+              <Filter size={14} /> {t('SpaceFilterType')}
             </h2>
             <div className="flex flex-col gap-1.5">
-              <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all  ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted cursor-pointer'}`}>
-                <span>Display All Spaces</span>
+              <button onClick={() => setSelectedTypeFilter('ALL')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all  ${selectedTypeFilter === 'ALL' ? 'bg-foreground/80 border-foreground text-primary-foreground' : 'bg-background border-muted text-muted-foreground hover:bg-muted'}`}>
+                <span>{t('SpaceDisplay')}</span>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${selectedTypeFilter === 'ALL' ? 'bg-primary-foreground/20 border-primary-foreground/30' : 'bg-muted border-muted-foreground/20'}`}>{displayLayout.length}</span>
               </button>
-              <button onClick={() => setSelectedTypeFilter('ROOM')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ROOM' ? 'bg-chef/60 border-chef/70 text-primary-foreground' : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted cursor-pointer'}`}>
-                <Home size={16} style={selectedTypeFilter === 'ROOM' ? { color: 'primary-foreground' } : { color: 'var(--chef-color)' }} /> <span>Rooms & Halls</span>
+              <button onClick={() => setSelectedTypeFilter('ROOM')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold order transition-all ${selectedTypeFilter === 'ROOM' ? 'bg-chef/60 border-chef/70 text-primary-foreground' : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'}`}>
+                <Home size={16} style={selectedTypeFilter === 'ROOM' ?{color: 'primary-foreground'} : {color: 'var(--chef-color)'}}/> <span>{t('SpaceRoomsHalls')}</span>
               </button>
-              <button onClick={() => setSelectedTypeFilter('LABORATORY')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'LABORATORY' ? 'bg-swordsman/60 border-swordsman/70 text-primary-foreground' : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted cursor-pointer'}`}>
-                <FlaskConical size={16} style={selectedTypeFilter === 'LABORATORY' ? { color: 'primary-foreground' } : { color: 'var(--swordsman-color)' }} /> <span>Laboratories</span>
+              <button onClick={() => setSelectedTypeFilter('LABORATORY')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'LABORATORY' ? 'bg-swordsman/60 border-swordsman/70 text-primary-foreground' : 'bg-primary-foreground border-muted text-muted-foreground hover:bg-muted'}`}>
+                <FlaskConical size={16} style={selectedTypeFilter === 'LABORATORY' ?{color: 'primary-foreground'} : {color: 'var(--swordsman-color)'}} /> <span>{t('SpaceLabs')}</span>
               </button>
             </div>
           </div>
@@ -437,7 +438,7 @@ export default function InteractiveMap() {
           <div className="p-4 bg-muted-foreground/10 border border-muted-foreground/60 text-muted-foreground/60 rounded-2xl flex gap-3 text-xs leading-relaxed">
             <AlertTriangle className="shrink-0 text-muted-foreground" size={18} />
             <p>
-              <strong>Deployment Hint:</strong> Click directly on the mapped rooms to make a reservation.
+              <strong>{t('SpaceDh')}:</strong> {t('SpaceDHText')}
             </p>
           </div>
         </div>

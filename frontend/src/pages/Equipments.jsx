@@ -3,6 +3,7 @@ import { Pencil, Wrench, Plus, PlusCircle, Palette, Type, Check, X, Trash2, Shie
 import { getAllEquipment, registerEquipment, updateResource, deleteResource } from '../lib/resource.js';
 import { createReservation } from '../lib/reservation.js';
 import { ReservationCalendarForm } from '../components/ReservationCalendarForm.jsx';
+import { useTranslation } from "react-i18next";
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -26,6 +27,7 @@ export default function EquipmentConfig() {
 
   const [reservationTarget, setReservationTarget] = useState(null);
   const [bookingForm, setBookingForm]             = useState({ date: '', startTime: '', endTime: '' });
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadData();
@@ -111,8 +113,8 @@ export default function EquipmentConfig() {
             <Wrench className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-bold text-primary tracking-tight">Equipment Catalog</h4>
-            <h2 className="text-xs text-muted-foreground">Make reservations of equipment!</h2>
+            <h4 className="text-2xl font-bold text-primary tracking-tight">{t('EquipTitle')}</h4>
+            <h2 className="text-xs text-muted-foreground">{t('EquipDesc')}</h2>
           </div>
         </div>
 
@@ -136,7 +138,7 @@ export default function EquipmentConfig() {
             onClick={() => setModalState(true)}
             className="text-sm font-bold bg-primary text-primary-foreground px-4 py-2.5 rounded-xl hover:bg-primary/90 transition-all flex items-center gap-2 cursor-pointer"
           >
-            <Plus className="w-4 h-4" /> Register New Equipment
+            <Plus className="w-4 h-4" /> {t('EquipRegNew')}
           </button>
         </div>
       )}
@@ -145,8 +147,8 @@ export default function EquipmentConfig() {
         {Object.keys(equipmentPool).length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-2xl border border-dashed border-border">
             <Wrench className="w-8 h-8 mx-auto mb-3 opacity-50" />
-            <p>No equipments registered yet.</p>
-            {isAdmin && <p className="text-sm mt-1">Click the "Register New Equipment" button to add one!</p>}
+            <p>{t('EquipcNoReg')}</p>
+            {isAdmin && <p className="text-sm mt-1">{t('EquipClick')}</p>}
           </div>
         ) : (
           Object.keys(equipmentPool).map((poolKey) => {
@@ -184,13 +186,13 @@ export default function EquipmentConfig() {
                         onClick={() => setModalState(item)}
                         className="px-4 py-2 flex items-center gap-1.5 bg-background/50 hover:bg-background text-foreground rounded-lg transition-colors cursor-pointer text-xs font-bold"
                       >
-                        <Pencil className="w-3.5 h-3.5" /> Edit
+                        <Pencil className="w-3.5 h-3.5" /> {t('EquipEdit')}
                       </button>
                       <button
                         onClick={(e) => handleDeleteEquipment(e, item.id)}
                         className="px-4 py-2 flex items-center gap-1.5 bg-background/50 hover:bg-foreground/30 text-foreground rounded-lg transition-colors cursor-pointer text-xs font-bold"
                       >
-                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                        <Trash2 className="w-3.5 h-3.5" /> {t('EquiptDelete')}
                       </button>
                     </>
                   ) : (
@@ -199,7 +201,7 @@ export default function EquipmentConfig() {
                       onClick={() => openReservationModal(item)}
                       className="px-6 py-2 flex items-center gap-1.5 bg-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer text-xs font-bold"
                     >
-                      <CalendarDays className="w-3.5 h-3.5" /> Reserve
+                      <CalendarDays className="w-3.5 h-3.5" /> {t('EquipReserve')}
                     </button>
                   )}
                 </div>
@@ -232,7 +234,7 @@ export default function EquipmentConfig() {
             </button>
 
             <div className="mb-2">
-              <h3 className="text-xl font-black tracking-tight text-primary">Book Equipment</h3>
+              <h3 className="text-xl font-black tracking-tight text-primary">{t('EquiptBookEquip')}</h3>
               <p className="text-sm font-semibold truncate mt-1">{reservationTarget.name}</p>
             </div>
 
@@ -297,10 +299,10 @@ function EquipmentForm({ onClose, onSave, initialData }) {
           <div className="flex items-center gap-2 text-primary mb-1">
             <PlusCircle className="w-5 h-5" />
             <h3 className="text-xl font-black tracking-tight">
-              {isEditing ? 'Edit Existing' : 'Register New'} Equipment
+              {isEditing ? 'Edit Existing' : 'Register New'} {t('EquipEquip')}
             </h3>
           </div>
-          <p className="text-xs text-muted-foreground">Manage technical specifications and availability.</p>
+          <p className="text-xs text-muted-foreground">{t('EquipManage')}</p>
         </div>
         <button
           onClick={onClose}
@@ -313,7 +315,7 @@ function EquipmentForm({ onClose, onSave, initialData }) {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-primary flex items-center gap-1.5">
-            <Type className="w-3.5 h-3.5" /> Equipment Name:
+            <Type className="w-3.5 h-3.5" /> {t('EquipName')}:
           </label>
           <input
             name="name"
@@ -325,7 +327,7 @@ function EquipmentForm({ onClose, onSave, initialData }) {
         </div>
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-primary flex items-center gap-1.5">
-            <Type className="w-3.5 h-3.5" /> Description:
+            <Type className="w-3.5 h-3.5" /> {t('EquipEquipDesc')}:
           </label>
           <input
             name="desc"
@@ -339,27 +341,27 @@ function EquipmentForm({ onClose, onSave, initialData }) {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-primary flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5" /> Floor Assignment:
+              <Layers className="w-3.5 h-3.5" /> {t('EquipFloor')}:
             </label>
             <select
               name="floor"
               defaultValue={initialData?.floor || "NONE"}
               className="w-full bg-muted/40 border border-border rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all text-foreground cursor-pointer"
             >
-              <option value="NONE">Unassigned (None)</option>
-              <option value="FLOOR_1">Floor 1</option>
-              <option value="FLOOR_2">Floor 2</option>
+              <option value="NONE">{t('EquipUnassign')}</option>
+              <option value="FLOOR_1">{t('EquipFloor1')}</option>
+              <option value="FLOOR_2">{t('EquipFloor2')}</option>
             </select>
           </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-xs font-bold text-primary flex items-center gap-1.5">
-            <Palette className="w-3.5 h-3.5" /> Tag Colors:
+            <Palette className="w-3.5 h-3.5" /> {t('EquipColors')}:
           </label>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1 text-[11px] font-semibold text-muted-foreground">
-              Border
+              {t('EquipBorder')}
               <select
                 name="selBorderColor"
                 defaultValue={currentThemeColors.border}
@@ -372,7 +374,7 @@ function EquipmentForm({ onClose, onSave, initialData }) {
               </select>
             </div>
             <div className="flex flex-col gap-1 text-[11px] font-semibold text-muted-foreground">
-              Background
+              {t('EquipBG')}
               <select
                 name="selBgColor"
                 defaultValue={currentThemeColors.bg}
@@ -389,8 +391,8 @@ function EquipmentForm({ onClose, onSave, initialData }) {
 
         <div className="flex items-center justify-between p-3 bg-muted/30 border border-border rounded-xl mt-2">
           <div className="flex flex-col">
-            <span className="text-sm font-bold tracking-tight">Active & Available</span>
-            <span className="text-[10px] text-muted-foreground">Toggle off if out of order or under maintenance.</span>
+            <span className="text-sm font-bold tracking-tight">{t('EquipAA')}</span>
+            <span className="text-[10px] text-muted-foreground">{t('EquipToggle')}</span>
           </div>
           <label className="relative inline-flex items-center cursor-pointer select-none">
             <input
@@ -409,7 +411,7 @@ function EquipmentForm({ onClose, onSave, initialData }) {
             onClick={onClose}
             className="flex-1 py-2.5 bg-muted hover:bg-muted/80 text-foreground font-semibold rounded-xl text-sm transition-all cursor-pointer"
           >
-            Cancel
+            {t('EquipCancel')}
           </button>
           <button
             type="submit"

@@ -1,5 +1,4 @@
 ply
 requests
 python-dotenv
-uvicorn
 fastapi
