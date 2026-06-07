@@ -215,3 +215,16 @@ export const validateReservationQR = async (req, res) => {
     res.status(500).json({ error: "Invalid QR code or server error." });
   }
 };
+
+export const getAccessLogs = async (req, res) => {
+  try {
+    const logs = await prisma.accessLog.findMany({
+      orderBy: { accessDate: 'desc' },
+      take: 50,
+      include: { user: true, resource: true }
+    });
+    res.status(200).json(logs);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch logs" });
+  }
+};

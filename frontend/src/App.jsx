@@ -31,6 +31,7 @@ import Footer from './components/Footer';
 import NotFound from './components/NotFound';
 import AdminUsers from './pages/AdminUsers';
 import Alerts from './pages/Alerts';
+import AccessLogs from './pages/AccessLogs';
 
 function RootLayout() {
   return (
@@ -82,6 +83,7 @@ export default function App() {
         <Route path="/energydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_CONSUMO_ENERGETICO"> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']} requiredPermission="GERIR_USERS"> <AdminUsers /> </ProtectedRoute>} />
         <Route path="/alerts" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <Alerts /> </ProtectedRoute>} />
+        <Route path="/accesslogs" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AccessLogs /> </ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
