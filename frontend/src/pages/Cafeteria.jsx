@@ -11,6 +11,8 @@ import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from '../components/CheckoutForm';
 
 import { getImageUrl } from '@/lib/utils';
+import { useTranslation } from "react-i18next";
+
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const getWorkdays = () => {
@@ -57,6 +59,7 @@ export default function Cafeteria() {
   const [clientSecret, setClientSecret] = useState('');
   const [menuData, setMenuData] = useState({ meals: {}, desserts: {} });
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
@@ -107,9 +110,9 @@ export default function Cafeteria() {
   const selectedDayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(selectedDate);
 
   const displayDish = currentDish || {
-    title: "No Dish Scheduled",
-    subtitle: "Chef is on break",
-    desc: "There is nothing scheduled for this slot yet. Check back later!",
+    title: t('DisplayDishTitle'),
+    subtitle: t('DisplayDishSubtitle'),
+    desc: t('DisplayDishDesc'),
     image: null,
     color: "bg-muted/20 border-dashed border-border text-muted-foreground"
   };
@@ -132,7 +135,7 @@ export default function Cafeteria() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <Loader2 className="w-10 h-10 animate-spin text-primary" />
-        <p className="text-muted-foreground font-medium animate-pulse">Loading today's specials...</p>
+        <p className="text-muted-foreground font-medium animate-pulse">{t('TodaySpecial')}</p>
       </div>
     );
   }
@@ -145,8 +148,8 @@ export default function Cafeteria() {
             <Utensils className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-bold text-primary tracking-tight">Grand Line Cafeteria Menu</h4>
-            <h2 className="text-xs text-muted-foreground">Check the plates of the week!</h2>
+            <h4 className="text-2xl font-bold text-primary tracking-tight">{t('CafeteriaMenu')}</h4>
+            <h2 className="text-xs text-muted-foreground">{t('CafeteriaMenuDesc')}</h2>
           </div>
         </div>
 
@@ -155,7 +158,7 @@ export default function Cafeteria() {
             to="/menuconfig"
             className="text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-full hover:shadow-xl hover:bg-primary/90 transition-all inline-block"
           >
-            Edit menu
+            {t('BtEditMenu')}
           </Link>
         </div>
 
@@ -168,13 +171,13 @@ export default function Cafeteria() {
             }}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
           >
-            Meals
+            {t('CafeteriaMeals')}
           </button>
           <button
             onClick={() => setActiveTab('desserts')}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
           >
-            Desserts
+            {t('CafeteriaDesserts')}
           </button>
         </div>
       </div>
@@ -284,7 +287,7 @@ export default function Cafeteria() {
 
             <div className="text-center space-y-4 pt-4 mb-6">
               <h3 className="text-2xl font-black tracking-tight text-foreground">{displayDish.title}</h3>
-              <p className="text-sm text-muted-foreground">Ticket for {selectedDayName}'s {activeTab === 'meals' ? 'meal' : 'dessert'}</p>
+              <p className="text-sm text-muted-foreground">{t('CafeteriaTicket')}{selectedDayName}'s {activeTab === 'meals' ? 'meal' : 'dessert'}</p>
               <p className="text-sm text-muted-foreground">5.00€</p>
             </div>
 
@@ -292,7 +295,7 @@ export default function Cafeteria() {
               <div className="flex flex-col items-center justify-center py-8 space-y-4">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 <p className="text-sm text-muted-foreground font-medium animate-pulse">
-                  Generating secure checkout...
+                  {t('CafeteriaCheckout')}
                 </p>
               </div>
             ) : (

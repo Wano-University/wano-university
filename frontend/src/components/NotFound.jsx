@@ -4,9 +4,13 @@ import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
+
 
 export default function NotFound() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -31,10 +35,10 @@ export default function NotFound() {
             404
           </h1>
           <h2 className="text-xl font-bold text-foreground">
-            Page Not Found
+            {t('NotFPage')}
           </h2>
           <p className="text-muted-foreground font-medium">
-            We couldn't find the page you're looking for. It might have been moved, deleted, or perhaps the URL is incorrect.
+            {t('NotFNoFind')}
           </p>
         </div>
 
@@ -44,7 +48,7 @@ export default function NotFound() {
             className="flex items-center justify-center gap-2 w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-[0.99] cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
-            Return to Home Page
+            {t('NotFReturn')}
           </Link>
         </div>
 
