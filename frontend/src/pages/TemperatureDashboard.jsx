@@ -1,8 +1,8 @@
 import { useState } from "react"
 import useSWR, { mutate } from "swr"
 import { useNavigate } from "react-router-dom"
-import { useTheme } from "@/providers/ThemeProvider"
-import { Card } from "@/components/ui/card"
+import { useTheme } from "../providers/ThemeProvider"
+import { Card } from "../components/ui/card"
 import { ArrowLeft, ArrowRight, Download, Thermometer, Settings, Info, AlertTriangle, Zap, Wind } from "lucide-react"
 import { simulateTemperature, updateTemperatureLimits, getTemperatureReport } from "../lib/sensors"
 
