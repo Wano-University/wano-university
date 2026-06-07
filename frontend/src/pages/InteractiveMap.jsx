@@ -25,12 +25,6 @@ const getSensorIcon = (type, isActive) => {
       colorVar = 'var(--surgeon-color)';
       iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
       break;
-    case 'OCCUPANCY':
-      colorVar = 'var(--swordsman-color)';
-      iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
-      break;
-    default:
-      break;
   }
 
   return L.divIcon({
@@ -46,7 +40,6 @@ const getSensorIcon = (type, isActive) => {
   });
 };
 
-// Invisible component that bridges Leaflet coordinates to React pixel state
 function MapTracker({ clickedCoords, setPixelCoords }) {
   const map = useMap();
 
@@ -180,20 +173,12 @@ export default function InteractiveMap() {
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">Wano University Spaces Map</h1>
           <p className="text-sm text-muted-foreground/80">
-            Review real-time resource distribution and floor occupancy baselines.
+            Review real-time sensor distribution.
           </p>
         </div>
 
         <div className="flex items-center gap-3 mt-4 md:mt-0">
-          <button
-            onClick={() => console.log("Equipments Module")}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
-          >
-            <Wrench size={16} />
-            Equipments Module
-          </button>
-
-          <button
+          <button 
             onClick={() => alert("Admin Panel")}
             className="flex items-center gap-2 px-4 py-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-sm font-medium rounded-xl transition shadow-sm"
           >
@@ -304,7 +289,6 @@ export default function InteractiveMap() {
                         <option value="TEMPERATURE">Temperature</option>
                         <option value="ENERGY_CONSUMPTION">Energy consumption</option>
                         <option value="AIR_QUALITY">Air quality</option>
-                        <option value="OCCUPANCY">Occupancy</option>
                       </select>
                     </div>
 
@@ -381,7 +365,7 @@ export default function InteractiveMap() {
                 onClick={() => setSelectedTypeFilter('ALL')}
                 className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground border-foreground text-primary-foreground' : 'bg-muted-foreground/10 border-primary-foreground text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                <span>All Active Sensors</span>
+                <span>All Sensors</span>
                 <span className="px-2 py-0.5 rounded bg-primary-foreground/80 text-muted-foreground text-[10px] font-bold">
                   {sensors.filter(s => (s.floor || 'FLOOR_1') === currentFloor).length}
                 </span>
@@ -415,16 +399,6 @@ export default function InteractiveMap() {
               >
                 <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? { color: 'primary-foreground' } : { color: 'var(--surgeon-color)' }} />
                 <span>Air Quality</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('OCCUPANCY')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'OCCUPANCY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-                style={selectedTypeFilter === 'OCCUPANCY' ? { backgroundColor: 'var(--swordsman-color)' } : {}}
-              >
-                <Users size={16} style={selectedTypeFilter === 'OCCUPANCY' ? { color: 'primary-foreground' } : { color: 'var(--swordsman-color)' }} />
-                <span>Occupancy</span>
               </button>
             </div>
           </div>

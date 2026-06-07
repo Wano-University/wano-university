@@ -1,6 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-// Helper to get token
 const getHeaders = () => {
   const token = localStorage.getItem('token');
   return {
@@ -9,7 +8,6 @@ const getHeaders = () => {
   };
 };
 
-// 1. Register Resource
 export const registerResource = async (resourceData) => {
   const response = await fetch(`${API_URL}/api/resources`, {
     method: 'POST',
@@ -21,7 +19,6 @@ export const registerResource = async (resourceData) => {
   return data;
 };
 
-// 2. Get Resources By Floor
 export const getResourcesByFloor = async (floorEnum) => {
   const response = await fetch(
     `${API_URL}/api/resources/floor/${floorEnum}`,
@@ -43,7 +40,6 @@ export const getResourcesByFloor = async (floorEnum) => {
   return data;
 };
 
-// 3. Get Reservations by Resource ID
 export const getResourceReservations = async (resourceId) => {
   const response = await fetch(`${API_URL}/api/resources/${resourceId}/reservations`, {
     headers: getHeaders(),
@@ -53,7 +49,6 @@ export const getResourceReservations = async (resourceId) => {
   return data;
 };
 
-// 4. Get Accesses by Resource ID
 export const getResourceAccesses = async (resourceId) => {
   const response = await fetch(`${API_URL}/api/resources/${resourceId}/accesses`, {
     headers: getHeaders(),
@@ -63,7 +58,6 @@ export const getResourceAccesses = async (resourceId) => {
   return data;
 };
 
-// 5. Get All Resources
 export const getResources = async () => {
   const response = await fetch(`${API_URL}/api/resources`, {
     headers: getHeaders(),
@@ -73,7 +67,6 @@ export const getResources = async () => {
   return data;
 };
 
-// 6. Update Resource Status
 export const updateResourceStatus = async (resourceId, isAvailable) => {
   const response = await fetch(`${API_URL}/api/resources/${resourceId}/status`, {
     method: 'PATCH', // or PUT depending on your route setup
@@ -85,7 +78,6 @@ export const updateResourceStatus = async (resourceId, isAvailable) => {
   return data;
 };
 
-// 7. Get Resources By Type
 export const getResourcesByType = async (type) => {
   const response = await fetch(`${API_URL}/api/resources/type/${type}`, {
     headers: getHeaders(),
@@ -95,7 +87,6 @@ export const getResourcesByType = async (type) => {
   return data;
 };
 
-// 8. Get All Reservations Data
 export const getAllReservations = async () => {
   const response = await fetch(`${API_URL}/api/resources/reservations/all`, {
     headers: getHeaders(),
@@ -105,12 +96,75 @@ export const getAllReservations = async () => {
   return data;
 };
 
-// 9. Get All Accesses Data
 export const getAllAccesses = async () => {
   const response = await fetch(`${API_URL}/api/resources/accesses/all`, {
     headers: getHeaders(),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Failed to fetch all accesses.');
+  return data;
+};
+
+export const updateResource = async (id, formData) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/resources/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(formData), 
+  });
+  
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to update resource.');
+  return data;
+};
+
+export const deleteResource = async (id) => {
+  const response = await fetch(`${API_URL}/api/resources/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to delete resource.');
+  return data;
+};
+
+export const registerEquipment = async (payload) => {
+  const response = await fetch(`${API_URL}/api/resources`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ ...payload, type: 'EQUIPMENT' }),
+  });
+  
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to register equipment.');
+  return data;
+};
+
+export const updateEquipment = async (id, formData) => {
+  formData.append('type', 'EQUIPMENT');
+
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/resources/${id}`, {
+    method: 'PUT',
+    headers: {
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    },
+    body: formData, 
+  });
+  
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to update equipment.');
+  return data;
+};
+
+export const getAllEquipment = async () => {
+  const response = await fetch(`${API_URL}/api/resources/type/EQUIPMENT`, {
+    headers: getHeaders(),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to fetch equipment.');
   return data;
 };
