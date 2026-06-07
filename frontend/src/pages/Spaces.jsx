@@ -4,14 +4,14 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { Layers, Wrench, Settings, Filter, AlertTriangle, Home, FlaskConical, Calendar as CalendarIcon, Users, ShieldAlert, Clock } from 'lucide-react';
-import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js'; 
-import { createReservation } from '../lib/reservation.js'; 
+import { getResourcesByFloor, registerResource, getResourceReservations } from '../lib/resource.js';
+import { createReservation } from '../lib/reservation.js';
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom"
 const bounds = [[0, 0], [1100, 2000]];
 
 const HARDCODED_SPACES = [
-  { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM'},
+  { hcId: 'F1_R1', floor: 'FLOOR_1', x: 477, y: 828, defaultType: 'ROOM' },
   { hcId: 'F1_R2', floor: 'FLOOR_1', x: 151, y: 576, defaultType: 'ROOM' },
   { hcId: 'F1_R4', floor: 'FLOOR_1', x: 284, y: 400, defaultType: 'ROOM' },
   { hcId: 'F1_R5', floor: 'FLOOR_1', x: 725, y: 128, defaultType: 'ROOM' },
@@ -25,7 +25,7 @@ const HARDCODED_SPACES = [
   { hcId: 'F2_R2', floor: 'FLOOR_2', x: 1836, y: 532, defaultType: 'ROOM' },
   { hcId: 'F2_R3', floor: 'FLOOR_2', x: 1650, y: 346, defaultType: 'ROOM' },
   { hcId: 'F2_R4', floor: 'FLOOR_2', x: 1774, y: 174, defaultType: 'ROOM' },
-  { hcId: 'F2_R5', floor: 'FLOOR_2', x: 1364, y: 172, defaultType:'ROOM' },
+  { hcId: 'F2_R5', floor: 'FLOOR_2', x: 1364, y: 172, defaultType: 'ROOM' },
   { hcId: 'F2_R6', floor: 'FLOOR_2', x: 729, y: 170, defaultType: 'ROOM' },
   { hcId: 'F2_R7', floor: 'FLOOR_2', x: 329, y: 176, defaultType: 'ROOM' },
   { hcId: 'F2_R8', floor: 'FLOOR_2', x: 291, y: 420, defaultType: 'ROOM' },
@@ -37,9 +37,9 @@ const HARDCODED_SPACES = [
 ];
 
 const getResourceIcon = (type, isAvailable, isRegistered) => {
-  let colorVar = isRegistered ? 'var(--foreground)' : 'var(--muted-foreground)'; 
-  
-  const statusClass = isRegistered 
+  let colorVar = isRegistered ? 'var(--foreground)' : 'var(--muted-foreground)';
+
+  const statusClass = isRegistered
     ? (isAvailable ? '' : 'opacity-40 grayscale border-dashed')
     : 'opacity-80 border-dashed animate-pulse';
 
@@ -71,12 +71,12 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit }) => (
     <div className="space-y-2">
       <div>
         <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">{t('SpaceTarget')}</label>
-        <input 
-          type="date" 
-          required 
-          value={bookingForm.date} 
-          onChange={(e) => setBookingForm({...bookingForm, date: e.target.value})}
-          className="w-full text-xs p-2 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:chef transition-all text-foreground" 
+        <input
+          type="date"
+          required
+          value={bookingForm.date}
+          onChange={(e) => setBookingForm({ ...bookingForm, date: e.target.value })}
+          className="w-full text-xs p-2 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:chef transition-all text-foreground"
         />
       </div>
       <div className="grid grid-cols-2 gap-2">
@@ -84,12 +84,12 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit }) => (
           <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Start time</label>
           <div className="relative">
             <Clock size={12} className="absolute left-2 top-2.5 text-muted-foreground/80" />
-            <input 
-              type="time" 
-              required 
-              value={bookingForm.startTime} 
-              onChange={(e) => setBookingForm({...bookingForm, startTime: e.target.value})} 
-              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:bg-muted-foreground/20 transition-all text-foreground" 
+            <input
+              type="time"
+              required
+              value={bookingForm.startTime}
+              onChange={(e) => setBookingForm({ ...bookingForm, startTime: e.target.value })}
+              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:bg-muted-foreground/20 transition-all text-foreground"
             />
           </div>
         </div>
@@ -97,20 +97,20 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit }) => (
           <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">End time</label>
           <div className="relative">
             <Clock size={12} className="absolute left-2 top-2.5 text-muted-foreground/80" />
-            <input 
-              type="time" 
-              required 
-              value={bookingForm.endTime} 
-              onChange={(e) => setBookingForm({...bookingForm, endTime: e.target.value})} 
-              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:bg-muted-foreground/20 transition-all text-foreground" 
+            <input
+              type="time"
+              required
+              value={bookingForm.endTime}
+              onChange={(e) => setBookingForm({ ...bookingForm, endTime: e.target.value })}
+              className="w-full text-xs p-2 pl-6 rounded-lg border border-muted bg-background focus:bg-background focus:outline-none focus:ring-2 focus:bg-muted-foreground/20 transition-all text-foreground"
             />
           </div>
         </div>
       </div>
     </div>
-    <button 
-      type="submit" 
-      disabled={!space.isAvailable} 
+    <button
+      type="submit"
+      disabled={!space.isAvailable}
       className="w-full mt-3 bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
     >
       {space.isAvailable ? 'Confirm reservation' : 'Space Unavailable'}
@@ -119,17 +119,17 @@ const ReservationForm = ({ space, bookingForm, setBookingForm, onSubmit }) => (
 );
 
 export default function InteractiveMap() {
+  const { t } = useTranslation();
   const [resources, setResources] = useState([]);
   const [displayLayout, setDisplayLayout] = useState([]);
   const [currentFloor, setCurrentFloor] = useState('FLOOR_1');
   const [selectedTypeFilter, setSelectedTypeFilter] = useState('ALL');
   const [isAdminMode, setIsAdminMode] = useState(false);
-  
+
   const [resourceForm, setResourceForm] = useState({ type: 'ROOM', name: '', capacity: '30' });
   const [bookingForm, setBookingForm] = useState({ date: '', startTime: '', endTime: '', userId: '1' });
   const [activeResourceReservations, setActiveResourceReservations] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const { t } = useTranslation();
 
   const userString = localStorage.getItem('user');
   const currentUser = userString ? JSON.parse(userString) : null;
@@ -143,7 +143,7 @@ export default function InteractiveMap() {
     } catch (error) {
       console.error("Failed to load resources:", error);
       setErrorMessage(error.message);
-      setResources([]); 
+      setResources([]);
     }
   };
 
@@ -153,17 +153,17 @@ export default function InteractiveMap() {
 
   useEffect(() => {
     const activeFloorHardcoded = HARDCODED_SPACES.filter(s => s.floor === currentFloor);
-    
+
     let combined = activeFloorHardcoded.map(hcSpace => {
-      const dbMatch = resources.find(r => 
-        Math.abs(r.xCoordinates - hcSpace.x) < 20 && 
+      const dbMatch = resources.find(r =>
+        Math.abs(r.xCoordinates - hcSpace.x) < 20 &&
         Math.abs(r.yCoordinates - hcSpace.y) < 20
       );
       return {
         ...hcSpace,
         isRegistered: !!dbMatch,
         dbData: dbMatch || null,
-        displayType: dbMatch ? dbMatch.type : hcSpace.defaultType 
+        displayType: dbMatch ? dbMatch.type : hcSpace.defaultType
       };
     });
 
@@ -178,7 +178,7 @@ export default function InteractiveMap() {
     setResourceForm({ type: space.defaultType, name: '', capacity: '30' });
     setBookingForm({ date: '', startTime: '', endTime: '', userId: '1' });
     setErrorMessage('');
-    
+
     if (space.isRegistered && space.dbData) {
       try {
         const resList = await getResourceReservations(space.dbData.id);
@@ -199,7 +199,7 @@ export default function InteractiveMap() {
         name: resourceForm.name,
         capacity: parseInt(resourceForm.capacity) || 1,
         isAvailable: true,
-        floor: currentFloor, 
+        floor: currentFloor,
         xCoordinates: space.x,
         yCoordinates: space.y
       });
@@ -213,7 +213,7 @@ export default function InteractiveMap() {
   const handleCreateReservation = async (e, resourceId) => {
     e.preventDefault();
     setErrorMessage('');
-    
+
     const targetStart = new Date(`${bookingForm.date}T${bookingForm.startTime}:00`);
     const targetEnd = new Date(`${bookingForm.date}T${bookingForm.endTime}:00`);
 
@@ -260,17 +260,17 @@ export default function InteractiveMap() {
               : t('SpaceDesc')}
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3 mt-4 md:mt-0">
-          <Link 
-              to="/equipments" 
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
-            >
+          <Link
+            to="/equipments"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-foreground hover:bg-muted text-muted-foreground text-sm font-medium rounded-xl transition"
+          >
             <Wrench size={16} />
             {t('SpaceEquip')}
           </Link>
 
-          
+
           {currentUser?.type === 'ADMIN' && (
           <button 
             onClick={() => setIsAdminMode(!isAdminMode)}
@@ -303,15 +303,15 @@ export default function InteractiveMap() {
               <ImageOverlay url={currentFloor === 'FLOOR_1' ? '/floor1.png' : '/floor2.png'} bounds={bounds} />
 
               {displayLayout.map((space) => (
-                <Marker 
-                  key={space.hcId} 
+                <Marker
+                  key={space.hcId}
                   position={[space.y, space.x]}
                   icon={getResourceIcon(space.displayType, space.dbData?.isAvailable ?? false, space.isRegistered)}
                   eventHandlers={{ click: () => handleMarkerClick(space) }}
                 >
                   <Popup maxWidth={320}>
                     <div className="p-1 min-w-[280px] text-foreground/80 font-sans">
-                      
+
                       {errorMessage && (
                         <div className="mb-3 p-2 bg-meat/20 border-meat/50 text-meat hover:bg-meat/10 text-xs rounded border flex items-start gap-1.5">
                           <AlertTriangle size={14} className="shrink-0 mt-0.5" />
@@ -339,11 +339,11 @@ export default function InteractiveMap() {
                           </div>
 
                           {!isAdminMode ? (
-                            <ReservationForm 
-                              space={space.dbData} 
-                              bookingForm={bookingForm} 
-                              setBookingForm={setBookingForm} 
-                              onSubmit={handleCreateReservation} 
+                            <ReservationForm
+                              space={space.dbData}
+                              bookingForm={bookingForm}
+                              setBookingForm={setBookingForm}
+                              onSubmit={handleCreateReservation}
                             />
                           ) : (
                             <div className="mt-3 pt-3 border-t border-muted space-y-2">
@@ -377,14 +377,14 @@ export default function InteractiveMap() {
                             </div>
                             <div>
                               <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('SpaceResource')}</label>
-                              <input type="text" value={resourceForm.name} onChange={(e) => setResourceForm({...resourceForm, name: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
+                              <input type="text" value={resourceForm.name} onChange={(e) => setResourceForm({ ...resourceForm, name: e.target.value })} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
                             </div>
                             <div>
                               <label className="block text-[10px] font-bold text-muted-foreground uppercase">Seating Capacity</label>
-                              <input type="number" value={resourceForm.capacity} onChange={(e) => setResourceForm({...resourceForm, capacity: e.target.value})} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
+                              <input type="number" value={resourceForm.capacity} onChange={(e) => setResourceForm({ ...resourceForm, capacity: e.target.value })} className="w-full text-xs p-2 mt-1 rounded-lg border border-muted bg-background text-foreground" required />
                             </div>
 
-                            <button type="submit" className="w-full bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm">
+                            <button type="submit" className="w-full bg-muted-foreground/60 hover:bg-muted-foreground/80 text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm cursor-pointer">
                               {t('SpaceRegister')}
                             </button>
                           </form>
@@ -404,7 +404,7 @@ export default function InteractiveMap() {
           </div>
         </div>
 
-      {/* Filter by floors */}
+        {/* Filter by floors */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
@@ -416,7 +416,7 @@ export default function InteractiveMap() {
             </div>
           </div>
 
-        {/* Filter by room type */}
+          {/* Filter by room type */}
           <div className="bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Filter size={14} /> {t('SpaceFilterType')}
@@ -435,7 +435,7 @@ export default function InteractiveMap() {
             </div>
           </div>
 
-        <div className="p-4 bg-muted-foreground/10 border border-muted-foreground/60 text-muted-foreground/60 rounded-2xl flex gap-3 text-xs leading-relaxed">
+          <div className="p-4 bg-muted-foreground/10 border border-muted-foreground/60 text-muted-foreground/60 rounded-2xl flex gap-3 text-xs leading-relaxed">
             <AlertTriangle className="shrink-0 text-muted-foreground" size={18} />
             <p>
               <strong>{t('SpaceDh')}:</strong> {t('SpaceDHText')}

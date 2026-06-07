@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from 'react'; 
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   DropdownMenu,
@@ -14,72 +14,73 @@ import { User } from "lucide-react";
 import { logoutUser } from "../lib/auth";
 import { AnimatePresence } from 'framer-motion';
 import { ThemeSwitcher } from '../pages/ThemeSwitcher.jsx';
+import { useTranslation } from "react-i18next";
 
 
 export default function UserAvatar({ user }) {
   const [themeOpen, setThemeOpen] = useState(false);
   const { t } = useTranslation();
   if (!user) return null;
-return (
-  <>
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative h-10 w-10 rounded-full border border-border bg-background shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer"
-        >
-          <User className="h-5 w-5 text-foreground/80" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.login}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user.type.charAt(0) + user.type.substring(1).toLowerCase()}</p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-10 w-10 rounded-full border border-border bg-background shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer"
+          >
+            <User className="h-5 w-5 text-foreground/80" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">{user.login}</p>
+              <p className="text-xs leading-none text-muted-foreground">{user.type.charAt(0) + user.type.substring(1).toLowerCase()}</p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
-          <Link to="/profile/customize" className="cursor-pointer w-full">{t('UserCustomize')}</Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem asChild>
-          <Link to="/tickets" className="cursor-pointer w-full">{t('UserTickets')}</Link>
-        </DropdownMenuItem>
-
-        {(user.type === 'STUDENT' || user.type === 'TEACHER') && (
           <DropdownMenuItem asChild>
-            <Link to="/reservations" className="cursor-pointer w-full">{t('UserReserv')}</Link>
+            <Link to="/profile/customize" className="cursor-pointer w-full">{t('UserCustomize')}</Link>
           </DropdownMenuItem>
-        )}
 
-        {(user.type === 'STAFF' || user.type === 'ADMIN') && (
           <DropdownMenuItem asChild>
-            <Link to="/alerts" className="cursor-pointer w-full">{t('UserAlert')}</Link>
+            <Link to="/tickets" className="cursor-pointer w-full">{t('UserTickets')}</Link>
           </DropdownMenuItem>
-        )}
+
+          {(user.type === 'STUDENT' || user.type === 'TEACHER') && (
+            <DropdownMenuItem asChild>
+              <Link to="/reservations" className="cursor-pointer w-full">{t('UserReserv')}</Link>
+            </DropdownMenuItem>
+          )}
+
+          {(user.type === 'STAFF' || user.type === 'ADMIN') && (
+            <DropdownMenuItem asChild>
+              <Link to="/alerts" className="cursor-pointer w-full">{t('UserAlert')}</Link>
+            </DropdownMenuItem>
+          )}
 
 
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link to="/changepassword" className="cursor-pointer w-full">{t('UserChange')}</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={logoutUser} className="cursor-pointer w-full">
-          {t('UserLog')}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link to="/changepassword" className="cursor-pointer w-full">{t('UserChange')}</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={logoutUser} className="cursor-pointer w-full">
+            {t('UserLog')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-  {createPortal(
-  <AnimatePresence>
-    {themeOpen && (
-      <ThemeSwitcher onClose={() => setThemeOpen(false)} />
-    )}
-  </AnimatePresence>,
-  document.body
-)}
-  </>
-);
+      {createPortal(
+        <AnimatePresence>
+          {themeOpen && (
+            <ThemeSwitcher onClose={() => setThemeOpen(false)} />
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
+  );
 }
