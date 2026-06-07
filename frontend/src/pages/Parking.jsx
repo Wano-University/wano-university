@@ -4,9 +4,15 @@ import { MapContainer, ImageOverlay, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Settings, AlertTriangle, ShieldAlert, Bike } from 'lucide-react';
-import { registerMobilityResource, getAllMobilityResources, updateMobilityStatus, simulateParkingOccupancy } from '../lib/mobilityResource.js';
+import { registerMobilityResource, getAllMobilityResources, updateMobilityStatus,  } from '../lib/mobilityResource.js';
 import { Link } from "react-router-dom"
 
+const simulateAndFetch = async () => {
+  const response = await fetch('/api/parking'); // Substitui pelo teu URL real
+  if (!response.ok) throw new Error('Erro ao buscar dados');
+  return response.json();
+};
+const [resources, setResources] = useState([]);
 const bounds = [[0, 0], [1100, 2000]];
 const userString = localStorage.getItem('user');
 const currentUser = userString ? JSON.parse(userString) : null;

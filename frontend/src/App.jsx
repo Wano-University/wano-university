@@ -17,33 +17,29 @@ import Equipments from './pages/Equipments';
 import TemperatureDashboard from './pages/TemperatureDashboard';
 import AirQualityDashboard from './pages/AirQualityDashboard';
 import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
-import NotFound from './components/NotFound';
 import Parking from './pages/Parking';
 import Bikes from './pages/Bikes';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
 import MyTickets from './pages/MyTickets';
 import ValidateTicket from './pages/ValidateTicket';
-import AdminUsers from "./pages/AdminUsers.jsx";
-import Unauthorized from './pages/Unauthorized';
-import NoPerms from './pages/NoPerms';
-
-import MyReservations from './pages/MyReservations';
 import LssDocs from './pages/Lssdocs';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
 import './i18n';
-
+import Footer from './components/Footer';
+import NotFound from './components/NotFound';
+import AdminUsers from './pages/AdminUsers';
 function RootLayout() {
   return (
     <ThemeProvider>
       <TerminalProvider>
-
         <div className="relative flex min-h-screen flex-col bg-background">
           <Navbar />
           <TerminalPopup />
           <main className="flex-1">
             <Outlet />
           </main>
+          <Footer />
         </div>
       </TerminalProvider>
     </ThemeProvider>
@@ -64,33 +60,24 @@ export default function App() {
         <Route path='/bikes' element={<Bikes />} />
 
         <Route path="/home" element={<HomeRedirection />} />
-
-        <Route path="/cafeteria" element={<ProtectedRoute requiredPermission="VER_EMENTA_COMPRAS"> <Cafeteria /> </ProtectedRoute>} />
+        <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
         <Route path="/lssdocs" element={<ProtectedRoute> <LssDocs /> </ProtectedRoute>} />
         <Route path="/equipments" element={<ProtectedRoute> <Equipments /> </ProtectedRoute>} />
 
         <Route path="/tickets" element={<ProtectedRoute> <MyTickets /> </ProtectedRoute>} />
         <Route path="/changepassword" element={<ProtectedRoute> <ChangePassword /> </ProtectedRoute>} />
-
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminHome /> </ProtectedRoute>} />
-        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']} requiredPermission="GERIR_USERS"> <AdminUsers /> </ProtectedRoute>} />
-
         <Route path="/staff" element={<ProtectedRoute allowedRoles={['STAFF']}> <StaffHome /> </ProtectedRoute>} />
         <Route path="/validate-ticket/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateTicket /> </ProtectedRoute>} />
-
-        <Route path="/validate-reservation/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateReservation /> </ProtectedRoute>} />
-        <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <StudentHome /> </ProtectedRoute>} />
-        <Route path="/reservations" element={<ProtectedRoute> <MyReservations /> </ProtectedRoute>} />
-
+        <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT']}> <StudentHome /> </ProtectedRoute>} />
+        <Route path="/student" element={<ProtectedRoute allowedRoles={['TEACHER']}> <StudentHome /> </ProtectedRoute>} />
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
-        <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="GERIR_EMENTA"> <MenuConfig /> </ProtectedRoute>} />
+        <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
 
         <Route path="/TemperatureDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_TEMPERATURE"> <TemperatureDashboard /> </ProtectedRoute>} />
         <Route path="/AirQualityDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_QUALIDADE_AR"> <AirQualityDashboard /> </ProtectedRoute>} />
         <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_CONSUMO_ENERGETICO"> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="/NoPerms" element={<NoPerms />} />
-
+        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']} requiredPermission="GERIR_USERS"> <AdminUsers /> </ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
