@@ -8,7 +8,6 @@ import { createReservation } from '../lib/reservation.js';
 import { useTranslation } from "react-i18next";
 
 import { Link } from "react-router-dom"
-
 const bounds = [[0, 0], [1100, 2000]];
 
 const HARDCODED_SPACES = [
@@ -130,6 +129,10 @@ export default function InteractiveMap() {
   const [bookingForm, setBookingForm] = useState({ date: '', startTime: '', endTime: '', userId: '1' });
   const [activeResourceReservations, setActiveResourceReservations] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Vai buscar os dados do utilizador logado
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
 
   const fetchResources = async () => {
     try {
@@ -268,16 +271,21 @@ export default function InteractiveMap() {
             <Wrench size={16} />
             Equipments
           </Link>
-          <button
-            onClick={() => setIsAdminMode(!isAdminMode)}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${isAdminMode
-              ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10"
-              : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
+
+          
+          {currentUser?.type === 'ADMIN' && (
+            <button 
+              onClick={() => setIsAdminMode(!isAdminMode)}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${
+                isAdminMode 
+                  ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10" 
+                  : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
               }`}
-          >
-            <Settings size={16} />
-            {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
-          </button>
+            >
+              <Settings size={16} />
+              {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
+            </button>
+          )}
         </div>
       </div>
 

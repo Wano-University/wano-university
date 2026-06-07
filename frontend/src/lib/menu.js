@@ -1,19 +1,21 @@
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const getActiveMenu = async () => {
-  const token = localStorage.getItem('token');
-
+  // A CORREÇÃO ESTÁ AQUI: garantir que tem o /api/menu/getMenu
   const response = await fetch(`${API_URL}/api/menu/getMenu`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+      // Se precisares de token, adiciona aqui:
+      // 'Authorization': `Bearer ${localStorage.getItem('token')}` 
+    }
   });
 
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.message || data.error || 'Error loading the menu.');
-  return data;
+  if (!response.ok) {
+    throw new Error('Failed to fetch active menu');
+  }
+
+  return response.json();
 };
 
 export const updateActiveMenu = async (dishIds, schedule) => {

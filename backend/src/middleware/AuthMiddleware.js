@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
+import prisma from '../config/db.js';
 
 export const verifyToken = (req, res, next) => {
+  console.log("1. Entrou no verifyToken");
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -19,10 +21,51 @@ export const verifyToken = (req, res, next) => {
 };
 
 export const requireRole = (allowedRoles) => {
+  
   return (req, res, next) => {
+    console.log("2. Entrou no requireRole para:", allowedRoles);
     if (!req.user || !allowedRoles.includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden. You do not have the required permissions.' });
     }
     next();
+  };
+};
+
+export const checkPermission = (permissaoRequerida) => {
+  return async (req, res, next) => {
+    try {
+      const userId = Number(req.user.userId);
+      
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { 
+          permissions: { 
+            include: { permission: true } 
+          } 
+        }
+      });
+
+      if (!user) return res.status(403).json({ error: "Utilizador não encontrado na BD." });
+
+      // LOG EXTREMO: Vamos imprimir exatamente o que o Prisma trouxe
+      console.log("--- DEBUG DE ACESSO ---");
+      console.log("User ID:", userId);
+      console.log("Permissões no objeto do User:", JSON.stringify(user.permissions, null, 2));
+      
+      const permissoesDoUtilizador = user.permissions.map(p => p.permission.description);
+      console.log("Lista de permissões (strings):", permissoesDoUtilizador);
+      console.log("Permissão Requerida pelo sistema:", permissaoRequerida);
+      console.log("O utilizador tem esta permissão?", permissoesDoUtilizador.includes(permissaoRequerida));
+      console.log("-----------------------");
+
+      if (!permissoesDoUtilizador.includes(permissaoRequerida)) {
+        return res.status(403).json({ error: `Falta a permissão: ${permissaoRequerida}` });
+      }
+
+      next();
+    } catch (error) {
+      console.error("Erro no checkPermission:", error);
+      return res.status(500).json({ error: "Erro interno no servidor." });
+    }
   };
 };

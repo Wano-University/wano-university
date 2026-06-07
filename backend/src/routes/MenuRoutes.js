@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getActiveMenu, updateActiveMenu } from '../controllers/MenuController.js';
-import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
+import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMiddleware.js';
 
 const router = Router();
 
