@@ -14,20 +14,18 @@ import StaffHome from './pages/StaffHome';
 import StudentHome from './pages/StudentHome';
 import AdminHome from './pages/AdminHome';
 import Equipments from './pages/Equipments';
+import TemperatureDashboard from './pages/TemperatureDashboard';
+import AirQualityDashboard from './pages/AirQualityDashboard';
+import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
+import NotFound from './components/NotFound';
 import Parking from './pages/Parking';
 import Bikes from './pages/Bikes';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
 import MyTickets from './pages/MyTickets';
 import ValidateTicket from './pages/ValidateTicket';
-import MyReservations from './pages/MyReservations';
-import TemperatureDashboard from './pages/TemperatureDashboard';
-import AirQualityDashboard from './pages/AirQualityDashboard';
-import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
+import LssDocs from './pages/Lssdocs';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
-import NotFound from './components/NotFound';
-import Footer from './components/Footer';
-import ValidateReservation from './pages/ValidateReservation';
 
 function RootLayout() {
   return (
@@ -39,7 +37,6 @@ function RootLayout() {
           <main className="flex-1">
             <Outlet />
           </main>
-          <Footer />
         </div>
       </TerminalProvider>
     </ThemeProvider>
@@ -53,10 +50,11 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/lssdocs" element={<LssDocs />} />
         <Route path="/changepw" element={<ForgotPassword />} />
         <Route path="/spaces" element={<Spaces />} />
         <Route path="/parking" element={<Parking />} />
-        <Route path='/bikes' element={<Bikes/>}/>
+        <Route path='/bikes' element={<Bikes />} />
 
         <Route path="/home" element={<HomeRedirection />} />
         <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
@@ -67,16 +65,14 @@ export default function App() {
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}> <AdminHome /> </ProtectedRoute>} />
         <Route path="/staff" element={<ProtectedRoute allowedRoles={['STAFF']}> <StaffHome /> </ProtectedRoute>} />
         <Route path="/validate-ticket/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateTicket /> </ProtectedRoute>} />
-        <Route path="/validate-reservation/:id" element={<ProtectedRoute allowedRoles={['STAFF']}> <ValidateReservation /> </ProtectedRoute>} />
-        <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <StudentHome /> </ProtectedRoute>} />
-        <Route path="/reservations" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER']}> <MyReservations /> </ProtectedRoute>} />
-
+        <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT']}> <StudentHome /> </ProtectedRoute>} />
+        <Route path="/student" element={<ProtectedRoute allowedRoles={['TEACHER']}> <StudentHome /> </ProtectedRoute>} />
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
 
-        <Route path="/TemperatureDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <TemperatureDashboard /> </ProtectedRoute>} />
-        <Route path="/AirQualityDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
-        <Route path="/EnergyConsumptionDashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
+        <Route path="/temperaturedashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <TemperatureDashboard /> </ProtectedRoute>} />
+        <Route path="/airqualitydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
+        <Route path="/energydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
