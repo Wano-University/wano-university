@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight, Wind, Cloud, Leaf, AlertTriangle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function AirQualityDashboard() {
   const [scale, setScale] = useState(1)
@@ -9,6 +10,7 @@ export default function AirQualityDashboard() {
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
   
   const [page, setPage] = useState(0)
   const sensorsPerPage = 4
@@ -58,7 +60,7 @@ export default function AirQualityDashboard() {
         
         const processedSensors = (json.sensors || []).sort((a, b) => a.id - b.id).map(s => ({
           id: s.id,
-          status: s.iqa > 80 ? "Poor" : s.iqa > 50 ? "Moderate" : "Excellent",
+          status: s.iqa > 80 ? t('AirDashboardStatusP') : s.iqa > 50 ? t('AirDashboardStatusM') : t('AirDashboardStatusE'),
           iqa: s.iqa,
           pm: Math.round(s.iqa / 10) + " µg/m³",
           color: s.iqa > 80 ? "text-red-500" : s.iqa > 50 ? "text-yellow-500" : "text-green-500",
@@ -95,7 +97,7 @@ export default function AirQualityDashboard() {
     <div style={!isMobile ? { transform: `scale(${scale})`, transformOrigin: "top" } : {}} className="w-[1400px]">
       <Card className="relative overflow-hidden p-6 border shadow-lg rounded-[2.5rem]">
           <h1 className="text-4xl font-bold text-center mb-4 text-[#320088]">
-            Air Quality Dashboard
+            {t('AirDashboardTitle')}
           </h1>
           
         {/* Summary Row */}
@@ -111,23 +113,22 @@ export default function AirQualityDashboard() {
                 </span>
               </div>
               
-              {/* The Wind Icon on the far right */}
-              {item.title === "Average IQA" && (
+              {item.title === "{t('AirDashboardIAvgIQA')}" && (
                 <div className="ml-4">
                   <Wind className="w-14 h-14 text-black" />
                 </div>
               )}
-              {item.title === "Average PM2.5" && (
+              {item.title === "{t('AirDashboardIAvgPM')}" && (
                 <div className="ml-4">
                   <Cloud className="w-14 h-14 text-black" />
                 </div>
               )}
-              {item.title === "Good IQA" && (
+              {item.title === "{t('AirDashboardIGIQA')}" && (
                 <div className="ml-4">
                   <Leaf className="w-14 h-14 text-black" />
                 </div>
               )}
-              {item.title === "Worst IQA" && (
+              {item.title === "{t('AirDashboardIWIQA')}" && (
                 <div className="ml-4">
                   <AlertTriangle className="w-14 h-14 text-black" />
                 </div>
@@ -152,7 +153,7 @@ export default function AirQualityDashboard() {
                     <div className={`font-bold text-lg md:text-3xl ${s.color}`}>{s.status}</div>
                     <div className="text-lg md:text-3xl font-semibold text-white/90">PM2.5 : {s.pm}</div>
                   </div>
-                  <div className="text-2xl md:text-5xl font-bold text-white">IQA {s.iqa}</div>
+                  <div className="text-2xl md:text-5xl font-bold text-white">{t('AirDashboardIQA')} {s.iqa}</div>
                   <Wind className="w-10 h-10 md:w-16 md:h-16 text-black dark:text-[#E0D0FF] ml-4" />
                 </div>
             ))}
@@ -164,7 +165,7 @@ export default function AirQualityDashboard() {
             
             <div className="flex items-center justify-center gap-4">
               <button onClick={handleEditClick} disabled={!selectedId} className={`px-10 py-3 rounded-full font-bold transition-colors ${selectedId ? "bg-foreground text-background" : "bg-gray-400 text-gray-200 cursor-not-allowed"}`}> 
-                  Edit ✏️ 
+                  {t('AirDashboardEdit')} ✏️ 
               </button>
               <button onClick={handlePrev} disabled={page === 0} className="bg-foreground text-background p-3 rounded-full disabled:opacity-50">
                   <ArrowLeft />
@@ -173,12 +174,12 @@ export default function AirQualityDashboard() {
                   <ArrowRight />
               </button>
               <button onClick={() => window.location.href = "http://localhost:3000/api/dashboard/air-quality/export"} className="bg-foreground text-background px-10 py-3 rounded-full font-bold"> 
-                  Export 
+                  {t('AirDashboardExport')}
               </button>
             </div>
             <div className="flex justify-end">
               <span className="font-bold text-lg text-[#320088]">
-                Page {currentPage} of {totalPages}
+                {t('AirDashboardPage')} {currentPage} {t('AirDashboardPageOf')} {totalPages}
               </span>
             </div>
           </div>
@@ -187,13 +188,13 @@ export default function AirQualityDashboard() {
             <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/20 backdrop-blur-md">
               <div className="bg-white/40 backdrop-blur-2xl border border-white/30 w-[90%] max-w-md rounded-3xl p-6 shadow-2xl text-center">  
                 <h3 className="text-[#3B1E7B] font-bold text-xl mb-6">
-                  Sensor {selectedId} Limits
+                  Sensor {selectedId}
                 </h3>
 
                 <div className="space-y-4 mb-8 text-left">
                   <div>
                     <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">
-                      Lowest:
+                      {t('AirDashboardEditL')}:
                     </label>
                    <input 
                       type="number"
@@ -206,7 +207,7 @@ export default function AirQualityDashboard() {
 
                   <div>
                     <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">
-                      Highest:
+                      {t('AirDashboardEditL')}:
                     </label>
                     <input 
                       type="number"
@@ -236,10 +237,10 @@ export default function AirQualityDashboard() {
                     }}
                     className="bg-[#6338AF] hover:bg-[#522c94] text-white font-bold px-6 py-2.5 rounded-md shadow-md hover:shadow-lg active:scale-95 transition-all text-sm uppercase tracking-wider"
                   >
-                    Update
+                    {t('AirDashboardEditY')}
                   </button>
                   <button onClick={() => setIsEditModalOpen(false)} className="bg-[#6338AF] hover:bg-[#522c94] text-white font-bold px-6 py-2.5 rounded-md shadow-md hover:shadow-lg active:scale-95 transition-all text-sm uppercase tracking-wider">
-                    Cancel
+                    {t('AirDashboardEditN')}
                   </button>
                 </div>
               </div>

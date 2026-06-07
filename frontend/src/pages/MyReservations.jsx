@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { X, CalendarClock, Loader2, Key, Car, Monitor } from 'lucide-react';
 import { getReservationsByUser } from '../lib/reservation';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
+import { useTranslation } from "react-i18next";
+
 
 export default function MyReservations() {
   const navigate = useNavigate();
@@ -12,6 +14,8 @@ export default function MyReservations() {
   const [error, setError] = useState('');
   const [selectedQRUrl, setSelectedQRUrl] = useState(null);
   const [pollingId, setPollingId] = useState(null);
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -81,8 +85,8 @@ export default function MyReservations() {
           <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary">
             <CalendarClock className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-black tracking-tight">Active Reservations</h2>
-          <p className="text-sm text-muted-foreground mt-1">Select a booking to view its access QR.</p>
+          <h2 className="text-2xl font-black tracking-tight">{t('ResActive')}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t('ResSelect')}</p>
         </div>
 
         <div className="overflow-y-auto pr-2 space-y-3 flex-1 custom-scrollbar">
@@ -92,7 +96,7 @@ export default function MyReservations() {
             <div className="p-4 bg-destructive/10 text-destructive font-bold text-center rounded-xl">{error}</div>
           ) : reservations.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed rounded-2xl bg-muted/10">
-              <p className="font-bold text-foreground">No Active Bookings</p>
+              <p className="font-bold text-foreground">{t('ResNoActive')}</p>
             </div>
           ) : (
             reservations.map((res) => {

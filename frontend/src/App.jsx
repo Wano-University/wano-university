@@ -25,6 +25,7 @@ import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
 import NotFound from './components/NotFound';
 import Footer from './components/Footer';
 import ValidateReservation from './pages/ValidateReservation';
+import './i18n';
 
 function RootLayout() {
   return (

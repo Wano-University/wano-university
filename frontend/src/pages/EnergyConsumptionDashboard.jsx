@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight, Download, Zap, Battery, Info } from "lucide-react"
 import { CartesianGrid, Line, LineChart, XAxis, Label } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useTranslation } from "react-i18next";
 
 const chartConfig = {
   power: {
@@ -27,6 +28,7 @@ export default function EnergyConsumptionDashboard() {
   const [lowestInput, setLowestInput] = useState("")
   const [highestInput, setHighestInput] = useState("")
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const sensorsPerPage = 6
 
@@ -70,12 +72,6 @@ export default function EnergyConsumptionDashboard() {
 
   const { sensors, totalPower, peak, chartData } = data
 
-  const stats = [
-    { title: "Total Power", value: totalPower },
-    { title: "Peak Sensor", value: peak?.sensorId ? `Sensor ${peak.sensorId}` : "N/A" },
-    { title: "Peak Value", value: peak?.value ? `${peak.value} W` : "0 W" }
-  ]
-
   const indexOfLastSensor = currentPage * sensorsPerPage
   const indexOfFirstSensor = indexOfLastSensor - sensorsPerPage
   const currentSensors = sensors.slice(indexOfFirstSensor, indexOfLastSensor)
@@ -108,7 +104,7 @@ export default function EnergyConsumptionDashboard() {
       <div className="w-full xl:max-w-6xl flex flex-col">
         <Card className="bg-card w-full rounded-3xl p-4 lg:p-6 border border-border shadow-md flex flex-col gap-4">          
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-center mb-4 text-[#320088]">
-            Energy Consumption Dashboard
+            {t('EnergyDashboardTitle')}
           </h1>
 
           {error && <p className="text-center text-red-500 text-sm mb-2">{error}</p>}
@@ -116,25 +112,29 @@ export default function EnergyConsumptionDashboard() {
           <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
             <div className="flex flex-col justify-between">
 
-              <div className="bg-[#6338AF]/60 rounded-2xl p-6 flex items-center justify-between">
-                <div>
-                  <p className="font-bold text-2xl text-[#320088]">Current Power</p>
+              <div className="bg-[#6338AF]/60 rounded-2xl p-6 flex items-center justify-between gap-6">
+                <div className="flex-1">
+                  <p className="font-bold text-xl md:text-2xl text-[#320088] leading-tight">
+                    {t('EnergyDashboardCP')}
+                  </p>
                 </div>
-                
-                <div className="flex-1 text-center">
-                  <p className="font-bold text-4xl text-white">{currentLivePower.toFixed(0)} W</p>
+                              
+                <div className="text-center shrink-0">
+                  <p className="font-bold text-3xl md:text-4xl text-white">
+                    {currentLivePower.toFixed(0)} W
+                  </p>
                 </div>
-                
-                <div className="text-white">
-                  <div className="text-black">
-                    <Battery className="w-20 h-12" />
-                    </div>
+                              
+                <div className="flex-1 flex justify-end">
+                  <div className="text-black p-2 rounded-lg">
+                    <Battery className="w-16 h-10 md:w-20 md:h-12" />
+                  </div>
                 </div>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 align-content-start">
                 {currentSensors.length === 0 ? (
-                  <p className="text-sm opacity-60 col-span-full text-center">Loading or no data available...</p>
+                  <p className="text-sm opacity-60 col-span-full text-center">{t('EnergyDashboardError')}</p>
                 ) : (
                   currentSensors.map((sensor) => {
                     const isSelected = selectedSensorId === sensor.id
@@ -158,10 +158,10 @@ export default function EnergyConsumptionDashboard() {
                 </div>
 
                 <div className="flex items-center justify-center gap-2">
-                  <button type="button" onClick={handleEditClick} disabled={!selectedSensorId} className="bg-foreground text-background px-4 py-2 rounded-full font-medium disabled:opacity-40">Edit</button>                
+                  <button type="button" onClick={handleEditClick} disabled={!selectedSensorId} className="bg-foreground text-background px-4 py-2 rounded-full font-medium disabled:opacity-40">{t('EnergyDashboardEdit')}</button>                
                   <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="bg-foreground text-background p-2 rounded-full disabled:opacity-40"><ArrowLeft className="w-4 h-4" /></button>
                   <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages || totalPages === 0} className="bg-foreground text-background p-2 rounded-full disabled:opacity-40"><ArrowRight className="w-4 h-4" /></button>
-                  <button onClick={() => window.location.href = "http://localhost:3000/api/dashboard/energy/export"} className="bg-foreground text-background px-4 py-2 rounded-full font-medium flex items-center gap-1">Export <Download className="w-4 h-4" /></button>
+                  <button onClick={() => window.location.href = "http://localhost:3000/api/dashboard/energy/export"} className="bg-foreground text-background px-4 py-2 rounded-full font-medium flex items-center gap-1">{t('EnergyDashboardExport')} <Download className="w-4 h-4" /></button>
                 </div>
 
                 <div className="flex justify-end pr-4">
@@ -175,7 +175,7 @@ export default function EnergyConsumptionDashboard() {
                 <div className="bg-[#6338AF]/60 rounded-2xl p-4 flex items-center cols-3 justify-between">
                   
                   <div className="max-w-[100px]"> 
-                    <p className="text-[#320088] font-bold text-3xl leading-none">Today's Peak</p>
+                    <p className="text-[#320088] font-bold text-3xl leading-none">{t('EnergyDashboardPeak')}</p>
                   </div>
                   
                   <div>
@@ -188,16 +188,16 @@ export default function EnergyConsumptionDashboard() {
                 </div>
                 
                 <div className="bg-[#6338AF]/60 rounded-2xl p-4 text-center">
-                  <p className="text-[#320088] font-bold text-3xl">Today's Total Consumption</p>
+                  <p className="text-[#320088] font-bold text-3xl">{t('EnergyDashboardTTC')}</p>
                   <p className="text-white font-bold text-4xl">{totalPower}</p>
                 </div>
               
               </div>
               <div className="bg-[#6338AF]/60 rounded-2xl p-4 lg:p-6 flex flex-col flex-1 min-h-[200px]">
-                <div className="text-white font-bold text-center mb-4">Average Power Usage Per Day</div>
+                <div className="text-white font-bold text-center mb-4">{t('EnergyDashboardGraphTitle')}</div>
                 <div className="w-full flex-1 min-h-0 flex items-center justify-center">
                   <div className="top-1/2 -translate-y-1/2 -rotate-90 text-white font-bold text-[15px] uppercase tracking-wider z-10 inline-block whitespace-nowrap">
-                    Power (W)
+                    {t('EnergyDashboardGraphLeftLable')} (W)
                   </div>
                   <ChartContainer className="w-full h-[250px] min-h-[250px]" config={chartConfig}>
                     <LineChart width={500} height={250} data={chartData} margin={{ top: 20, right: 120, left: -5, bottom: 20 }}>
@@ -212,7 +212,7 @@ export default function EnergyConsumptionDashboard() {
                       <Line type="monotone" dataKey="power" stroke="#0BDA51" strokeWidth={4} dot={{ r: 4, fill: "#E0E0E0", strokeWidth: 0 }} activeDot={{ r: 6 }}/>
                     </LineChart>
                     <div className="w-full text-center -translate-x-1/10 text-white font-bold text-[15px] uppercase tracking-wider mt-[-10px]">
-                      Date
+                      {t('EnergyDashboardGraphBotomLable')}
                     </div>
                   </ChartContainer>
                 </div>
@@ -224,11 +224,11 @@ export default function EnergyConsumptionDashboard() {
         {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-md transition-all">
           <div className="bg-white/40 backdrop-blur-2xl border border-white/30 w-[90%] max-w-md rounded-3xl p-6 shadow-2xl relative text-center">
-            <h3 className="text-[#3B1E7B] font-bold text-xl mb-6">Sensor {selectedSensorId} Limits</h3>
+            <h3 className="text-[#3B1E7B] font-bold text-xl mb-6">Sensor {selectedSensorId}</h3>
             
             <div className="space-y-4 mb-8 text-left">
               <div>
-                <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">Lowest:</label>
+                <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">{t('EnergyDashboardEditL')}:</label>
                 <input 
                   type="number" value={lowestInput} onChange={(e) => setLowestInput(e.target.value)}
                   placeholder="N/A" className="w-full bg-white text-[#3B1E7B] font-medium px-4 py-3 rounded-full shadow-inner border border-transparent focus:outline-none transition text-lg"
@@ -236,7 +236,7 @@ export default function EnergyConsumptionDashboard() {
               </div>
               
               <div>
-                <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">Highest:</label>
+                <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">{t('EnergyDashboardEditH')}:</label>
                 <input 
                   type="number" value={highestInput} onChange={(e) => setHighestInput(e.target.value)}
                   placeholder="N/A" className="w-full bg-white text-[#3B1E7B] font-medium px-4 py-3 rounded-full shadow-inner border border-transparent focus:outline-none transition text-lg"
@@ -252,15 +252,15 @@ export default function EnergyConsumptionDashboard() {
                     body: JSON.stringify({ lowerLimit: lowestInput, upperLimit: highestInput })
                   });
                   setIsEditModalOpen(false);
-                  fetchData(); // Refresh data
+                  fetchData();
                 }}
                 className="bg-[#6338AF] text-white font-bold px-6 py-2.5 rounded-md hover:opacity-90 transition"
               >
-                Update
+                {t('EnergyDashboardEditY')}
               </button>
               
               <button onClick={() => setIsEditModalOpen(false)} className="bg-[#6338AF] text-white font-bold px-6 py-2.5 rounded-md hover:opacity-90 transition">
-                Cancel
+                {t('EnergyDashboardEditN')}
               </button>
             </div>
           </div>
@@ -269,17 +269,17 @@ export default function EnergyConsumptionDashboard() {
       {isInfoModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-md transition-all">
           <div className="bg-white/40 backdrop-blur-2xl border border-white/30 w-[90%] max-w-md rounded-3xl p-6 shadow-2xl relative text-center">
-            <h3 className="text-[#3B1E7B] font-bold text-2xl mb-6">Energy Tips</h3>
+            <h3 className="text-[#3B1E7B] font-bold text-2xl mb-6">{t('EnergyDashboardInfo')}</h3>
             <div className="text-left space-y-4 mb-8 text-[#3B1E7B] font-medium">
-              <p>Tip 1: Turn off the lights when they're not needed!</p>
-              <p>Tip 2: Use natural light!</p>
-              <p>Tip 3: Open or close windows to help with the temperature!</p>
+              <p>{t('EnergyDashboardInfoTip1')}</p>
+              <p>{t('EnergyDashboardInfoTip2')}</p>
+              <p>{t('EnergyDashboardInfoTip3')}</p>
             </div>
             <button 
               onClick={() => setIsInfoModalOpen(false)} 
               className="bg-[#6338AF] text-white font-bold px-8 py-2.5 rounded-full hover:opacity-90 transition"
             >
-              Back
+              {t('EnergyDashboardBack')}
             </button>
           </div>
         </div>

@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight, Download, Thermometer } from "lucide-react"
 import { CartesianGrid, LabelList, Line, LineChart, XAxis, YAxis, Label } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useTranslation } from "react-i18next";
+
 
 const chartConfig = {
   temperature: {
@@ -21,6 +23,7 @@ export default function TemperatureDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const { t } = useTranslation();
   
   // NOVO ESTADO: Guarda qual sensor foi clicado/selecionado
   const [selectedSensorId, setSelectedSensorId] = useState(null)
@@ -84,7 +87,7 @@ return (
         <Card className="bg-card w-full h-full rounded-3xl md:rounded-[2.5rem] p-5 lg:p-6 border border-border shadow-md flex flex-col min-h-0 justify-between overflow-hidden">
           
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-center mb-4 text-[#320088]">
-            Temperature Dashboard
+            {t('TempDashTitle')}
           </h1>
 
           {error && <p className="text-center text-red-500 text-sm mb-2">{error}</p>}
@@ -95,7 +98,7 @@ return (
             <div className="flex flex-col justify-between">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 align-content-start">
                 {currentSensors.length === 0 ? (
-                  <p className="text-sm opacity-60 col-span-full text-center">Loading or no data available...</p>
+                  <p className="text-sm opacity-60 col-span-full text-center">{t('TempDashError')}</p>
                 ) : (
                   currentSensors.map((sensor) => {
                     const isSelected = selectedSensorId === sensor.id
@@ -130,7 +133,7 @@ return (
                       disabled={!selectedSensorId}
                       className="bg-foreground text-background px-4 py-2 rounded-full font-medium hover:opacity-90 transition disabled:opacity-40"
                     >
-                      Edit
+                      {t('TempDashEdit')}
                     </button>
 
                     <button 
@@ -163,7 +166,7 @@ return (
                       Export <Download className="w-4 h-4" />
                     </button>  
                 </div>
-                {totalPages > 0 && <span className="mx-10 text-xs font-semibold opacity-70">Page {currentPage} of {totalPages}</span>}
+                {totalPages > 0 && <span className="mx-10 text-xs font-semibold opacity-70">{t('TempDashPage')} {currentPage} {t('TempDashOf')} {totalPages}</span>}
               </div>
             </div>
 
@@ -183,10 +186,10 @@ return (
 
               {/* CHART */}
               <div className="bg-[#6338AF]/60 rounded-2xl p-4 lg:p-6 flex flex-col flex-1 min-h-[200px]">
-                <div className="text-white font-bold text-center mb-4">Average Temperature Per Hour</div>
+                <div className="text-white font-bold text-center mb-4">{t('TempDashAvg')}</div>
                   <div className="w-full flex-1 min-h-0 flex items-center justify-center">
                     <div className="top-1/2 -translate-y-1/2 -rotate-90 text-white font-bold text-[15px] uppercase tracking-wider z-10 inline-block whitespace-nowrap">
-                      Temperature
+                      {t('TempDashTempLabel')}
                     </div>
                   <ChartContainer className="w-full h-[250px] min-h-[250px]" config={chartConfig}>
                     <LineChart width={500} height={250} data={chartData} margin={{ top: 20, right: 120, left: -5, bottom: 20 }}>
@@ -222,14 +225,10 @@ return (
                         />
                       </LineChart>
                       <div className="w-full text-center -translate-x-1/10 text-white font-bold text-[15px] uppercase tracking-wider mt-[-10px]">
-                      Hour
+                      {t('TempDashHourLabel')}
                       </div>
                     </ChartContainer>
                   </div>
-                </div>
-                {/* X-Axis Absolute Label */}
-                <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 text-[12px] font-bold text-white/70 tracking-wider pointer-events-none z-10">
-                  Hours
                 </div>
               </div>
             </div>
@@ -239,13 +238,13 @@ return (
             <div className="bg-white/40 backdrop-blur-2xl border border-white/30 w-[90%] max-w-md rounded-3xl p-6 shadow-2xl relative text-center">
               
               <h3 className="text-[#3B1E7B] font-bold text-xl mb-6">
-                Sensor {selectedSensorId} Limits
+                Sensor {selectedSensorId}
               </h3>
 
               <div className="space-y-4 mb-8 text-left">
                 <div>
                   <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">
-                    Lowest:
+                    {t('TempDashEditMin')}:
                   </label>
                  <input 
                     type="number"
@@ -258,7 +257,7 @@ return (
 
                 <div>
                   <label className="block text-[#3B1E7B]/70 text-sm font-semibold mb-1 ml-2">
-                    Highest:
+                    {t('TempDashEditMax')}:
                   </label>
                   <input 
                     type="number"
@@ -288,10 +287,10 @@ return (
                   }}
                   className="bg-[#6338AF] hover:bg-[#522c94] text-white font-bold px-6 py-2.5 rounded-md shadow-md hover:shadow-lg active:scale-95 transition-all text-sm uppercase tracking-wider"
                 >
-                  Update
+                  {t('TempDashEditY')}
                 </button>
                 <button onClick={() => setIsEditModalOpen(false)} className="bg-[#6338AF] hover:bg-[#522c94] text-white font-bold px-6 py-2.5 rounded-md shadow-md hover:shadow-lg active:scale-95 transition-all text-sm uppercase tracking-wider">
-                  Cancel
+                  {t('TempDashEditN')}
                 </button>
               </div>
             </div>
