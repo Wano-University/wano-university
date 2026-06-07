@@ -20,8 +20,7 @@ export const createDish = async (formData) => {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
-
-    body: JSON.stringify,
+    body: formData,
   });
 
   const data = await response.json();

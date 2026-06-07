@@ -1,13 +1,13 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const getActiveMenu = async () => {
-  // A CORREÇÃO ESTÁ AQUI: garantir que tem o /api/menu/getMenu
+  const token = localStorage.getItem('token');;
+
   const response = await fetch(`${API_URL}/api/menu/getMenu`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      // Se precisares de token, adiciona aqui:
-      // 'Authorization': `Bearer ${localStorage.getItem('token')}` 
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
     }
   });
 
