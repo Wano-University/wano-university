@@ -13,9 +13,12 @@ import {
   getAllActiveSensorsByFloor,
   getAllActiveSensorsByType,
   resolveAlert,
-  getPendingAlerts
+  getPendingAlerts,
+  updateSensor,
+  deleteSensor
 } from '../controllers/SensorController.js';
 import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
+
 
 const router = Router();
 
@@ -42,5 +45,8 @@ router.get('/:id/readings', verifyToken, requireRole(['ADMIN', 'STAFF']), getRea
 
 router.get('/alerts/pending', verifyToken, requireRole(['ADMIN', 'STAFF']), getPendingAlerts);
 router.patch('/alerts/:id/resolve', verifyToken, requireRole(['ADMIN', 'STAFF']), resolveAlert);
+
+router.put('/:id', verifyToken, requireRole(['ADMIN', 'STAFF']), updateSensor);  
+router.delete('/:id', verifyToken, requireRole(['ADMIN', 'STAFF']), deleteSensor);
 
 export default router;

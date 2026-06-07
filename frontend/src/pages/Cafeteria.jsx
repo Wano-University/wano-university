@@ -13,6 +13,8 @@ import CheckoutForm from '../components/CheckoutForm';
 import { getImageUrl } from '@/lib/utils';
 import { useTranslation } from "react-i18next";
 
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const getWorkdays = () => {
@@ -153,14 +155,14 @@ export default function Cafeteria() {
           </div>
         </div>
 
-        <div className="flex justify-end">
+        {(currentUser?.type === 'ADMIN' || currentUser?.type === 'STAFF') && (
           <Link
             to="/menuconfig"
             className="text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-full hover:shadow-xl hover:bg-primary/90 transition-all inline-block"
           >
             {t('BtEditMenu')}
           </Link>
-        </div>
+        )}
 
         <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
           <button

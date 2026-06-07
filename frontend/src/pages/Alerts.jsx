@@ -10,6 +10,8 @@ import {
   Zap,
   Wind
 } from 'lucide-react';
+import { useTranslation } from "react-i18next";
+
 
 import {
   getPendingAlerts,
@@ -18,6 +20,8 @@ import {
 
 export default function Alerts() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     const handleKeyDown = (e) => {

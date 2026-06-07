@@ -11,7 +11,7 @@ export default function EditUserModal({ user, onClose, onSave }) {
   email: user?.email || '',
   address: user?.address || '',
   nif: user?.nif || '',
-  login: user?.login || user?.username || '' // Experimenta usar o nome que o backend espera
+  login: user?.login || user?.username || '' 
 });
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,7 +33,6 @@ export default function EditUserModal({ user, onClose, onSave }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      {/* Alterado bg-white para bg-card (que muda conforme o tema) */}
       <Card className="w-full max-w-2xl p-8 shadow-xl border-border bg-card">
         <h2 className="text-2xl font-bold mb-6 text-foreground">Edit User: {user.name}</h2>
         

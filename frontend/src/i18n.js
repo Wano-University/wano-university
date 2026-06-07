@@ -409,6 +409,8 @@ i18n.use(initReactI18next).init({
         EquipAA: "Active & Available",
         EquipToggle: "Toggle off if out of order or under maintenance.",
         EquipCancel: "Cancel",
+        EquipBtSpace: "Spaces",
+        EquipUna: "Unavailable",
 
 
         LSSRR: "Register a Resource",
@@ -866,6 +868,8 @@ i18n.use(initReactI18next).init({
         EquipAA: "Ativo e disponível",
         EquipToggle: "Desativar se estiver avariado ou em manutenção.",
         EquipCancel: "Cancelar",
+        EquipBtSpace: "Espaços",
+        EquipUna: "Indisponível",
 
         LSSRR: "Registar um Recurso",
         LSSGR: "Obter Todos os Recursos",
