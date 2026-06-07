@@ -3,7 +3,7 @@ import { Terminal, ChevronRight, BookOpen, Cpu, Wifi, Users, Calendar, Bike, Inf
 
 const sections = [
   {
-   id: "resources",
+    id: "resources",
     label: "Resources",
     icon: Cpu,
     color: "nika",
@@ -205,17 +205,17 @@ export default function LssDocs() {
 
   return (
     <section className="py-12 max-w-7xl mx-auto px-6 space-y-6">
-     <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-muted-foreground/20">
-      <div className="flex items-center gap-4">
-        <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-          <BookOpen className="w-6 h-6" />
-        </div>
-        <div>
-          <h4 className="text-2xl font-bold text-primary tracking-tight">LSS Language Documentation</h4>
-          <h2 className="text-xs text-muted-foreground mt-1">Command reference for the LSS grammar</h2>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-6 border-muted-foreground/20">
+        <div className="flex items-center gap-4">
+          <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
+            <BookOpen className="w-6 h-6" />
+          </div>
+          <div>
+            <h4 className="text-2xl font-bold text-primary tracking-tight">LSS Language Documentation</h4>
+            <h2 className="text-xs text-muted-foreground mt-1">Command reference for the LSS grammar</h2>
+          </div>
         </div>
       </div>
-    </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
         <div className="md:col-span-1 bg-primary-foreground p-5 rounded-3xl border border-muted-foreground/20 shadow-sm space-y-2">
@@ -258,7 +258,7 @@ export default function LssDocs() {
                 {notes.map((n) => (
                   <div key={n.label} className="flex items-start gap-4 py-2.5">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full shrink-0">
-                      {n.label}
+                      {t(n.label)}
                     </span>
                     <code className="text-xs text-muted-foreground font-mono">{n.value}</code>
                   </div>

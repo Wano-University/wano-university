@@ -32,6 +32,7 @@ import AdminUsers from './pages/AdminUsers';
 import Alerts from './pages/Alerts';
 import AccessLogs from './pages/AccessLogs';
 import { ThemeSwitcher } from './pages/ThemeSwitcher';
+import MyReservations from './pages/MyReservations';
 
 function RootLayout() {
   return (
@@ -64,6 +65,7 @@ export default function App() {
         <Route path="/home" element={<HomeRedirection />} />
         <Route path="/cafeteria" element={<ProtectedRoute requiredPermission="VER_EMENTA_COMPRAS"><Cafeteria /></ProtectedRoute>} />
         <Route path="/lssdocs" element={<ProtectedRoute><LssDocs /></ProtectedRoute>} />
+        <Route path="/reservations" element={<ProtectedRoute><MyReservations /></ProtectedRoute>} />
         <Route path="/equipments" element={<ProtectedRoute requiredPermission="VER_EQUIPAMENTOS"><Equipments /></ProtectedRoute>} />
         <Route path="/tickets" element={<ProtectedRoute><MyTickets /></ProtectedRoute>} />
         <Route path="/changepassword" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
@@ -73,7 +75,7 @@ export default function App() {
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminHome /></ProtectedRoute>} />
         <Route path="/staff" element={<ProtectedRoute allowedRoles={['STAFF']}><StaffHome /></ProtectedRoute>} />
         <Route path="/validate-ticket/:id" element={<ProtectedRoute allowedRoles={['STAFF']}><ValidateTicket /></ProtectedRoute>} />
-        <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentHome /></ProtectedRoute>} />
+        <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT', 'PROFESSOR']}><StudentHome /></ProtectedRoute>} />
 
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="GERIR_SENSORES"><InteractiveMap /></ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="GERIR_EMENTA"><MenuConfig /></ProtectedRoute>} />

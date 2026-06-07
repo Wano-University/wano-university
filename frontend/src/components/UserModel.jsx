@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
 const MAPA_PERMISSOES = [
-  { id: 'VER_EMENTA_COMPRAS',            label: 'Ementa',                roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_PARKING',                   label: 'Parking',               roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_SALAS_LABORATORIOS',        label: 'Ver Salas',             roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_EQUIPAMENTOS',              label: 'Ver Equipamentos',      roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_BICICLETAS_TROTINETES',     label: 'Ver Bicicletas',        roles: ['STUDENT', 'TEACHER', 'STAFF', 'ADMIN'] },
-  { id: 'VER_DASHBOARD',                 label: 'Dashboards',            roles: ['STAFF', 'ADMIN'] },
-  { id: 'GERIR_USERS',                   label: 'Gestão Users',          roles: ['ADMIN'] },
-  { id: 'GERIR_EQUIPAMENTOS',            label: 'Gestão Equipamentos',   roles: ['ADMIN'] },
-  { id: 'GERIR_BICICLETAS_TROTINETES',   label: 'Gestão Bicicletas',     roles: ['ADMIN'] },
-  { id: 'GERIR_EMENTA',                  label: 'Gestão Ementa',         roles: ['ADMIN', 'STAFF'] },
-  { id: 'GERIR_SENSORES',                label: 'Gestão Sensores',       roles: ['ADMIN'] }
+  { id: 'VER_EMENTA_COMPRAS', label: 'Ementa', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_PARKING', label: 'Parking', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_SALAS_LABORATORIOS', label: 'Ver Salas', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_EQUIPAMENTOS', label: 'Ver Equipamentos', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_BICICLETAS_TROTINETES', label: 'Ver Bicicletas', roles: ['STUDENT', 'PROFESSOR', 'STAFF', 'ADMIN'] },
+  { id: 'VER_DASHBOARD', label: 'Dashboards', roles: ['STAFF', 'ADMIN'] },
+  { id: 'GERIR_USERS', label: 'Gestão Users', roles: ['ADMIN'] },
+  { id: 'GERIR_EQUIPAMENTOS', label: 'Gestão Equipamentos', roles: ['ADMIN'] },
+  { id: 'GERIR_BICICLETAS_TROTINETES', label: 'Gestão Bicicletas', roles: ['ADMIN'] },
+  { id: 'GERIR_EMENTA', label: 'Gestão Ementa', roles: ['ADMIN', 'STAFF'] },
+  { id: 'GERIR_SENSORES', label: 'Gestão Sensores', roles: ['ADMIN', 'STAFF'] }
 ];
 
 export default function UserModel({ user, onClose, onSave }) {
@@ -119,11 +119,10 @@ export default function UserModel({ user, onClose, onSave }) {
                     <div
                       key={perm.id}
                       onClick={() => handleToggle(perm.id, !isChecked)}
-                      className={`flex items-center justify-between p-4 w-full h-14 rounded-xl border transition-all cursor-pointer select-none shrink-0 ${
-                        isChecked
-                          ? "bg-primary/5 border-primary shadow-sm"
-                          : "bg-muted/10 border-border/60 hover:border-border hover:bg-muted/20"
-                      }`}
+                      className={`flex items-center justify-between p-4 w-full h-14 rounded-xl border transition-all cursor-pointer select-none shrink-0 ${isChecked
+                        ? "bg-primary/5 border-primary shadow-sm"
+                        : "bg-muted/10 border-border/60 hover:border-border hover:bg-muted/20"
+                        }`}
                     >
                       <span className={`text-sm font-semibold transition-colors ${isChecked ? "text-primary" : "text-foreground"}`}>
                         {perm.label}
