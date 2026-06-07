@@ -20,7 +20,6 @@ export default function CreateAccount() {
     setStatus('loading');
     setErrorMsg('');
 
-    // Verifica o user logado (tenta obter do localStorage)
     const userString = localStorage.getItem('user');
     const currentUser = userString ? JSON.parse(userString) : null;
 
@@ -47,10 +46,9 @@ export default function CreateAccount() {
       await registerUserAPI(payload);
       setStatus('success');
 
-      // Redirecionamento condicional
       setTimeout(() => {
         if (currentUser?.type === 'ADMIN') {
-          window.location.href = '/admin/users'; // Ajusta para a tua rota de gestão
+          window.location.href = '/admin/users'; 
         } else {
           window.location.href = '/login';
         }
@@ -83,11 +81,11 @@ export default function CreateAccount() {
                     name="type"
                     placeholder="Select account type..."
                     required 
-                    className="bg-white"
+                    className="bg-primary-foreground"
                   />
                   <ComboboxContent>
                     <ComboboxEmpty>{t('CreateAccountNoItems')}</ComboboxEmpty>
-                    <ComboboxList className="bg-white">
+                    <ComboboxList className="bg-primary-foreground">
                       {types.map((item) => (
                         <ComboboxItem key={item} value={item}>
                           {item}
@@ -98,6 +96,7 @@ export default function CreateAccount() {
                 </Combobox>
               </Field>
 
+            <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-4 md:gap-8">
               <Field>
                 <FieldLabel htmlFor="name">{t('CreateAccountName')}:</FieldLabel>
                 <Input name="name" id="name" placeholder="Name" required />
@@ -107,6 +106,7 @@ export default function CreateAccount() {
                 <FieldLabel htmlFor="surname">{t('CreateAccountSurname')}:</FieldLabel>
                 <Input name="surname" id="surname" placeholder="Surname" required />
               </Field>
+            </div>
 
               <Field className="col-span-2">
                 <FieldLabel htmlFor="address">{t('CreateAccountAddress')}:</FieldLabel>
@@ -115,7 +115,8 @@ export default function CreateAccount() {
 
               <Field className="col-span-2">
                 <FieldLabel htmlFor="nif">{t('CreateAccountNIF')}:</FieldLabel>
-                <Input name="nif" id="nif" placeholder="NIF" required minLength={9} maxLength={9} />
+                <Input name="nif" id="nif" inputMode="numeric" placeholder="NIF" required minLength={9} maxLength={9} pattern="\d*"onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '');
+                  }} />
               </Field>
 
               <Field className="col-span-2">
@@ -150,7 +151,7 @@ export default function CreateAccount() {
               type="submit"
               disabled={status === 'loading' || status === 'success'}
               className={`mt-4 cursor-pointer transition-all ${
-                status === 'success' ? 'bg-purple-800 text-white' :
+                status === 'success' ? 'bg-foreground text-primary-foreground' :
                 status === 'error' ? 'bg-red-800 text-white' : ''
               }`}
             >
