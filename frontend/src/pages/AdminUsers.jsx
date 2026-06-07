@@ -3,19 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { Plus } from "lucide-react";
 import UserModel from '../components/UserModel';
 import EditUser from '../components/EditUser';
-import { getAllUsers, updateUserPermissions, updateUserData } from "../lib/users";
+import { getAllUsers, updateUserData, updateUserPermissions } from "../lib/users";
 import { useTranslation } from "react-i18next";
+import { jwtDecode } from "jwt-decode";
 
 export default function AdminUsers() {
-  console.log("--- AdminUsers carregado ---");
   const [utilizadores, setUtilizadores] = useState([]);
-  const [utilizadorSelecionado, setUtilizadorSelecionado] = useState(null); // Para Permissões
-  const [userParaEditar, setUserParaEditar] = useState(null); // Para Dados Pessoais
+  const [utilizadorSelecionado, setUtilizadorSelecionado] = useState(null);
+  const [userParaEditar, setUserParaEditar] = useState(null);
   const [erro, setErro] = useState(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  
+  const token = localStorage.getItem('token');
+  const loggedUserId = token ? jwtDecode(token).userId : null;
 
   const carregarUtilizadores = () => {
     getAllUsers()
@@ -34,13 +35,25 @@ export default function AdminUsers() {
     carregarUtilizadores();
   }, []);
 
-  const handleSalvarPermissoes = (id, dadosAtualizados) => {
-    updateUserPermissions(id, dadosAtualizados.ativo, dadosAtualizados.novasPermissoes)
-      .then(() => {
-        carregarUtilizadores();
-        setUtilizadorSelecionado(null);
-      })
-      .catch(err => alert(err.message));
+  const handleSalvarPermissoes = async (id, dadosAtualizados) => {
+    const container = dadosAtualizados || {};
+
+    let statusAtivo = true;
+    if (container.ativo !== undefined) statusAtivo = !!container.ativo;
+    else if (container.isActive !== undefined) statusAtivo = !!container.isActive;
+
+    let listaPermissoes = [];
+    if (Array.isArray(container.novasPermissoes)) listaPermissoes = container.novasPermissoes;
+    else if (Array.isArray(container.permissions)) listaPermissoes = container.permissions;
+
+    try {
+      await updateUserPermissions(id, statusAtivo, listaPermissoes);
+      carregarUtilizadores();
+      setUtilizadorSelecionado(null);
+    } catch (err) {
+      console.error("Erro ao gravar permissões:", err);
+      alert(`Erro ao gravar permissões: ${err.message}`);
+    }
   };
 
   const handleSalvarEdicao = (id, dados) => {
@@ -59,8 +72,8 @@ export default function AdminUsers() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('AdminUTitle')}</h1>
           <p className="text-muted-foreground mt-1">{t('AdminUDesc')}</p>
         </div>
-        
-        <button 
+
+        <button
           onClick={() => navigate('/createacc')}
           className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 font-medium rounded-lg shadow-sm text-sm flex items-center gap-2 transition-all cursor-pointer"
         >
@@ -68,7 +81,7 @@ export default function AdminUsers() {
           {t('AdminUCreate')}
         </button>
       </div>
-      
+
       {erro && (
         <div className="p-4 mb-4 text-sm bg-destructive/15 text-destructive rounded-lg border border-destructive/20">
           <span className="font-semibold">{t('AdminUErr')}:</span> {erro}
@@ -105,13 +118,15 @@ export default function AdminUsers() {
                     </span>
                   </td>
                   <td className="p-4 text-right flex gap-2 justify-end">
-                    <button 
-                      onClick={() => setUtilizadorSelecionado(user)}
-                      className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-1 rounded-lg text-xs transition-all"
-                    >
-                      {t('AdminUPerms')}
-                    </button>
-                    <button 
+                    {user.id !== loggedUserId && (
+                      <button
+                        onClick={() => setUtilizadorSelecionado(user)}
+                        className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-1 rounded-lg text-xs transition-all"
+                      >
+                        {t('AdminUPerms')}
+                      </button>
+                    )}
+                    <button
                       onClick={() => setUserParaEditar(user)}
                       className="bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-1 rounded-lg text-xs transition-all"
                     >
@@ -125,18 +140,17 @@ export default function AdminUsers() {
         </table>
       </div>
 
-      {/* Modais */}
       {utilizadorSelecionado && (
-        <UserModel 
-          user={utilizadorSelecionado} 
-          onClose={() => setUtilizadorSelecionado(null)} 
+        <UserModel
+          user={utilizadorSelecionado}
+          onClose={() => setUtilizadorSelecionado(null)}
           onSave={handleSalvarPermissoes}
         />
       )}
       {userParaEditar && (
         <EditUser
-          user={userParaEditar} 
-          onClose={() => setUserParaEditar(null)} 
+          user={userParaEditar}
+          onClose={() => setUserParaEditar(null)}
           onSave={handleSalvarEdicao}
         />
       )}

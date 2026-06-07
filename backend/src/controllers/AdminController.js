@@ -9,21 +9,31 @@ export const getAllUsers = async (req, res) => {
         email: true,
         type: true,
         isActive: true,
-        // Adiciona aqui os campos que faltam!
         address: true, 
         nif: true,
         login: true,
         permissions: {
           select: {
-            permission: { select: { description: true } }
+            permission: { 
+              select: { 
+                description: true 
+              } 
+            }
           }
         }
+      },
+      orderBy: {
+        id: 'asc' 
       }
     });
 
     const usersFormatados = users.map(user => ({
       ...user,
-      permissions: user.permissions.map(p => p.permission.description)
+      permissions: Array.isArray(user.permissions) 
+        ? user.permissions
+            .map(p => p.permission?.description)
+            .filter(Boolean)
+        : []
     }));
 
     return res.status(200).json(usersFormatados);
@@ -39,7 +49,7 @@ export const updateProfile = async (req, res) => {
   const userId = Number(id);
 
   try {
-    // CORREÇÃO: Usar prisma.user.update em vez de Mongoose
+
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -58,53 +68,33 @@ export const updateProfile = async (req, res) => {
   }
 };
 
+
 export const updateUserPermissions = async (req, res) => {
   const { id } = req.params;
   const { ativo, novasPermissoes } = req.body;
-  const userId = Number(id);
+  const userId = parseInt(id, 10);
 
   try {
-    const listaPermissoes = Array.isArray(novasPermissoes) ? novasPermissoes : [];
-
-    const permissoesBd = await prisma.permission.findMany({
-      where: { description: { in: listaPermissoes } },
+    const permissoesObj = await prisma.permission.findMany({
+      where: { description: { in: novasPermissoes } },
       select: { id: true }
     });
+    const novosPermissionIds = permissoesObj.map(p => p.id);
 
-    const result = await prisma.$transaction(async (tx) => {
-      await tx.user.update({
+    await prisma.$transaction([
+      prisma.usersOnPermissions.deleteMany({ where: { userId } }),
+      prisma.usersOnPermissions.createMany({
+        data: novosPermissionIds.map(permId => ({ userId, permissionId: permId }))
+      }),
+      prisma.user.update({
         where: { id: userId },
-        data: { isActive: ativo }
-      });
+        data: { isActive: !!ativo }
+      })
+    ]);
 
-      await tx.usersOnPermissions.deleteMany({
-        where: { userId: userId }
-      });
-
-      await tx.usersOnPermissions.createMany({
-        data: permissoesBd.map(p => ({
-          userId: userId,
-          permissionId: p.id
-        }))
-      });
-
-      return await tx.user.findUnique({
-        where: { id: userId },
-        include: { 
-          permissions: { include: { permission: true } } 
-        }
-      });
-    });
-
-    return res.status(200).json({ 
-      message: "Sucesso!",
-      user: {
-        ...result,
-        permissions: result.permissions.map(p => p.permission.description)
-      }
-    });
+    return res.status(200).json({ success: true, message: "Permissões atualizadas!" });
   } catch (error) {
-    console.error("Erro Crítico no Prisma:", error);
-    return res.status(500).json({ error: "Erro ao processar atualização." });
+    console.error("Erro Prisma na gravação:", error);
+    return res.status(500).json({ success: false, message: "Erro ao gravar na BD." });
   }
 };

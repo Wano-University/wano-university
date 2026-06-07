@@ -15,7 +15,7 @@ import temperatureRoutes from './routes/TemperatureRoutes.js';
 import paymentRoutes from './routes/PaymentRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import adminRoutes from './routes/AdminRoutes.js'; // Substitui pelo nome correto do ficheiro se for diferente
+import adminRoutes from './routes/AdminRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

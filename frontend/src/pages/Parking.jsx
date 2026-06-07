@@ -7,7 +7,6 @@ import { Settings, AlertTriangle, ShieldAlert, Bike } from 'lucide-react';
 import { registerMobilityResource, getAllMobilityResources, updateMobilityStatus, simulateParkingOccupancy } from '../lib/mobilityResource.js';
 import { Link } from "react-router-dom";
 
-// Constants stay outside
 const bounds = [[0, 0], [1100, 2000]];
 const HARDCODED_SPACES = [
   { hcId: 'F1_R1', x: 410, y: 835, defaultType: 'PARKING_SPOT' },
@@ -164,14 +163,21 @@ const getResourceIcon = (status, isRegistered) => {
 const simulateAndFetch = () => simulateParkingOccupancy();
 
 export default function InteractiveMap() {
-  // HOOKS AND SESSION VARS INSIDE COMPONENT
   const userString = localStorage.getItem('user');
   const currentUser = userString ? JSON.parse(userString) : null;
-  const isAdmin = currentUser?.type === 'ADMIN';
 
-  const [resources, setResources] = useState([]);
+  // type === 'ADMIN' + tem a permissão GERIR_SENSORES
+  const isAdmin =
+    currentUser?.type === 'ADMIN' &&
+    Array.isArray(currentUser?.permissions) &&
+    currentUser.permissions.some(p => {
+      if (typeof p === 'string') return p === 'VER_PARKING';
+      return p?.permission?.description === 'VER_PARKING' || p?.description === 'VER_PARKING';
+    });
+
+  const [resources, setResources]       = useState([]);
   const [displayLayout, setDisplayLayout] = useState([]);
-  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [isAdminMode, setIsAdminMode]   = useState(false);
   const [resourceForm, setResourceForm] = useState({ status: 'FREE', identifier: '' });
 
   const {
@@ -202,12 +208,11 @@ export default function InteractiveMap() {
   }, []);
 
   useEffect(() => {
-    let combined = HARDCODED_SPACES.map(hcSpace => {
+    const combined = HARDCODED_SPACES.map(hcSpace => {
       const dbMatch = resources.find(r =>
         Math.abs(r.xCoordinates - hcSpace.x) < 20 &&
         Math.abs(r.yCoordinates - hcSpace.y) < 20
       );
-
       return {
         ...hcSpace,
         isRegistered: !!dbMatch,
@@ -215,7 +220,6 @@ export default function InteractiveMap() {
         displayType: dbMatch ? dbMatch.type : hcSpace.defaultType,
       };
     });
-
     setDisplayLayout(combined);
   }, [resources]);
 
@@ -236,13 +240,12 @@ export default function InteractiveMap() {
         yCoordinates: space.y,
       });
       mutate();
-      fetchResources(); // Re-sync local state
+      fetchResources();
       alert('Space activated successfully!');
     } catch (err) {
       setErrorMessage(err.message || 'Failed to save resource.');
     }
   };
-
 
   const handleStatusChange = async (id, newStatus) => {
     setErrorMessage('');
@@ -262,7 +265,9 @@ export default function InteractiveMap() {
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight text-foreground font-sans">Wano University Parking Map</h1>
           <p className="text-sm text-muted-foreground/80">
-            {isAdminMode ? "Admin privileges enabled: Parking management." : "Click on icons to check availability. Green = free. Gray = inactive or unregistered. Red = occupied."}
+            {isAdminMode
+              ? "Admin privileges enabled: Parking management."
+              : "Click on icons to check availability. Green = free. Gray = inactive or unregistered. Red = occupied."}
           </p>
         </div>
         <div className="flex items-center gap-3 mt-4 md:mt-0">
@@ -273,13 +278,16 @@ export default function InteractiveMap() {
             <Bike size={16} />
             Public Bikes
           </Link>
+
+          {/* Botão só aparece se for ADMIN + tiver GERIR_SENSORES */}
           {isAdmin && (
             <button
               onClick={() => setIsAdminMode(!isAdminMode)}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border ${isAdminMode
-                ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10 cursor-pointer"
-                : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground cursor-pointer"
-                }`}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition shadow-sm border cursor-pointer ${
+                isAdminMode
+                  ? "bg-meat/20 border-meat/50 text-meat hover:bg-meat/10"
+                  : "bg-foreground/80 border-foreground text-primary-foreground hover:bg-foreground"
+              }`}
             >
               <Settings size={16} />
               {isAdminMode ? "Exit Admin Panel" : "Admin Panel Mode"}
@@ -288,7 +296,6 @@ export default function InteractiveMap() {
         </div>
       </div>
 
-      {/* Map container */}
       <div className="w-full flex flex-col space-y-6">
         <div className="w-full max-w-7xl mx-auto bg-primary-foreground rounded-2xl border shadow-sm p-4">
           <div className="w-full relative overflow-hidden rounded-xl">
@@ -318,6 +325,7 @@ export default function InteractiveMap() {
                           <span>{errorMessage}</span>
                         </div>
                       )}
+
                       {space.isRegistered && space.dbData ? (
                         <>
                           {space.dbData.status === 'INACTIVE' ? (
@@ -328,26 +336,25 @@ export default function InteractiveMap() {
                               </p>
                             </div>
                           ) : (
-                            <>
-                              <div className="flex justify-between items-center border-b border-muted pb-2 mb-3">
-                                <div>
-                                  <strong className="block text-sm font-bold text-foreground">{space.dbData.identifier}</strong>
-                                  <span className="text-[11px] text-muted-foreground/80 capitalize">{space.dbData.type?.toLowerCase()}</span>
-                                </div>
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${space.dbData.status === 'FREE'
+                            <div className="flex justify-between items-center border-b border-muted pb-2 mb-3">
+                              <div>
+                                <strong className="block text-sm font-bold text-foreground">{space.dbData.identifier}</strong>
+                                <span className="text-[11px] text-muted-foreground/80 capitalize">{space.dbData.type?.toLowerCase()}</span>
+                              </div>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                space.dbData.status === 'FREE'
                                   ? 'text-green-600 bg-green-100'
                                   : space.dbData.status === 'OCCUPIED'
                                     ? 'text-red-500 bg-red-100'
                                     : 'text-muted-foreground bg-muted'
-                                  }`}>
-                                  {space.dbData.status}
-                                </span>
-                              </div>
-                            </>
+                              }`}>
+                                {space.dbData.status}
+                              </span>
+                            </div>
                           )}
 
-                          {/* Admin thingy */}
-                          {isAdminMode && (
+                          {/* Admin actions — só aparece se isAdmin + isAdminMode */}
+                          {isAdmin && isAdminMode && (
                             <div className="mt-3 pt-3 border-t border-muted space-y-2">
                               <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                                 <ShieldAlert size={14} className="text-swordsman" /> Admin Actions
@@ -367,7 +374,7 @@ export default function InteractiveMap() {
                           )}
                         </>
                       ) : (
-                        isAdminMode ? (
+                        isAdmin && isAdminMode ? (
                           <form onSubmit={(e) => handleRegisterResource(e, space)} className="space-y-3">
                             <div className="border-b border-muted pb-2">
                               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">

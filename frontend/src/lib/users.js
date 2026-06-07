@@ -1,5 +1,5 @@
-// Se o .env falhar, ele usa a porta 3000 que vimos que está ativa
 const API_URL = import.meta.env.VITE_FASTAPI_URL || "http://localhost:3000";
+
 
 export const handleApiResponse = async (response) => {
   if (!response.ok) {
@@ -22,7 +22,6 @@ export const getAllUsers = async () => {
       },
     });
 
-    // 2. Verifica outros erros
     if (!response.ok) {
       console.error(`Erro na resposta da API: Status ${response.status}`);
       return [];
@@ -35,30 +34,25 @@ export const getAllUsers = async () => {
   }
 };
 
-/**
- * Atualizar permissões/estado do utilizador
- */
-export const updateUserPermissions = async (userId, ativo, novasPermissoes) => {
-  const token = localStorage.getItem("token");
+export const updateUserPermissions = async (id, ativo, novasPermissoes) => {
+  const token = localStorage.getItem('token');
 
-  try {
-    // 🔴 CORREÇÃO DO URL: Alinhado com a rota base do teu backend para um utilizador específico
-    // (Nota: Ajustei para o padrão REST /api/users/:id, que costuma ser o normal no Node)
-const response = await fetch(`${API_URL}/api/admin/users/${userId}/permissions`, {
-  method: "PUT",
-  headers: {
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({ ativo, novasPermissoes }),
-});
+  const response = await fetch(`${API_URL}/api/admin/users/${id}/permissions`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ ativo, novasPermissoes })
+  });
 
-    if (!response.ok) return { success: false };
-    return await response.json();
-  } catch (error) {
-    console.error("Erro ao atualizar utilizador:", error);
-    return { success: false };
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.message || "Erro retornado pelo servidor.");
   }
+
+  return data;
 };
 
 export const updateUserData = async (userId, data) => {

@@ -5,16 +5,23 @@ import { createReservation } from '../lib/reservation.js';
 import { ReservationCalendarForm } from '../components/ReservationCalendarForm.jsx';
 import { useTranslation } from "react-i18next";
 
-// Verifica se o user existe e se o tipo é ADMIN
-const user = JSON.parse(localStorage.getItem('user') || '{}');
 export default function Bikes() {
   const [mobilityPool, setMobilityPool]           = useState({});
   const [modalState, setModalState]               = useState(false);
-  const [isAdmin, setIsAdmin]                     = useState(false);
 
   const [reservationTarget, setReservationTarget] = useState(null);
   const [bookingForm, setBookingForm]             = useState({ date: '', startTime: '', endTime: '' });
   const { t } = useTranslation();
+
+  // Lê o user do localStorage e verifica role + permissão
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isAdmin =
+    user?.type === 'ADMIN' &&
+    Array.isArray(user?.permissions) &&
+    user.permissions.some(p => {
+      if (typeof p === 'string') return p === 'GERIR_BICICLETAS_TROTINETES';
+      return p?.permission?.description === 'GERIR_BICICLETAS_TROTINETES' || p?.description === 'GERIR_BICICLETAS_TROTINETES';
+    });
 
   useEffect(() => {
     loadData();
@@ -59,10 +66,9 @@ export default function Bikes() {
     try {
       const startDateTime = `${bookingForm.date}T${bookingForm.startTime}:00`;
       const endDateTime   = `${bookingForm.date}T${bookingForm.endTime}:00`;
-      console.log("Attempting to reserve Resource ID:", resourceId);
 
       await createReservation({
-        mobilityrRsourceId: resourceId, // preserved original field name
+        mobilityrRsourceId: resourceId,
         startTime:  startDateTime,
         endTime:    endDateTime,
         status:     'ACTIVE',
@@ -91,7 +97,6 @@ export default function Bikes() {
   };
 
   const openReservationModal = (item) => {
-    // Reset form so the calendar starts clean for each new vehicle
     setBookingForm({ date: '', startTime: '', endTime: '' });
     setReservationTarget(item);
   };
@@ -114,21 +119,15 @@ export default function Bikes() {
           </div>
         </div>
 
-{isAdmin && (
-        <button 
-          onClick={() => setIsAdmin(!isAdmin)}
-          className={`text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border transition-all flex items-center gap-2 cursor-pointer ${
-            isAdmin
-              ? 'bg-foreground text-primary-foreground border-foreground/80'
-              : 'bg-muted text-muted-foreground border-transparent'
-          }`}
-        >
-          {isAdmin ? <ShieldAlert className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
-          {isAdmin ? 'Admin Mode: ON' : 'Admin Mode: OFF'}
-        </button>
+        {/* Badge informativo — só aparece se for admin com permissão */}
+        {isAdmin && (
+          <div className="text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border bg-foreground text-primary-foreground border-foreground/80 flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4" />
+            Admin Mode
+          </div>
         )}
       </div>
-        
+
       {isAdmin && (
         <div className="flex items-center justify-end">
           <button
@@ -150,7 +149,7 @@ export default function Bikes() {
             </div>
           ) : (
             Object.keys(mobilityPool).map((poolKey) => {
-              const item  = mobilityPool[poolKey];
+              const item   = mobilityPool[poolKey];
               const isFree = item.status === 'FREE';
 
               return (
@@ -244,10 +243,6 @@ export default function Bikes() {
               </p>
             </div>
 
-            {/*
-              key={reservationTarget.id} forces a full remount when switching vehicles
-              so the calendar's derived state starts fresh from the reset bookingForm.
-            */}
             <ReservationCalendarForm
               key={reservationTarget.id}
               entityId={reservationTarget.id}
