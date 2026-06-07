@@ -17,7 +17,6 @@ import Equipments from './pages/Equipments';
 import TemperatureDashboard from './pages/TemperatureDashboard';
 import AirQualityDashboard from './pages/AirQualityDashboard';
 import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
-import NotFound from './components/NotFound';
 import Parking from './pages/Parking';
 import Bikes from './pages/Bikes';
 import ForgotPassword from './pages/ForgotPassword';
@@ -27,6 +26,7 @@ import ValidateTicket from './pages/ValidateTicket';
 import LssDocs from './pages/Lssdocs';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
 import './i18n';
+import Alerts from './pages/Alerts';
 
 function RootLayout() {
   return (
@@ -38,6 +38,7 @@ function RootLayout() {
           <main className="flex-1">
             <Outlet />
           </main>
+          <Footer />
         </div>
       </TerminalProvider>
     </ThemeProvider>
@@ -75,6 +76,7 @@ export default function App() {
         <Route path="/temperaturedashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <TemperatureDashboard /> </ProtectedRoute>} />
         <Route path="/airqualitydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <AirQualityDashboard /> </ProtectedRoute>} />
         <Route path="/energydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
+        <Route path="/alerts" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <Alerts /> </ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>

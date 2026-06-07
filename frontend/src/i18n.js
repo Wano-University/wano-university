@@ -23,7 +23,7 @@ i18n.use(initReactI18next).init({
 
         Terminal: "Terminal",
         TerminalDesc: "Learn our System-Specific language in order to perform complex tasks efficiently",
-      
+
         DisplayDishTitle: "No Dish Scheduled",
         DisplayDishSubtitle: "Chef is on a break",
         DisplayDishDesc: "There is nothing scheduled for this slot yet. Check back later!",
@@ -99,7 +99,7 @@ i18n.use(initReactI18next).init({
         ForgotPasswordNewPass: "New Password",
         ForgotPasswordConfirmPass: "Confirm Password",
         ForgotPasswordButton: "Change Password",
-        
+
         IMapTitle: "Wano University Spaces Map",
         IMapDesc: "Review real-time resource distribution and floor occupancy baselines.",
         IMapEquipMod: "Equipments Module",
@@ -281,6 +281,7 @@ i18n.use(initReactI18next).init({
         UserCustomize: "Customize",
         UserTickets: "Tickets",
         UserReserv: "Reservations",
+        UserAlert: "Alerts",
         UserChange: "Change Password",
         UserLog: "Log out",
       }
@@ -353,7 +354,7 @@ i18n.use(initReactI18next).init({
         AirDashboardEditH: "Máximo",
         AirDashboardEditY: "Atualizar",
         AirDashboardEditN: "Cancelar",
-        
+
         EnergyDashboardTitle: "Painél de Consumo de Energia",
         EnergyDashboardCP: "Consumo Atual",
         EnergyDashboardError: "Sem dados disponíveis..",
@@ -565,6 +566,7 @@ i18n.use(initReactI18next).init({
         UserCustomize: "Personalizar",
         UserTickets: "Bilhetes",
         UserReserv: "Reservas",
+        UserAlert: "Alertas",
         UserChange: "Alterar Palavra-Passe",
         UserLog: "Sair",
       }
