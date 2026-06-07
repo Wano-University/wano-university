@@ -278,3 +278,34 @@ export const resolveAlert = async (id) => {
 
   return data;
 };
+
+export const updateSensor = async (id, sensorData) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/sensors/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(sensorData),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to update sensor.');
+  return data;
+};
+
+export const deleteSensor = async (id) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/sensors/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || 'Failed to delete sensor.');
+  }
+  return true;
+};
