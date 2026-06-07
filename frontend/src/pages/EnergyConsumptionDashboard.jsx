@@ -116,7 +116,7 @@ export default function EnergyConsumptionDashboard() {
   const chartJsData = {
     labels: chartData.map(d => d.time),
     datasets: [{
-      fill: true,
+      fill: false,
       label: 'Average Power',
       data: chartData.map(d => d.power),
       borderColor: 'hsl(var(--primary))',

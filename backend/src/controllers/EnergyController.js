@@ -57,7 +57,6 @@ export const runEnergySimulation = async (req, res) => {
     const newReadings = sensors.map(sensor => {
       const value = Math.floor(Math.random() * 500) + 100;
 
-      // 1. Evaluate Alerts
       if (sensor.upperLimit !== null && value > sensor.upperLimit) {
         alertsToCreate.push({
           sensorId: sensor.id,
