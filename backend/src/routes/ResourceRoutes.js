@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import path from 'path'; // FIX 3: was used in multer config but never imported
+import path from 'path';
 import multer from 'multer';
 import {
   getResources, registerResource, getResourcesByFloor,
@@ -9,10 +9,10 @@ import {
 import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'src/assets'); 
+  destination: function(req, file, cb) {
+    cb(null, 'src/assets');
   },
-  filename: function (req, file, cb) {
+  filename: function(req, file, cb) {
     const title = req.body.title || 'dish';
     const slugifiedTitle = title
       .toLowerCase()
