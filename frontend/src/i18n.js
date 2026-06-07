@@ -297,6 +297,7 @@ i18n.use(initReactI18next).init({
         UserAlert: "Alerts",
         UserChange: "Change Password",
         UserLog: "Log out",
+        UserAccess: "Access Logs",
 
         ALTitle: "Access Logs",
         ALDesc: "Real-time room and equipment entries.",
@@ -315,7 +316,7 @@ i18n.use(initReactI18next).init({
         AdminUNoU: "No users found",
         AdminUPerms: "Permissions",
         AdminUEdit: "Edit Data",
-                
+
       }
     },
 
@@ -613,6 +614,7 @@ i18n.use(initReactI18next).init({
         UserAlert: "Alertas",
         UserChange: "Alterar Palavra-Passe",
         UserLog: "Sair",
+        UserAccess: "Registos de Acessos",
 
         ALTitle: "Registos de acesso",
         ALDesc: "Registos em tempo real de entradas nas salas e utilização do equipamento.",
