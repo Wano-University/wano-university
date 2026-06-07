@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ShieldAlert, CheckCircle2, Loader2, ScanLine, Unlock, ArrowRightLeft } from 'lucide-react';
 import { validateReservation } from '../lib/reservation';
+import { useTranslation } from "react-i18next";
+
 
 export default function ValidateReservation() {
   const { id } = useParams();
@@ -9,6 +11,7 @@ export default function ValidateReservation() {
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState(null);
   const [actionResult, setActionResult] = useState(null);
+  const { t } = useTranslation();
 
   const storedUser = localStorage.getItem('user');
   const user = storedUser ? JSON.parse(storedUser) : null;
@@ -20,6 +23,17 @@ export default function ValidateReservation() {
 
     try {
       const response = await validateReservation(id);
+      const token = localStorage.getItem('token');
+
+      await fetch('/api/access-logs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reservationId: id, status: 'SUCCESS' })
+      });
+
       setActionResult(response.action);
       setStatus('success');
     } catch (err) {
@@ -32,9 +46,9 @@ export default function ValidateReservation() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background text-center">
         <ShieldAlert className="w-16 h-16 text-destructive mb-4" />
-        <h1 className="text-2xl font-black">Unauthorized</h1>
-        <p className="text-muted-foreground mt-2">Only staff can validate reservations.</p>
-        <button onClick={() => navigate('/login')} className="mt-6 text-primary font-bold">Switch Account</button>
+        <h1 className="text-2xl font-black">{t('ValUn')}</h1>
+        <p className="text-muted-foreground mt-2">{t('ValStaff')}</p>
+        <button onClick={() => navigate('/login')} className="mt-6 text-primary font-bold">{t('ValSwitch')}</button>
       </div>
     );
   }
@@ -53,7 +67,7 @@ export default function ValidateReservation() {
             <h2 className="text-3xl font-black tracking-tight text-foreground">
               {actionResult === 'UNLOCK_SUCCESS' ? 'Access Granted' : 'Transaction Logged'}
             </h2>
-            <p className="text-muted-foreground mt-2">The reservation QR was successfully processed.</p>
+            <p className="text-muted-foreground mt-2">{t('ValQR')}</p>
           </div>
         ) : (
           <>
@@ -61,8 +75,8 @@ export default function ValidateReservation() {
               <ScanLine className="w-8 h-8 text-primary" />
             </div>
 
-            <h2 className="text-2xl font-black tracking-tight mb-2">Validate Reservation #{id}</h2>
-            <p className="text-sm text-muted-foreground mb-8">Confirm physical presence before validating.</p>
+            <h2 className="text-2xl font-black tracking-tight mb-2">{t('ValReserv')} #{id}</h2>
+            <p className="text-sm text-muted-foreground mb-8">{t('ValPhysical')}</p>
 
             {error && (
               <div className="p-4 mb-6 bg-destructive/10 rounded-xl border border-destructive/20">

@@ -4,12 +4,9 @@ import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useTranslation } from "react-i18next";
-
 
 export default function Unauthorized() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -30,10 +27,10 @@ export default function Unauthorized() {
 
         <div className="space-y-2">
           <h1 className="text-3xl font-black tracking-tight text-foreground">
-            {t('UnDeny')}
+            You don't have enough permissions
           </h1>
           <p className="text-muted-foreground font-medium">
-            {t('UnPerms')}
+            You do not have the necessary permissions to view this page. If you believe this is an error, please contact the Wano University IT administration.
           </p>
         </div>
 
@@ -43,7 +40,7 @@ export default function Unauthorized() {
             className="flex items-center justify-center gap-2 w-full py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-md transition-all active:scale-[0.99] cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
-            {t('UnReturnHome')}
+            Return to Home Page
           </Link>
         </div>
       </Card>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Eye, EyeOff, KeyRound, Loader2, Check } from 'lucide-react';
 import { changePW } from '../lib/auth';
+import { useTranslation } from "react-i18next";
 
 export default function UpdatePassword() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function UpdatePassword() {
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -86,14 +88,14 @@ export default function UpdatePassword() {
           <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
             <KeyRound className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="text-2xl font-black tracking-tight text-foreground">Change Password</h3>
-          <p className="text-sm text-muted-foreground">Update your security credentials.</p>
+          <h3 className="text-2xl font-black tracking-tight text-foreground">{t('ChangePass')}</h3>
+          <p className="text-sm text-muted-foreground">{t('ChangePassCredencials')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-foreground">Current Password</label>
+            <label className="text-xs font-bold text-foreground">{t('ChangePassCurrentPass')}</label>
             <div className="relative">
               <input
                 name="oldPassword"
@@ -108,7 +110,7 @@ export default function UpdatePassword() {
           </div>
 
           <div className="space-y-1.5 pt-2">
-            <label className="text-xs font-bold text-foreground">New Password</label>
+            <label className="text-xs font-bold text-foreground">{t('ChangePassNewPass')}</label>
             <div className="relative">
               <input
                 name="newPassword"
@@ -123,7 +125,7 @@ export default function UpdatePassword() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-foreground">Confirm New Password</label>
+            <label className="text-xs font-bold text-foreground">{t('ChangePassConfirm')}</label>
             <div className="relative">
               <input
                 name="confirmPassword"

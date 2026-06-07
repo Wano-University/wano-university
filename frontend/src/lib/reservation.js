@@ -16,7 +16,6 @@ export const createReservation = async (reservationData) => {
 };
 
 export const getAllReservations = async () => {
-  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api/reservations`, {
     headers: {
       'Content-Type': 'application/json',
@@ -69,4 +68,12 @@ export const validateReservation = async (reservationId) => {
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Validation failed');
   return data;
+};
+
+export const getAccessLogs = async () => {
+  const response = await fetch(`${API_URL}/api/reservations/accesslogs`, {
+    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+  });
+  if (!response.ok) throw new Error("Failed to fetch logs");
+  return response.json();
 };

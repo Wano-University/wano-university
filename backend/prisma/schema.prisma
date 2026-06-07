@@ -20,13 +20,23 @@ model User {
   accesses     Access[]
   purchases    Purchase[]
   reservations Reservation[]
-  permissions  Permission[]  @relation("PermissionToUser")
+  permissions UsersOnPermissions[] 
 }
 
 model Permission {
   id          Int    @id @default(autoincrement())
   description String @unique
-  users       User[] @relation("PermissionToUser")
+  users       UsersOnPermissions[]
+}
+
+// Tabela de junção explícita
+model UsersOnPermissions {
+  user         User       @relation(fields: [userId], references: [id])
+  userId       Int
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  permissionId Int
+
+  @@id([userId, permissionId]) // Chave primária composta
 }
 
 model Resource {
@@ -43,7 +53,6 @@ model Resource {
   yCoordinates Float?
   accesses     Access[]
   reservations Reservation[]
-  sensor       Sensor?
 }
 
 model MobilityResource {
@@ -54,8 +63,6 @@ model MobilityResource {
   status     MobilityStatus @default(FREE)
   xCoordinates Float?
   yCoordinates Float?
-
-  sensor       Sensor?
   reservations Reservation[]
 }
 
@@ -64,16 +71,13 @@ model Sensor {
   type               SensorType
   space              String
   floor              Floor?
-  resourceId         Int?              @unique
-  mobilityResourceId Int?              @unique
   upperLimit         Float?
-  lowerLimit         Float?  
+  lowerLimit         Float?
   isActive           Boolean           @default(true)
   isOccupied         Boolean           @default(true)
   xCoordinates       Float
   yCoordinates       Float
-  mobilityResource   MobilityResource? @relation(fields: [mobilityResourceId], references: [id])
-  resource           Resource?         @relation(fields: [resourceId], references: [id])
+  UnityMeasure       String
   alerts             SensorAlert[]
   readings           SensorReading[]
 }
@@ -193,7 +197,6 @@ enum SensorType {
   TEMPERATURE
   ENERGY_CONSUMPTION
   AIR_QUALITY
-  OCCUPANCY
 }
 
 enum ReservationStatus {
@@ -227,4 +230,23 @@ enum DishType {
 enum Floor {
   FLOOR_1
   FLOOR_2
+}
+
+enum PermissionType {
+  VER_EMENTA_COMPRAS
+  VER_PARKING
+  VER_SALAS_LABORATORIOS
+  VER_EQUIPAMENTOS
+  VER_BICICLETAS_TROTINETES
+  VER_DASHBOARD_TEMPERATURA
+  VER_DASHBOARD_QUALIDADE_AR
+  VER_DASHBOARD_CONSUMO_ENERGETICO
+  VER_SUSTENTABILIDADE
+  GERIR_PARKING
+  GERIR_USERS
+  GERIR_SALAS_LABORATORIOS
+  GERIR_EQUIPAMENTOS
+  GERIR_BICICLETAS_TROTINETES
+  GERIR_EMENTA
+  GERIR_SENSORES
 }

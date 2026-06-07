@@ -4,6 +4,8 @@ import { getAllMobilityResources, registerMobilityResource, updateMobilityStatus
 import { createReservation } from '../lib/reservation.js';
 import { ReservationCalendarForm } from '../components/ReservationCalendarForm.jsx';
 
+// Verifica se o user existe e se o tipo é ADMIN
+const user = JSON.parse(localStorage.getItem('user') || '{}');
 export default function Bikes() {
   const [mobilityPool, setMobilityPool]           = useState({});
   const [modalState, setModalState]               = useState(false);
@@ -110,7 +112,8 @@ export default function Bikes() {
           </div>
         </div>
 
-        <button
+{isAdmin && (
+        <button 
           onClick={() => setIsAdmin(!isAdmin)}
           className={`text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border transition-all flex items-center gap-2 cursor-pointer ${
             isAdmin
@@ -121,8 +124,9 @@ export default function Bikes() {
           {isAdmin ? <ShieldAlert className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
           {isAdmin ? 'Admin Mode: ON' : 'Admin Mode: OFF'}
         </button>
+        )}
       </div>
-
+        
       {isAdmin && (
         <div className="flex items-center justify-end">
           <button

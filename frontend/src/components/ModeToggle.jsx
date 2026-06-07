@@ -1,6 +1,8 @@
 import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/providers/ThemeProvider"
+import { useTranslation } from "react-i18next";
+
 
 const TOGGLE_MAP = {
   light:    'dark',
@@ -33,6 +35,7 @@ export function ModeToggle() {
 
   const resolved = resolveSystemTheme(theme);
   const isDark = DARK_THEMES.has(resolved);
+   const { t } = useTranslation();
 
   function handleToggle() {
     setTheme(TOGGLE_MAP[resolved] ?? (isDark ? 'light' : 'dark'));
@@ -45,8 +48,12 @@ export function ModeToggle() {
       className="rounded-full text-muted-foreground hover:text-primary hover:scale-110 transition-all duration-200 cursor-pointer"
       onClick={handleToggle}
     >
-      {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-      <span className="sr-only">Toggle theme</span>
+      {isDark ? (
+        <Sun className="h-5 w-5" />
+      ) : (
+        <Moon className="h-5 w-5" />
+      )}
+      <span className="sr-only">{t('ModeToggle')}</span>
     </Button>
   );
 }

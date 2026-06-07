@@ -18,6 +18,7 @@ import { ThemeSwitcher } from '../pages/ThemeSwitcher.jsx';
 
 export default function UserAvatar({ user }) {
   const [themeOpen, setThemeOpen] = useState(false);
+  const { t } = useTranslation();
   if (!user) return null;
 return (
   <>
@@ -40,26 +41,31 @@ return (
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={() => setThemeOpen(true)} className="cursor-pointer">
-          Customize
+        <DropdownMenuItem asChild>
+          <Link to="/profile/customize" className="cursor-pointer w-full">{t('UserCustomize')}</Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link to="/tickets" className="cursor-pointer w-full">Tickets</Link>
+          <Link to="/tickets" className="cursor-pointer w-full">{t('UserTickets')}</Link>
         </DropdownMenuItem>
 
-        {(user.type === 'STUDENT' || user.type === 'TEACHER') && (
           <DropdownMenuItem asChild>
-            <Link to="/reservations" className="cursor-pointer w-full">Reservations</Link>
+            <Link to="/reservations" className="cursor-pointer w-full">{t('UserReserv')}</Link>
+          </DropdownMenuItem>
+
+        {(user.type === 'STAFF' || user.type === 'ADMIN') && (
+          <DropdownMenuItem asChild>
+            <Link to="/alerts" className="cursor-pointer w-full">{t('UserAlert')}</Link>
           </DropdownMenuItem>
         )}
 
+
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link to="/changepassword" className="cursor-pointer w-full">Change Password</Link>
+          <Link to="/changepassword" className="cursor-pointer w-full">{t('UserChange')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={logoutUser} className="cursor-pointer w-full">
-          Log out
+          {t('UserLog')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

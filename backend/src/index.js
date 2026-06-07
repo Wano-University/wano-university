@@ -15,11 +15,13 @@ import temperatureRoutes from './routes/TemperatureRoutes.js';
 import paymentRoutes from './routes/PaymentRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import adminRoutes from './routes/AdminRoutes.js'; // Substitui pelo nome correto do ficheiro se for diferente
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,17 +33,27 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.use('/api/users', userRoutes);
+
 app.use('/api/menu', menuRoutes);
+
 app.use('/api/dishes', dishRoutes);
+
 app.use('/api/tickets', ticketRoutes);
+
 app.use('/api/sensors', sensorRoutes);
 app.use('/api/energy', energyRoutes);
 app.use('/api/air-quality', airQualityRoutes);
 app.use('/api/temperature', temperatureRoutes);
 app.use('/api/mobilityResources', mobilityResourceRoutes);
+
 app.use('/api/resources', resourceRoutes);
+
 app.use('/api/reservations', reservationRoutes);
+
 app.use('/api/payments', paymentRoutes);
+
+app.use('/api/admin/users', adminRoutes);
+
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend is securely running and listening on port ${PORT}`);
