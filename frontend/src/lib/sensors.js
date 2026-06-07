@@ -224,3 +224,11 @@ export const getAirQualityReport = async () => {
   const text = await response.text();
   return new Blob([text], { type: 'text/csv;charset=utf-8;' });
 };
+
+export const getTemperatureTrend = async () => {
+  const response = await fetch(`${API_URL}/api/temperature/trend`, {
+    headers: getHeaders()
+  });
+  if (!response.ok) throw new Error("Failed to fetch trend");
+  return response.json();
+};
