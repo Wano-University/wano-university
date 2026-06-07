@@ -11,6 +11,7 @@ import MenuConfig from './pages/MenuConfig';
 import Spaces from './pages/Spaces';
 import HomeRedirection from './components/HomeRedirection';
 import StaffHome from './pages/StaffHome';
+import Parking from './pages/Parking';
 import StudentHome from './pages/StudentHome';
 import AdminHome from './pages/AdminHome';
 import Equipments from './pages/Equipments';
@@ -25,12 +26,12 @@ import ValidateTicket from './pages/ValidateTicket';
 import LssDocs from './pages/Lssdocs';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
 import './i18n';
-
 import Footer from './components/Footer';
 import NotFound from './components/NotFound';
 import AdminUsers from './pages/AdminUsers';
 import Alerts from './pages/Alerts';
 import AccessLogs from './pages/AccessLogs';
+import { ThemeSwitcher } from './pages/ThemeSwitcher';
 
 function RootLayout() {
   return (
@@ -56,15 +57,16 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/createacc" element={<CreateAccount />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/lssdocs" element={<LssDocs />} />
         <Route path="/changepw" element={<ForgotPassword />} />
-        <Route path="/spaces" element={<Spaces />} />
-        <Route path='/bikes' element={<Bikes />} />
 
         <Route path="/home" element={<HomeRedirection />} />
         <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
-        <Route path="/lssdocs" element={<ProtectedRoute> <LssDocs /> </ProtectedRoute>} />
         <Route path="/equipments" element={<ProtectedRoute> <Equipments /> </ProtectedRoute>} />
+        <Route path="/parking" element={<ProtectedRoute> <Parking /> </ProtectedRoute>} />
+        <Route path="/bikes" element={<ProtectedRoute> <Bikes /> </ProtectedRoute>} />
+        <Route path="/spaces" element={<ProtectedRoute> <Spaces /> </ProtectedRoute>} />
+        <Route path="/lssdocs" element={<ProtectedRoute> <LssDocs /> </ProtectedRoute>} />
+        <Route path="/profile/customize" element={<ProtectedRoute> <ThemeSwitcher /> </ProtectedRoute>} />
 
         <Route path="/tickets" element={<ProtectedRoute> <MyTickets /> </ProtectedRoute>} />
         <Route path="/changepassword" element={<ProtectedRoute> <ChangePassword /> </ProtectedRoute>} />

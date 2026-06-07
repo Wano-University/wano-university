@@ -168,7 +168,7 @@ export default function InteractiveMap() {
     }
   };
 
-function MapEventsHandler() {
+  function MapEventsHandler() {
     useMapEvents({
       click(e) {
         const clickedX = Math.round(e.latlng.lng);
@@ -254,7 +254,7 @@ function MapEventsHandler() {
                           <button
                             type="button"
                             onClick={() => handleToggleActive(sensor.id, sensor.isActive)}
-                            className={`p-1 rounded transition-colors ${sensor.isActive ? 'text-swordsman/80 hover:bg-swordsman/20' : 'text-muted-foreground hover:bg-primary-foreground/20'}`}
+                            className={`p-1 rounded transition-colors ${sensor.isActive ? 'text-swordsman/80 hover:bg-swordsman/20' : 'text-muted-foreground hover:bg-primary-foreground/20 cursor-pointer'}`}
                           >
                             <Power size={16} />
                           </button>
@@ -290,7 +290,7 @@ function MapEventsHandler() {
                       <button
                         type="button"
                         onClick={closeForm}
-                        className="text-muted-foreground hover:text-foreground p-1"
+                        className="text-muted-foreground hover:text-foreground p-1 cursor-pointer"
                       >
                         ✕
                       </button>
@@ -348,7 +348,7 @@ function MapEventsHandler() {
 
                     <button
                       type="submit"
-                      className="w-full mt-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm"
+                      className="w-full mt-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-xs font-bold py-2.5 rounded-xl transition shadow-sm cursor-pointer"
                     >
                       {t('IMapSaveDB')}
                     </button>
@@ -370,14 +370,14 @@ function MapEventsHandler() {
               <button
                 type="button"
                 onClick={() => setCurrentFloor('FLOOR_1')}
-                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
+                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'}`}
               >
                 {t('IMapFloor1')}
               </button>
               <button
                 type="button"
                 onClick={() => setCurrentFloor('FLOOR_2')}
-                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
+                className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_2' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'}`}
               >
                 {t('IMapFloor2')}
               </button>
@@ -395,7 +395,7 @@ function MapEventsHandler() {
               <button
                 type="button"
                 onClick={() => setSelectedTypeFilter('ALL')}
-                className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground border-foreground text-primary-foreground' : 'bg-muted-foreground/10 border-primary-foreground text-muted-foreground hover:bg-muted-foreground/20'}`}
+                className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ALL' ? 'bg-foreground border-foreground text-primary-foreground' : 'bg-muted-foreground/10 border-primary-foreground text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'}`}
               >
                 <span>{t('IMapActiveS')}</span>
                 <span className="px-2 py-0.5 rounded bg-primary-foreground/80 text-muted-foreground text-[10px] font-bold">
@@ -406,7 +406,7 @@ function MapEventsHandler() {
               <button
                 type="button"
                 onClick={() => setSelectedTypeFilter('TEMPERATURE')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'TEMPERATURE' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
+                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'TEMPERATURE' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'}`}
                 style={selectedTypeFilter === 'TEMPERATURE' ? { backgroundColor: 'var(--fire-color)' } : {}}
               >
                 <Thermometer size={16} style={selectedTypeFilter === 'TEMPERATURE' ? { color: 'primary-foreground' } : { color: 'var(--fire-color)' }} />
@@ -416,7 +416,7 @@ function MapEventsHandler() {
               <button
                 type="button"
                 onClick={() => setSelectedTypeFilter('ENERGY_CONSUMPTION')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ENERGY_CONSUMPTION' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
+                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ENERGY_CONSUMPTION' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'}`}
                 style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? { backgroundColor: 'var(--nika-color)' } : {}}
               >
                 <Zap size={16} style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? { color: 'primary-foreground' } : { color: 'var(--nika-color)' }} />
@@ -426,21 +426,11 @@ function MapEventsHandler() {
               <button
                 type="button"
                 onClick={() => setSelectedTypeFilter('AIR_QUALITY')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'AIR_QUALITY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
+                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'AIR_QUALITY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20 cursor-pointer'}`}
                 style={selectedTypeFilter === 'AIR_QUALITY' ? { backgroundColor: 'var(--surgeon-color)' } : {}}
               >
                 <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? { color: 'primary-foreground' } : { color: 'var(--surgeon-color)' }} />
                 <span>{t('IMapFAQ')}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTypeFilter('OCCUPANCY')}
-                className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'OCCUPANCY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
-                style={selectedTypeFilter === 'OCCUPANCY' ? { backgroundColor: 'var(--swordsman-color)' } : {}}
-              >
-                <Users size={16} style={selectedTypeFilter === 'OCCUPANCY' ? { color: 'primary-foreground' } : { color: 'var(--swordsman-color)' }} />
-                <span>{t('IMapFOcc')}</span>
               </button>
             </div>
           </div>
