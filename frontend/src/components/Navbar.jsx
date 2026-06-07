@@ -42,22 +42,22 @@ export default function Navbar() {
 
         {user?.type === 'ADMIN' && (
           <>
-            <Link to="/map" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
+            <Link to="/spaces" className={desktopLinkStyle}>{t('NavbarSpaces')}</Link>
             <Link to="/parking" className={desktopLinkStyle}>{t('NavbarMobility')}</Link>
             <Link to="/sensors" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
             <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
-            <Link to="/admin/dashboard" className={desktopLinkStyle}>{t('NavbarDashboards')}</Link>
-            <Link to="/admin/users" className={desktopLinkStyle}>{t('NavbarDashboards')}</Link>
+            <Link to="/energydashboard" className={desktopLinkStyle}>{t('NavbarDashboards')}</Link>
+            <Link to="/admin/users" className={desktopLinkStyle}>{t('NavbarUserManagement')}</Link>
           </>
         )}
 
         {user?.type === 'STAFF' && (
           <>
             <Link to="/cafeteria" className={desktopLinkStyle}>{t('NavbarCafeteria')}</Link>
-            <Link to="/sensors" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
-            <Link to="/sensors/temperature" className={desktopLinkStyle}>{t('NavbarTemperature')}</Link>
-            <Link to="/sensors/air-quality" className={desktopLinkStyle}>{t('NavbarAir')}</Link>
-            <Link to="/sensors/energy" classname={desktopLinkStyle}>{t('NavbarEnergy')}</Link>
+            <Link to="/map" className={desktopLinkStyle}>{t('NavbarSensors')}</Link>
+            <Link to="/temperaturedashboard" className={desktopLinkStyle}>{t('NavbarTemperature')}</Link>
+            <Link to="/airqualitydashboard" className={desktopLinkStyle}>{t('NavbarAir')}</Link>
+            <Link to="/energydashboard" classname={desktopLinkStyle}>{t('NavbarEnergy')}</Link>
           </>
         )}
 
@@ -131,7 +131,7 @@ export default function Navbar() {
                 <Link to="/parking" className={mobileLinkStyle}>{t('NavbarMobility')}</Link>
                 <Link to="/sensors" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
                 <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
-                <Link to="/admin/dashboard" className={mobileLinkStyle}>{t('NavbarDashboards')}</Link>
+                <Link to="/energydashboard" className={mobileLinkStyle}>{t('NavbarDashboards')}</Link>
                 <Link to="/admin/users" className={mobileLinkStyle}>{t('NavbarUserManagement')}</Link>
               </>
             )}
@@ -140,9 +140,9 @@ export default function Navbar() {
               <>
                 <Link to="/cafeteria" className={mobileLinkStyle}>{t('NavbarCafeteria')}</Link>
                 <Link to="/sensors" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
-                <Link to="/sensors/temperature" className={mobileLinkStyle}>{t('NavbarTemperature')}</Link>
-                <Link to="/sensors/air-quality" className={mobileLinkStyle}>{t('NavbarAir')}</Link>
-                <Link to="/sensors/energy" classname={mobileLinkStyle}>{t('NavbarEnergy')}</Link>
+                <Link to="/temperaturedashboard" className={mobileLinkStyle}>{t('NavbarTemperature')}</Link>
+                <Link to="/airqualitydashboard" className={mobileLinkStyle}>{t('NavbarAir')}</Link>
+                <Link to="/energydashboard" classname={mobileLinkStyle}>{t('NavbarEnergy')}</Link>
               </>
             )}
 

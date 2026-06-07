@@ -67,7 +67,7 @@ model Sensor {
   resourceId         Int?              @unique
   mobilityResourceId Int?              @unique
   upperLimit         Float?
-  lowerLimit         Float?  
+  lowerLimit         Float?
   isActive           Boolean           @default(true)
   isOccupied         Boolean           @default(true)
   xCoordinates       Float

@@ -18,13 +18,13 @@ export default function TemperatureDashboard() {
   const navigate = useNavigate()
   const activeTab = "temperature"
 
+  const SIMULATE_KEY = "temperature-simulate"
   const { data: sensorData, isLoading: sensorsLoading } = useSWR(SIMULATE_KEY, fetchSensors, { refreshInterval: 60000 });
   const { data: trendData, isLoading: trendLoading } = useSWR(TREND_KEY, fetchTrend, { refreshInterval: 300000 });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const { t } = useTranslation();
-  
-  // NOVO ESTADO: Guarda qual sensor foi clicado/selecionado
+
   const [selectedSensorId, setSelectedSensorId] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [lowerLimitInput, setLowerLimitInput] = useState("")

@@ -11,7 +11,9 @@ import {
   getAllReadings,
   getAllActiveSensors,
   getAllActiveSensorsByFloor,
-  getAllActiveSensorsByType
+  getAllActiveSensorsByType,
+  resolveAlert,
+  getPendingAlerts
 } from '../controllers/SensorController.js';
 import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
@@ -33,5 +35,8 @@ router.get('/data/readings', verifyToken, requireRole(['ADMIN', 'STAFF']), getAl
 
 router.get('/:id/alerts', verifyToken, requireRole(['ADMIN', 'STAFF']), getAlerts);
 router.get('/:id/readings', verifyToken, requireRole(['ADMIN', 'STAFF']), getReadings);
+
+router.get('/alerts/pending', verifyToken, requireRole(['ADMIN', 'STAFF']), getPendingAlerts);
+router.patch('/alerts/:id/resolve', verifyToken, requireRole(['ADMIN', 'STAFF']), resolveAlert);
 
 export default router;
