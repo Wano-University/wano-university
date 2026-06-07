@@ -130,6 +130,19 @@ export default function InteractiveMap() {
   const handleRegisterSensor = async (e) => {
     e.preventDefault();
 
+    let unit = "";
+    switch (formData.type) {
+      case 'TEMPERATURE':
+        unit = 'ºC';
+        break;
+      case 'ENERGY_CONSUMPTION':
+        unit = 'W';
+        break;
+      case 'AIR_QUALITY':
+        unit = 'AQI';
+        break;
+    }
+
     const newSensorPayload = {
       type: formData.type,
       floor: currentFloor,
@@ -139,6 +152,7 @@ export default function InteractiveMap() {
       isActive: true,
       xCoordinates: clickedCoords.x,
       yCoordinates: clickedCoords.y,
+      UnityMeasure: unit,
     };
 
     try {
@@ -146,8 +160,9 @@ export default function InteractiveMap() {
       setSensors([...sensors, savedSensor]);
 
       closeForm();
-      setFormData({ type: 'TEMPERATURE', space: '', alertLimit: '' });
+      setFormData({ type: 'TEMPERATURE', space: '', upperLimit: '', lowerLimit: '' });
     } catch (err) {
+      console.error("DEBUG - Prisma Error:", err);
       console.error("Sensor registration failed:", err);
       alert("Failed to save sensor to the database.");
     }
@@ -307,7 +322,6 @@ export default function InteractiveMap() {
                         <option value="TEMPERATURE">{t('IMapTemp')}</option>
                         <option value="ENERGY_CONSUMPTION">{t('IMapEnergy')}</option>
                         <option value="AIR_QUALITY">{t('IMapAir')}</option>
-                        <option value="OCCUPANCY">{t('IMapOccup')}</option>
                       </select>
                     </div>
 
