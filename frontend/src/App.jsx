@@ -58,6 +58,7 @@ export default function App() {
 
         <Route path="/home" element={<HomeRedirection />} />
         <Route path="/cafeteria" element={<ProtectedRoute> <Cafeteria /> </ProtectedRoute>} />
+        <Route path="/lssdocs" element={<ProtectedRoute> <LssDocs /> </ProtectedRoute>} />
         <Route path="/equipments" element={<ProtectedRoute> <Equipments /> </ProtectedRoute>} />
 
         <Route path="/tickets" element={<ProtectedRoute> <MyTickets /> </ProtectedRoute>} />
