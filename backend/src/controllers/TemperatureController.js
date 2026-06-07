@@ -85,13 +85,11 @@ export const runTemperatureSimulation = async (req, res) => {
       };
     });
 
-    // Write to database
     await prisma.sensorReading.createMany({ data: newReadings });
     if (alertsToCreate.length > 0) {
       await prisma.sensorAlert.createMany({ data: alertsToCreate });
     }
 
-    // Chart logic
     const fifteenMinutesAgo = new Date(Date.now() - (15 * 60 * 1000));
     const historicalReadings = await prisma.sensorReading.findMany({
       where: {
@@ -121,7 +119,6 @@ export const runTemperatureSimulation = async (req, res) => {
       }))
       .slice(-10);
 
-    // Stats calculations
     const currentSnapshotValues = newReadings.map(r => r.value);
     const minCalculated = currentSnapshotValues.length > 0 ? Math.min(...currentSnapshotValues) : 0;
     const maxCalculated = currentSnapshotValues.length > 0 ? Math.max(...currentSnapshotValues) : 0;
@@ -187,7 +184,7 @@ export const getTemperatureTrend = async (req, res) => {
 
     const hourlyGroups = {};
     historicalReadings.forEach(reading => {
-      const hour = reading.readingDate.toISOString().slice(0, 13); // "YYYY-MM-DDTHH"
+      const hour = reading.readingDate.toISOString().slice(0, 13);
       if (!hourlyGroups[hour]) hourlyGroups[hour] = { sum: 0, count: 0 };
       hourlyGroups[hour].sum += reading.value;
       hourlyGroups[hour].count += 1;

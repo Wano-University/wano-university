@@ -25,7 +25,6 @@ export default function UserModel({ user, onClose, onSave }) {
 
   useEffect(() => {
     if (user && Array.isArray(user.permissions)) {
-      // Extrai as descrições da base de dados e compara com os IDs do mapa
       const userPermsFromDB = user.permissions.map(p => p.permission?.description);
       const perms = MAPA_PERMISSOES
         .filter(perm => userPermsFromDB.includes(perm.id))
@@ -45,7 +44,6 @@ export default function UserModel({ user, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Envia o array de strings (ex: ['GERIR_USERS', 'VER_PARKING']) para o backend
     onSave(user.id, { isActive: ativo, permissions: permissions });
   };
 

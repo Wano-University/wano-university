@@ -8,8 +8,8 @@ import { getAllUsers, updateUserPermissions, updateUserData } from "../lib/users
 export default function AdminUsers() {
   console.log("--- AdminUsers carregado ---");
   const [utilizadores, setUtilizadores] = useState([]);
-  const [utilizadorSelecionado, setUtilizadorSelecionado] = useState(null); // Para Permissões
-  const [userParaEditar, setUserParaEditar] = useState(null); // Para Dados Pessoais
+  const [utilizadorSelecionado, setUtilizadorSelecionado] = useState(null);
+  const [userParaEditar, setUserParaEditar] = useState(null); 
   const [erro, setErro] = useState(null);
   const navigate = useNavigate();
 
@@ -121,7 +121,6 @@ export default function AdminUsers() {
         </table>
       </div>
 
-      {/* Modais */}
       {utilizadorSelecionado && (
         <UserModel 
           user={utilizadorSelecionado} 

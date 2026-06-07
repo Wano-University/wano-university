@@ -91,7 +91,6 @@ export default function AirQualityDashboard() {
     }
   }
 
-  // Helper to assign specific icons and colors to the 4 stats returned by the backend
   const getStatIcon = (title) => {
     if (title.includes("PM2.5")) return <Cloud className="w-6 h-6 text-primary" />;
     if (title.includes("Average IQA")) return <Wind className="w-6 h-6 text-primary" />;
@@ -103,7 +102,6 @@ export default function AirQualityDashboard() {
   return (
     <section className="py-12 max-w-7xl mx-auto px-6">
 
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-foreground flex items-center gap-3">
@@ -118,10 +116,8 @@ export default function AirQualityDashboard() {
         )}
       </div>
 
-      {/* Main Grid */}
       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
 
-        {/* 1. Tabs */}
         <div className="order-1 lg:col-start-1 lg:col-span-7 lg:row-start-1">
           <div className="flex gap-2 p-1 bg-card border border-border rounded-2xl shadow-sm">
             {SENSOR_TABS.map(({ key, label, icon: Icon, path }) => (
@@ -139,7 +135,6 @@ export default function AirQualityDashboard() {
           </div>
         </div>
 
-        {/* 2. Right Column Stats (Fills the space where the chart usually is) */}
         <div className="order-2 lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:row-span-3">
           <div className="grid grid-cols-2 gap-4 h-full min-h-[400px]">
             {stats.length > 0 ? (
@@ -162,7 +157,6 @@ export default function AirQualityDashboard() {
           </div>
         </div>
 
-        {/* 3. Sensors */}
         <div className="order-3 lg:col-start-1 lg:col-span-7 lg:row-start-2">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 min-h-[300px]">
             {isLoading
@@ -203,7 +197,6 @@ export default function AirQualityDashboard() {
           </div>
         </div>
 
-        {/* 4. Pagination & Management Bar */}
         <div className="order-4 lg:col-start-1 lg:col-span-7 lg:row-start-3">
           <div className="flex flex-wrap items-center justify-between gap-4 p-3 bg-card rounded-2xl border border-border shadow-sm">
             <div className="flex items-center gap-2">
@@ -247,7 +240,6 @@ export default function AirQualityDashboard() {
 
       </div>
 
-      {/* Edit Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
           <Card className="w-full max-w-md p-6 border-border shadow-2xl animate-in zoom-in-95">
@@ -294,7 +286,6 @@ export default function AirQualityDashboard() {
         </div>
       )}
 
-      {/* Info Modal */}
       {isInfoModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
           <Card className="w-full max-w-sm p-6 border-border shadow-2xl animate-in zoom-in-95">

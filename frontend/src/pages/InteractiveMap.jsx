@@ -225,7 +225,6 @@ export default function InteractiveMap() {
               <MapEventsHandler />
               <MapTracker clickedCoords={clickedCoords} setPixelCoords={setPixelCoords} />
 
-              {/* Existing sensors */}
               {filteredSensors.map((sensor) => (
                 <Marker
                   key={sensor.id}

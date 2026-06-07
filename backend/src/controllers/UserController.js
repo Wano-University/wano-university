@@ -30,7 +30,6 @@ export const registerUser = async (req, res) => {
   try {
     const { name, address, nif, email, login, password, type } = req.body;
 
-    // 1. Validação da Password
     if (!isValidPassword(password)) {
       return res.status(400).json({ error: "Password policy violation." });
     }
@@ -51,7 +50,6 @@ export const registerUser = async (req, res) => {
       )
     );
 
-    // VOLTAMOS A METER O CREATE AQUI (Como tinhas no início)
     const user = await prisma.user.create({
       data: {
         name, address, nif, email, login,
@@ -85,13 +83,12 @@ export const login = async (req, res) => {
       include: { 
         permissions: {
           include: {
-            permission: true // ISTO FAZ O PRISMA TRAZER A DESCRIÇÃO!
+            permission: true
           }
         }
       }
     });
 
-    // Após isto, verifica se o user tem permissões:
     if (user && user.permissions) {
       console.log("Permissões carregadas:", user.permissions);
     }

@@ -36,7 +36,7 @@ model UsersOnPermissions {
   permission   Permission @relation(fields: [permissionId], references: [id])
   permissionId Int
 
-  @@id([userId, permissionId]) // Chave primária composta
+  @@id([userId, permissionId])
 }
 
 model Resource {

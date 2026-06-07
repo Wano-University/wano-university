@@ -3,9 +3,6 @@ import { getAllReservationsList, createReservation, updateReservationStatus, get
 import { verifyToken, requireRole } from '../middleware/AuthMiddleware.js';
 
 
-import { getAllReservationsList, createReservation, updateReservationStatus, getReservationsByUser, validateReservationQR } from '../controllers/ReservationController.js';
-import { verifyToken, requireRole, checkPermission } from '../middleware/AuthMiddleware.js';
-
 
 const router = Router();
 

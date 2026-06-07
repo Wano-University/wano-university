@@ -9,7 +9,7 @@ export const getAllUsers = async (req, res) => {
         email: true,
         type: true,
         isActive: true,
-        // Adiciona aqui os campos que faltam!
+
         address: true, 
         nif: true,
         login: true,
@@ -39,7 +39,7 @@ export const updateProfile = async (req, res) => {
   const userId = Number(id);
 
   try {
-    // CORREÇÃO: Usar prisma.user.update em vez de Mongoose
+
     const user = await prisma.user.update({
       where: { id: userId },
       data: {

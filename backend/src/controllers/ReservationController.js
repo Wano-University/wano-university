@@ -152,7 +152,6 @@ export const validateReservationQR = async (req, res) => {
     const now = new Date();
     const isEquipment = reservation.resource?.type === 'EQUIPMENT';
 
-    // Rooms, Labs, Vehicles
     if (!isEquipment) {
       const allowedStart = new Date(reservation.startTime.getTime() - 5 * 60000);
 
@@ -172,7 +171,6 @@ export const validateReservationQR = async (req, res) => {
       return res.status(200).json({ action: 'UNLOCK_SUCCESS', message: "Access granted." });
     }
 
-    // Equipment Check-in/Check-out
     if (isEquipment) {
       const hasCheckedOut = reservation.accesses.some(a => a.accessType === 'ENTRY');
       const hasReturned = reservation.accesses.some(a => a.accessType === 'EXIT');

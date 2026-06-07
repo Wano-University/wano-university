@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import path from 'path'; // FIX 3: was used in multer config but never imported
+import path from 'path';
 import multer from 'multer';
 import {
   getResources, registerResource, getResourcesByFloor,

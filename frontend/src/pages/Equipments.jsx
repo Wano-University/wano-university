@@ -93,7 +93,6 @@ export default function EquipmentConfig() {
   };
 
   const openReservationModal = (item) => {
-    // Reset form so the calendar starts clean for each new item
     setBookingForm({ date: '', startTime: '', endTime: '' });
     setReservationTarget(item);
   };
@@ -236,10 +235,6 @@ export default function EquipmentConfig() {
               <p className="text-sm font-semibold truncate mt-1">{reservationTarget.name}</p>
             </div>
 
-            {/*
-              key={reservationTarget.id} forces a full remount when switching items
-              so the calendar's derived state starts fresh from the reset bookingForm.
-            */}
             <ReservationCalendarForm
               key={reservationTarget.id}
               entityId={reservationTarget.id}

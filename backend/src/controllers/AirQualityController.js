@@ -48,7 +48,6 @@ export const runAirQualitySimulation = async (req, res) => {
       orderBy: { id: 'asc' }
     });
 
-    // Auto-seed lab environment if empty
     if (sensors.length < 6) {
       const needed = 6 - sensors.length;
       const newSensors = Array.from({ length: needed }).map((_, index) => ({
@@ -85,7 +84,6 @@ export const runAirQualitySimulation = async (req, res) => {
       };
     });
 
-    // Write to database
     await prisma.sensorReading.createMany({ data: newReadings });
     if (alertsToCreate.length > 0) {
       await prisma.sensorAlert.createMany({ data: alertsToCreate });

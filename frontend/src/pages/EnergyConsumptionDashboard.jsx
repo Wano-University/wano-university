@@ -44,7 +44,7 @@ const fetcher = async () => {
 export default function EnergyConsumptionDashboard() {
   const { theme } = useTheme()
   const navigate = useNavigate()
-  const activeTab = "energy" // Hardcoded since we use routing now
+  const activeTab = "energy"
 
   const { data, isLoading } = useSWR(SIMULATE_KEY, fetcher, {
     refreshInterval: 60000,
@@ -155,7 +155,6 @@ export default function EnergyConsumptionDashboard() {
   return (
     <section className="py-12 max-w-7xl mx-auto px-6">
 
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-foreground flex items-center gap-3">
@@ -170,10 +169,8 @@ export default function EnergyConsumptionDashboard() {
         )}
       </div>
 
-      {/* Main Grid: Hybrid layout mapping Mobile/Desktop orders seamlessly */}
       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
 
-        {/* 1. Tabs */}
         <div className="order-1 lg:col-start-1 lg:col-span-7 lg:row-start-1">
           <div className="flex gap-2 p-1 bg-card border border-border rounded-2xl shadow-sm">
             {SENSOR_TABS.map(({ key, label, icon: Icon, path }) => (
@@ -191,7 +188,6 @@ export default function EnergyConsumptionDashboard() {
           </div>
         </div>
 
-        {/* 2. Top Stats */}
         <div className="order-2 lg:col-start-8 lg:col-span-5 lg:row-start-1">
           <div className="grid grid-cols-2 gap-4 h-full">
             <Card className="p-6 flex flex-col justify-between h-32 hover:shadow-md transition-all cursor-default">
@@ -210,7 +206,6 @@ export default function EnergyConsumptionDashboard() {
           </div>
         </div>
 
-        {/* 3. Graph */}
         <div className="order-3 lg:col-start-8 lg:col-span-5 lg:row-start-2 lg:row-span-2">
           <Card className="p-6 flex flex-col h-full min-h-[350px] hover:shadow-md transition-all cursor-default">
             <h3 className="text-sm font-bold text-muted-foreground mb-4 flex items-center gap-2">
@@ -228,7 +223,6 @@ export default function EnergyConsumptionDashboard() {
           </Card>
         </div>
 
-        {/* 4. Sensors */}
         <div className="order-4 lg:col-start-1 lg:col-span-7 lg:row-start-2">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 min-h-[300px]">
             {isLoading
@@ -258,7 +252,6 @@ export default function EnergyConsumptionDashboard() {
           </div>
         </div>
 
-        {/* 5. Pagination & Management Bar */}
         <div className="order-5 lg:col-start-1 lg:col-span-7 lg:row-start-3">
           <div className="flex flex-wrap items-center justify-between gap-4 p-3 bg-card rounded-2xl border border-border shadow-sm">
             <div className="flex items-center gap-2">
@@ -349,7 +342,6 @@ export default function EnergyConsumptionDashboard() {
         </div>
       )}
 
-      {/* Info Modal */}
       {isInfoModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
           <Card className="w-full max-w-sm p-6 border-border shadow-2xl animate-in zoom-in-95">

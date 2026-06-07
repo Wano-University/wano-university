@@ -4,7 +4,6 @@ import { getAllMobilityResources, registerMobilityResource, updateMobilityStatus
 import { createReservation } from '../lib/reservation.js';
 import { ReservationCalendarForm } from '../components/ReservationCalendarForm.jsx';
 
-// Verifica se o user existe e se o tipo é ADMIN
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 export default function Bikes() {
   const [mobilityPool, setMobilityPool]           = useState({});
@@ -60,7 +59,7 @@ export default function Bikes() {
       console.log("Attempting to reserve Resource ID:", resourceId);
 
       await createReservation({
-        mobilityrRsourceId: resourceId, // preserved original field name
+        mobilityrRsourceId: resourceId,
         startTime:  startDateTime,
         endTime:    endDateTime,
         status:     'ACTIVE',
@@ -89,7 +88,6 @@ export default function Bikes() {
   };
 
   const openReservationModal = (item) => {
-    // Reset form so the calendar starts clean for each new vehicle
     setBookingForm({ date: '', startTime: '', endTime: '' });
     setReservationTarget(item);
   };
@@ -242,10 +240,6 @@ export default function Bikes() {
               </p>
             </div>
 
-            {/*
-              key={reservationTarget.id} forces a full remount when switching vehicles
-              so the calendar's derived state starts fresh from the reset bookingForm.
-            */}
             <ReservationCalendarForm
               key={reservationTarget.id}
               entityId={reservationTarget.id}

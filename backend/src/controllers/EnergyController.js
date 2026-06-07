@@ -57,7 +57,6 @@ export const runEnergySimulation = async (req, res) => {
     const newReadings = sensors.map(sensor => {
       const value = Math.floor(Math.random() * 500) + 100;
 
-      // 1. Evaluate Alerts
       if (sensor.upperLimit !== null && value > sensor.upperLimit) {
         alertsToCreate.push({
           sensorId: sensor.id,
@@ -104,7 +103,7 @@ export const runEnergySimulation = async (req, res) => {
     });
 
     const hourlyGroups = todayReadings.reduce((acc, curr) => {
-      const hour = curr.readingDate.toISOString().slice(0, 13); // "2026-06-07T14"
+      const hour = curr.readingDate.toISOString().slice(0, 13);
       if (!acc[hour]) acc[hour] = { total: 0, count: 0 };
       acc[hour].total += curr.value;
       acc[hour].count += 1;

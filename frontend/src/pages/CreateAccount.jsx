@@ -20,7 +20,6 @@ export default function CreateAccount() {
     setStatus('loading');
     setErrorMsg('');
 
-    // Verifica o user logado (tenta obter do localStorage)
     const userString = localStorage.getItem('user');
     const currentUser = userString ? JSON.parse(userString) : null;
 
@@ -47,10 +46,9 @@ export default function CreateAccount() {
       await registerUserAPI(payload);
       setStatus('success');
 
-      // Redirecionamento condicional
       setTimeout(() => {
         if (currentUser?.type === 'ADMIN') {
-          window.location.href = '/admin/users'; // Ajusta para a tua rota de gestão
+          window.location.href = '/admin/users';
         } else {
           window.location.href = '/login';
         }
