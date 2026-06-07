@@ -49,6 +49,13 @@ export default function UserAvatar({ user }) {
             <Link to="/reservations" className="cursor-pointer w-full">{t('UserReserv')}</Link>
           </DropdownMenuItem>
 
+        {(user.type === 'STAFF' || user.type === 'ADMIN') && (
+          <DropdownMenuItem asChild>
+            <Link to="/alerts" className="cursor-pointer w-full">{t('UserAlert')}</Link>
+          </DropdownMenuItem>
+        )}
+
+
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link to="/changepassword" className="cursor-pointer w-full">{t('UserChange')}</Link>
