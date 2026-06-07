@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card } from '../components/ui/card';
 import { FieldSet, FieldGroup, Field, FieldLabel } from '../components/ui/field';
 import { Combobox, ComboboxInput, ComboboxContent, ComboboxEmpty, ComboboxList, ComboboxItem } from '../components/ui/combobox';
@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 const types = ["Admin", "Student", "Professor", "Staff"];
 
 export default function CreateAccount() {
-
   const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const { t } = useTranslation();
@@ -20,6 +19,10 @@ export default function CreateAccount() {
     e.preventDefault();
     setStatus('loading');
     setErrorMsg('');
+
+    // Verifica o user logado (tenta obter do localStorage)
+    const userString = localStorage.getItem('user');
+    const currentUser = userString ? JSON.parse(userString) : null;
 
     const formData = new FormData(e.target);
     const formValues = Object.fromEntries(formData);
@@ -42,16 +45,21 @@ export default function CreateAccount() {
 
     try {
       await registerUserAPI(payload);
-
       setStatus('success');
+
+      // Redirecionamento condicional
       setTimeout(() => {
-        window.location.href = '/login';
+        if (currentUser?.type === 'ADMIN') {
+          window.location.href = '/admin/users'; // Ajusta para a tua rota de gestão
+        } else {
+          window.location.href = '/login';
+        }
       }, 800);
 
     } catch (error) {
       console.error(error);
       setStatus('error');
-      setErrorMsg(error.message);
+      setErrorMsg(error.message || 'An error occurred.');
       setTimeout(() => setStatus('idle'), 3000);
     }
   };
@@ -66,7 +74,7 @@ export default function CreateAccount() {
         <form onSubmit={handleRegister} className="w-full">
           <FieldSet className="w-full space-y-6">
             <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
+              
               <Field className="col-span-2">
                 <FieldLabel htmlFor="type">{t('CreateAccountType')}:</FieldLabel>
                 <Combobox items={types}>
@@ -74,16 +82,17 @@ export default function CreateAccount() {
                     id="type"
                     name="type"
                     placeholder="Select account type..."
-                    required className="bg-white"
+                    required 
+                    className="bg-white"
                   />
                   <ComboboxContent>
                     <ComboboxEmpty>{t('CreateAccountNoItems')}</ComboboxEmpty>
                     <ComboboxList className="bg-white">
-                      {(item) => (
+                      {types.map((item) => (
                         <ComboboxItem key={item} value={item}>
                           {item}
                         </ComboboxItem>
-                      )}
+                      ))}
                     </ComboboxList>
                   </ComboboxContent>
                 </Combobox>
@@ -140,9 +149,10 @@ export default function CreateAccount() {
             <Button
               type="submit"
               disabled={status === 'loading' || status === 'success'}
-              className={`mt-4 cursor-pointer transition-all ${status === 'success' ? 'bg-purple-800 text-white' :
+              className={`mt-4 cursor-pointer transition-all ${
+                status === 'success' ? 'bg-purple-800 text-white' :
                 status === 'error' ? 'bg-red-800 text-white' : ''
-                }`}
+              }`}
             >
               {status === 'loading' && 'Registering...'}
               {status === 'success' && 'Account Registered ✓'}

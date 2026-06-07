@@ -3,6 +3,8 @@ import { Trash2, Pencil, Plus, PlusCircle, Check, X, Shield, ShieldAlert, Calend
 import { getAllMobilityResources, registerMobilityResource, updateMobilityStatus ,deleteMobilityResource} from '../lib/mobilityResource.js';
 import { createReservation } from '../lib/reservation.js'; 
 
+// Verifica se o user existe e se o tipo é ADMIN
+const user = JSON.parse(localStorage.getItem('user') || '{}');
 export default function Bikes() {
   const [mobilityPool, setMobilityPool] = useState({});
   const [modalState, setModalState] = useState(false); 
@@ -103,7 +105,7 @@ export default function Bikes() {
             <h2 className="text-xs text-muted-foreground">Book a bicycle or scooter for your commute!</h2>
           </div>
         </div>
-
+{isAdmin && (
         <button 
           onClick={() => setIsAdmin(!isAdmin)}
           className={`text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-full border transition-all flex items-center gap-2 cursor-pointer ${
@@ -113,8 +115,9 @@ export default function Bikes() {
           {isAdmin ? <ShieldAlert className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
           {isAdmin ? 'Admin Mode: ON' : 'Admin Mode: OFF'}
         </button>
+        )}
       </div>
-
+        
       {isAdmin && (
         <div className="flex items-center justify-end">
           <button 
