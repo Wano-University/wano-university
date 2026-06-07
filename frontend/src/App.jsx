@@ -17,7 +17,7 @@ import Equipments from './pages/Equipments';
 import TemperatureDashboard from './pages/TemperatureDashboard';
 import AirQualityDashboard from './pages/AirQualityDashboard';
 import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
-import Parking from './pages/Parking';
+//import Parking from './pages/Parking';
 import Bikes from './pages/Bikes';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
@@ -60,7 +60,6 @@ export default function App() {
         <Route path="/lssdocs" element={<LssDocs />} />
         <Route path="/changepw" element={<ForgotPassword />} />
         <Route path="/spaces" element={<Spaces />} />
-        <Route path="/parking" element={<Parking />} />
         <Route path='/bikes' element={<Bikes />} />
 
         <Route path="/home" element={<HomeRedirection />} />

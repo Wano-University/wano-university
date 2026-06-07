@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import UserModel from '../components/UserModel';
 import EditUser from '../components/EditUser';
 import { getAllUsers, updateUserPermissions, updateUserData } from "../lib/users";
+import { useTranslation } from "react-i18next";
 
 export default function AdminUsers() {
   console.log("--- AdminUsers carregado ---");
@@ -12,6 +13,9 @@ export default function AdminUsers() {
   const [userParaEditar, setUserParaEditar] = useState(null); // Para Dados Pessoais
   const [erro, setErro] = useState(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  
 
   const carregarUtilizadores = () => {
     getAllUsers()
@@ -52,8 +56,8 @@ export default function AdminUsers() {
     <div className="container mx-auto p-8 max-w-7xl font-sans">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Account & Privilege Management</h1>
-          <p className="text-muted-foreground mt-1">Manage user access levels, active sessions, and system permissions.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('AdminUTitle')}</h1>
+          <p className="text-muted-foreground mt-1">{t('AdminUDesc')}</p>
         </div>
         
         <button 
@@ -61,13 +65,13 @@ export default function AdminUsers() {
           className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 font-medium rounded-lg shadow-sm text-sm flex items-center gap-2 transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          Create New User
+          {t('AdminUCreate')}
         </button>
       </div>
       
       {erro && (
         <div className="p-4 mb-4 text-sm bg-destructive/15 text-destructive rounded-lg border border-destructive/20">
-          <span className="font-semibold">Erro:</span> {erro}
+          <span className="font-semibold">{t('AdminUErr')}:</span> {erro}
         </div>
       )}
 
@@ -75,17 +79,17 @@ export default function AdminUsers() {
         <table className="w-full border-collapse text-left text-sm">
           <thead className="bg-muted/50 border-b border-border">
             <tr>
-              <th className="p-4 font-semibold text-foreground">Name</th>
-              <th className="p-4 font-semibold text-foreground">Email</th>
-              <th className="p-4 font-semibold text-foreground">Role</th>
-              <th className="p-4 font-semibold text-foreground">Status</th>
-              <th className="p-4 font-semibold text-foreground text-right">Action</th>
+              <th className="p-4 font-semibold text-foreground">{t('AdminUName')}</th>
+              <th className="p-4 font-semibold text-foreground">{t('AdminUEmail')}</th>
+              <th className="p-4 font-semibold text-foreground">{t('AdminURole')}</th>
+              <th className="p-4 font-semibold text-foreground">{t('AdminUStatus')}</th>
+              <th className="p-4 font-semibold text-foreground text-right">{t('AdminUAction')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {utilizadores.length === 0 ? (
               <tr>
-                <td colSpan="5" className="p-8 text-center text-muted-foreground">No users found.</td>
+                <td colSpan="5" className="p-8 text-center text-muted-foreground">{t('AdminUNoU')}</td>
               </tr>
             ) : (
               utilizadores.map(user => (
@@ -105,13 +109,13 @@ export default function AdminUsers() {
                       onClick={() => setUtilizadorSelecionado(user)}
                       className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-1 rounded-lg text-xs transition-all"
                     >
-                      Permissões
+                      {t('AdminUPerms')}
                     </button>
                     <button 
                       onClick={() => setUserParaEditar(user)}
                       className="bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-1 rounded-lg text-xs transition-all"
                     >
-                      Editar Dados
+                      {t('AdminUEdit')}
                     </button>
                   </td>
                 </tr>
