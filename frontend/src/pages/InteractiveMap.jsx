@@ -81,7 +81,7 @@ export default function InteractiveMap() {
   const [isRegistering, setIsRegistering] = useState(false);
   const { t } = useTranslation();
 
-  
+
   const [formData, setFormData] = useState({
     type: 'TEMPERATURE',
     space: '',
@@ -130,6 +130,19 @@ export default function InteractiveMap() {
   const handleRegisterSensor = async (e) => {
     e.preventDefault();
 
+    let unit = "";
+    switch (formData.type) {
+      case 'TEMPERATURE':
+        unit = 'ºC';
+        break;
+      case 'ENERGY_CONSUMPTION':
+        unit = 'W';
+        break;
+      case 'AIR_QUALITY':
+        unit = 'AQI';
+        break;
+    }
+
     const newSensorPayload = {
       type: formData.type,
       floor: currentFloor,
@@ -139,6 +152,7 @@ export default function InteractiveMap() {
       isActive: true,
       xCoordinates: clickedCoords.x,
       yCoordinates: clickedCoords.y,
+      UnityMeasure: unit,
     };
 
     try {
@@ -146,8 +160,9 @@ export default function InteractiveMap() {
       setSensors([...sensors, savedSensor]);
 
       closeForm();
-      setFormData({ type: 'TEMPERATURE', space: '', alertLimit: '' });
+      setFormData({ type: 'TEMPERATURE', space: '', upperLimit: '', lowerLimit: '' });
     } catch (err) {
+      console.error("DEBUG - Prisma Error:", err);
       console.error("Sensor registration failed:", err);
       alert("Failed to save sensor to the database.");
     }
@@ -187,21 +202,6 @@ function MapEventsHandler() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 mt-4 md:mt-0">
-          {isAdmin && (
-  <button
-
-            onClick={() => alert("Admin Panel")}
-
-            className="flex items-center gap-2 px-4 py-2 bg-foreground/80 hover:bg-foreground text-primary-foreground text-sm font-medium rounded-xl transition shadow-sm"
-
-          >
-
-            <Settings size={16} />
-            Admin Panel
-          </button>
-)}
-        </div>
       </div>
 
       {/* Map container */}
@@ -248,7 +248,7 @@ function MapEventsHandler() {
                         <p><span className="font-semibold text-muted-foreground">{t('IMapUAlert')}:</span> {sensor.upperLimit}</p>
                         <p><span className="font-semibold text-muted-foreground">{t('IMapLAlert')}:</span> {sensor.lowerLimit}</p>
                         <p><span className="font-semibold text-muted-foreground">{t('IMapCoords')}:</span> X:{sensor.xCoordinates} | Y:{sensor.yCoordinates}</p>
-                        
+
                         <div className="pt-2 flex items-center justify-between border-t border-muted-foreground/20 mt-2">
                           <span className="text-[11px] text-muted-foreground">{t('IMapOpState')}:</span>
                           <button
@@ -299,7 +299,7 @@ function MapEventsHandler() {
                     {/* Type Selection */}
                     <div className="space-y-1">
                       <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapType')}</label>
-                      <select 
+                      <select
                         value={formData.type}
                         onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                         className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
@@ -307,15 +307,14 @@ function MapEventsHandler() {
                         <option value="TEMPERATURE">{t('IMapTemp')}</option>
                         <option value="ENERGY_CONSUMPTION">{t('IMapEnergy')}</option>
                         <option value="AIR_QUALITY">{t('IMapAir')}</option>
-                        <option value="OCCUPANCY">{t('IMapOccup')}</option>
                       </select>
                     </div>
 
                     {/* Location Input */}
                     <div className="space-y-1">
                       <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapLocal')}</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.space}
                         onChange={(e) => setFormData({ ...formData, space: e.target.value })}
                         className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
@@ -327,20 +326,20 @@ function MapEventsHandler() {
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
                         <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapUAlert')}</label>
-                        <input 
-                          type="number" 
+                        <input
+                          type="number"
                           value={formData.upperLimit}
-                          onChange={(e) => setFormData({...formData, upperLimit: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, upperLimit: e.target.value })}
                           className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
                           required
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="block text-[10px] font-bold text-muted-foreground uppercase">{t('IMapLAlert')}</label>
-                        <input 
-                          type="number" 
+                        <input
+                          type="number"
                           value={formData.lowerLimit}
-                          onChange={(e) => setFormData({...formData, lowerLimit: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, lowerLimit: e.target.value })}
                           className="w-full text-xs p-2 rounded-lg border border-muted-foreground/20 bg-background focus:outline-none focus:ring-1 focus:ring-foreground"
                           required
                         />
@@ -373,7 +372,7 @@ function MapEventsHandler() {
                 onClick={() => setCurrentFloor('FLOOR_1')}
                 className={`py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all ${currentFloor === 'FLOOR_1' ? 'bg-foreground/80 border-muted-foreground/40 text-primary-foreground shadow-md' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
               >
-                {t('IMapFloor1')} 
+                {t('IMapFloor1')}
               </button>
               <button
                 type="button"
@@ -410,7 +409,7 @@ function MapEventsHandler() {
                 className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'TEMPERATURE' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
                 style={selectedTypeFilter === 'TEMPERATURE' ? { backgroundColor: 'var(--fire-color)' } : {}}
               >
-                <Thermometer size={16} style={selectedTypeFilter === 'TEMPERATURE' ? {color: 'primary-foreground'} : {color: 'var(--fire-color)'}} />
+                <Thermometer size={16} style={selectedTypeFilter === 'TEMPERATURE' ? { color: 'primary-foreground' } : { color: 'var(--fire-color)' }} />
                 <span>{t('IMapFTemp')}</span>
               </button>
 
@@ -420,7 +419,7 @@ function MapEventsHandler() {
                 className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'ENERGY_CONSUMPTION' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
                 style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? { backgroundColor: 'var(--nika-color)' } : {}}
               >
-                <Zap size={16} style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? {color: 'primary-foreground'} : {color: 'var(--nika-color)'}} />
+                <Zap size={16} style={selectedTypeFilter === 'ENERGY_CONSUMPTION' ? { color: 'primary-foreground' } : { color: 'var(--nika-color)' }} />
                 <span>{t('IMapFEC')}</span>
               </button>
 
@@ -430,7 +429,7 @@ function MapEventsHandler() {
                 className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'AIR_QUALITY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
                 style={selectedTypeFilter === 'AIR_QUALITY' ? { backgroundColor: 'var(--surgeon-color)' } : {}}
               >
-                <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? {color: 'primary-foreground'} : {color: 'var(--surgeon-color)'}} />
+                <Wind size={16} style={selectedTypeFilter === 'AIR_QUALITY' ? { color: 'primary-foreground' } : { color: 'var(--surgeon-color)' }} />
                 <span>{t('IMapFAQ')}</span>
               </button>
 
@@ -440,7 +439,7 @@ function MapEventsHandler() {
                 className={`w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold border transition-all ${selectedTypeFilter === 'OCCUPANCY' ? 'border-primary-foreground text-primary-foreground shadow-sm' : 'bg-primary-foreground border-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/20'}`}
                 style={selectedTypeFilter === 'OCCUPANCY' ? { backgroundColor: 'var(--swordsman-color)' } : {}}
               >
-                <Users size={16} style={selectedTypeFilter === 'OCCUPANCY' ? {color: 'primary-foreground'} : {color: 'var(--swordsman-color)'}} />
+                <Users size={16} style={selectedTypeFilter === 'OCCUPANCY' ? { color: 'primary-foreground' } : { color: 'var(--swordsman-color)' }} />
                 <span>{t('IMapFOcc')}</span>
               </button>
             </div>

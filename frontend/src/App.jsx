@@ -17,7 +17,6 @@ import Equipments from './pages/Equipments';
 import TemperatureDashboard from './pages/TemperatureDashboard';
 import AirQualityDashboard from './pages/AirQualityDashboard';
 import EnergyConsumptionDashboard from './pages/EnergyConsumptionDashboard';
-import Parking from './pages/Parking';
 import Bikes from './pages/Bikes';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
@@ -60,7 +59,6 @@ export default function App() {
         <Route path="/lssdocs" element={<LssDocs />} />
         <Route path="/changepw" element={<ForgotPassword />} />
         <Route path="/spaces" element={<Spaces />} />
-        <Route path="/parking" element={<Parking />} />
         <Route path='/bikes' element={<Bikes />} />
 
         <Route path="/home" element={<HomeRedirection />} />
@@ -78,7 +76,7 @@ export default function App() {
         <Route path="/map" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <InteractiveMap /> </ProtectedRoute>} />
         <Route path="/menuconfig" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}> <MenuConfig /> </ProtectedRoute>} />
 
-        <Route path="/temperaturedashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_TEMPERATURE"> <TemperatureDashboard /> </ProtectedRoute>} />
+        <Route path="/temperaturedashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_TEMPERATURA"> <TemperatureDashboard /> </ProtectedRoute>} />
         <Route path="/airqualitydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_QUALIDADE_AR"> <AirQualityDashboard /> </ProtectedRoute>} />
         <Route path="/energydashboard" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']} requiredPermission="VER_DASHBOARD_CONSUMO_ENERGETICO"> <EnergyConsumptionDashboard /> </ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['ADMIN']} requiredPermission="GERIR_USERS"> <AdminUsers /> </ProtectedRoute>} />

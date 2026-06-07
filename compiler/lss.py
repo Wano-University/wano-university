@@ -192,7 +192,9 @@ def mobility_resources_to_text(resources):
     if not resources:
         return "No mobility resources"
     return "\n".join(f"MobilityResource {r['id']}: {r['type']} — Identifier {r['identifier']}, Location {r['location']}, Status {r['status']}." for r in resources)
+
 def reservations_to_text(reservations):
+
     lines = []
 
     if(len(reservations)<1):
@@ -216,10 +218,13 @@ def reservations_to_text(reservations):
 def sensors_to_text(sensors):
     if not sensors:
         return "No sensors"
-    return "\n".join(f"Sensor {s['id']}: {s['type']} — Space {s['space']}, Floor {s['floor']}, Resource {s['resourceId']}." for s in sensors)
-def resources_to_text(resources):
-    lines = []
+    return "\n".join(f"Sensor {s['id']}: {s['type']} — Space {s['space']}, Floor {s['floor']} " for s in sensors)
 
+def resources_to_text(resources):
+
+    if not resources:
+        return "No resources to show"
+    lines = []
     for r in resources:
         status = "available" if r["isAvailable"] else "unavailable"
 
@@ -230,6 +235,7 @@ def resources_to_text(resources):
         )
 
     return "\n".join(lines)
+
 def t_EQUIPMENT(t):
     r'[Ss]ala|[Ee]quipamento|[Ss]ensor|[Ll]aboratorio|[Rr]oom|[Ee]quipment|[Ll]ab'
     mapping = {
@@ -306,11 +312,11 @@ def t_HCID(t):
     return t
 
 def t_SENSORTYPE(t):
-    r'[Tt]emperature|[Ee]nergy|[Aa]ir[_-]?[Qq]uality|[Oo]ccupancy'
+    r'[Tt]emperature|[Ee]nergy|[Aa]ir[_-]?[Qq]uality'
     mapping = {
         'temperature': 'TEMPERATURE',
         'energy':      'ENERGY_CONSUMPTION',
-        'occupancy':   'OCCUPANCY',
+        'air_quality':   'AIR_QUALITY',
     }
     v = t.value.lower().replace('-', '_').replace(' ', '_')
     if 'air' in v:
@@ -612,6 +618,7 @@ def p_instruction_update_reservation(p):
 #USERS
 def p_instruction_register_user(p):
     '''instruction : REGISTER USER COLON STRING COMMA STRING COMMA NIF COMMA EMAIL COMMA ID COMMA PASSWORD COMMA USERTYPE'''
+
     p[0]={
             'name': p[4],
             'address':p[6],
@@ -621,12 +628,15 @@ def p_instruction_register_user(p):
             'password':p[14],
             'type':p[16].upper()
             }
-
     response = requests.post(
         f"{API_URL}/api/users/register",
         json=p[0],
         headers=get_headers()
     )
+    if(response.status_code == 201):
+        p[0]="Success: " ,response.status_code
+    else:
+        p[0] = "Failed to create user" + response.text
     print(response)
 
 #RESOURCES
@@ -672,7 +682,7 @@ def p_instruction_get_resources_by_floor(p):
         p[0]= "Invalid floor (1 or 2)"
         return
     response = requests.get(
-                f"{API_URL}/api/resources/floor/{p[3].upper()}",
+                f"{API_URL}/api/resources/floor/FLOOR_{str(p[3]).upper()}",
                 headers=get_headers()
                 )
 

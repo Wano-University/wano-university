@@ -5,7 +5,6 @@ import { getAllDishes, createDish, updateDishAPI, deleteDishAPI } from '../lib/d
 import { getActiveMenu, updateActiveMenu } from '../lib/menu';
 import { useTranslation } from "react-i18next";
 
-
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 const THEME_OPTIONS = [
@@ -67,7 +66,6 @@ export default function MenuConfig() {
   const [dishModalState, setDishModalState] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { t } = useTranslation();
-
 
   useEffect(() => {
     loadData();
@@ -146,10 +144,11 @@ export default function MenuConfig() {
       const uniqueAssignedIds = [...new Set(assignedIds)];
 
       await updateActiveMenu(uniqueAssignedIds, schedule);
+      alert("Schedule saved successfully!");
     } catch (error) {
       console.error(error);
+      alert("Failed to save schedule.");
     } finally {
-      alert
       setIsSaving(false);
     }
   };
@@ -392,8 +391,8 @@ export default function MenuConfig() {
   );
 }
 
-
 function DishForm({ onClose, onSave, activeTab, initialData }) {
+  const { t } = useTranslation();
   const isEditing = !!initialData;
 
   const handleSubmit = (e) => {

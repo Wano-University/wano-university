@@ -4,22 +4,17 @@ import { useNavigate } from "react-router-dom"
 import { useTheme } from "../providers/ThemeProvider"
 import { Card } from "../components/ui/card"
 import { ArrowLeft, ArrowRight, Download, Thermometer, Settings, Info, AlertTriangle, Zap, Wind } from "lucide-react"
-import { simulateTemperature, updateTemperatureLimits, getTemperatureReport } from "../lib/sensors"
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip as ChartTooltip,
-  Filler
-} from 'chart.js';
+// FIX 1: Imported getTemperatureTrend
+import { simulateTemperature, updateTemperatureLimits, getTemperatureReport, getTemperatureTrend } from "../lib/sensors"
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip as ChartTooltip, Filler } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { useTranslation } from "react-i18next"
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ChartTooltip, Filler);
 
+// FIX 2: Defined both SWR Keys
 const SIMULATE_KEY = "temperature-simulate"
+const TREND_KEY = "temperature-trend"
 
 const SENSOR_TABS = [
   { key: "energy", label: "Energy", icon: Zap, path: "/energydashboard" },
@@ -27,31 +22,30 @@ const SENSOR_TABS = [
   { key: "air", label: "Air Quality", icon: Wind, path: "/airqualitydashboard" },
 ]
 
-const fetcher = async () => {
-  const result = await simulateTemperature()
+// FIX 3: Replaced the generic "fetcher" with the two specific fetchers
+const fetchSensors = async () => {
+  const result = await simulateTemperature();
   return {
     sensors: result?.sensors ?? [],
     stats: result?.stats ?? [],
-    chartData: (result?.chartData ?? []).map(item => ({
-      ...item,
-      temperature: Number(item.temperature),
-    })),
-    alertsGenerated: result?.alertsGenerated ?? 0,
-  }
-}
+    alertsGenerated: result?.alertsGenerated ?? 0
+  };
+};
+
+const fetchTrend = async () => {
+  return await getTemperatureTrend();
+};
 
 export default function TemperatureDashboard() {
+  const { t } = useTranslation();
   const { theme } = useTheme()
   const navigate = useNavigate()
   const activeTab = "temperature"
 
-  const SIMULATE_KEY = "temperature-simulate"
   const { data: sensorData, isLoading: sensorsLoading } = useSWR(SIMULATE_KEY, fetchSensors, { refreshInterval: 60000 });
   const { data: trendData, isLoading: trendLoading } = useSWR(TREND_KEY, fetchTrend, { refreshInterval: 300000 });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const { t } = useTranslation();
-
   const [selectedSensorId, setSelectedSensorId] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [lowerLimitInput, setLowerLimitInput] = useState("")
@@ -60,10 +54,12 @@ export default function TemperatureDashboard() {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
 
   const sensorsPerPage = 6
-  const sensors = data?.sensors ?? []
-  const stats = data?.stats ?? []
-  const chartData = data?.chartData ?? []
-  const alertsGenerated = data?.alertsGenerated ?? 0
+
+  // FIX 4: Changed `data?.x` to `sensorData?.x` and `trendData`
+  const sensors = sensorData?.sensors ?? []
+  const stats = sensorData?.stats ?? []
+  const chartData = trendData ?? []
+  const alertsGenerated = sensorData?.alertsGenerated ?? 0
 
   const indexOfLastSensor = currentPage * sensorsPerPage
   const indexOfFirstSensor = indexOfLastSensor - sensorsPerPage
@@ -115,7 +111,7 @@ export default function TemperatureDashboard() {
   const chartJsData = {
     labels: chartData.map(d => d.hour),
     datasets: [{
-      fill: true,
+      fill: false,
       label: 'Average Temperature',
       data: chartData.map(d => d.temperature),
       borderColor: 'hsl(var(--primary))',
@@ -212,11 +208,11 @@ export default function TemperatureDashboard() {
 
         {/* 3. Graph */}
         <div className="order-3 lg:col-start-8 lg:col-span-5 lg:row-start-2 lg:row-span-2">
-          <Card className="p-6 flex flex-col h-full min-h-[350px] hover:shadow-md transition-all cursor-default">
+          <Card className="p-6 flex flex-col h-full min-h-[350px] hover:shadow-md transition-all cursor-default bg-white">
             <h3 className="text-sm font-bold text-muted-foreground mb-4 flex items-center gap-2">
               <Thermometer className="w-4 h-4" /> Recent Temperature Trend
             </h3>
-            {isLoading ? (
+            {trendLoading ? (
               <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">Loading Chart...</div>
             ) : chartData.length === 0 ? (
               <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">No data yet.</div>
@@ -231,7 +227,7 @@ export default function TemperatureDashboard() {
         {/* 4. Sensors */}
         <div className="order-4 lg:col-start-1 lg:col-span-7 lg:row-start-2">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 min-h-[300px]">
-            {isLoading
+            {sensorsLoading
               ? Array(6).fill(0).map((_, i) => <Card key={i} className="h-36 animate-pulse" />)
               : currentSensors.length > 0
                 ? currentSensors.map(sensor => {

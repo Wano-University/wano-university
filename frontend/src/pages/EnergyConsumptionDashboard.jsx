@@ -116,7 +116,7 @@ export default function EnergyConsumptionDashboard() {
   const chartJsData = {
     labels: chartData.map(d => d.time),
     datasets: [{
-      fill: true,
+      fill: false,
       label: 'Average Power',
       data: chartData.map(d => d.power),
       borderColor: 'hsl(var(--primary))',
@@ -212,7 +212,7 @@ export default function EnergyConsumptionDashboard() {
 
         {/* 3. Graph */}
         <div className="order-3 lg:col-start-8 lg:col-span-5 lg:row-start-2 lg:row-span-2">
-          <Card className="p-6 flex flex-col h-full min-h-[350px] hover:shadow-md transition-all cursor-default">
+          <Card className="p-6 flex flex-col h-full min-h-[350px] hover:shadow-md transition-all cursor-default bg-white">
             <h3 className="text-sm font-bold text-muted-foreground mb-4 flex items-center gap-2">
               <Zap className="w-4 h-4" /> Today's Average Trend
             </h3>

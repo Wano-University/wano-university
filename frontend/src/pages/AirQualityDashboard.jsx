@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom"
 import { Card } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight, Download, Wind, Cloud, Leaf, Settings, Info, AlertTriangle, Thermometer, Zap } from "lucide-react"
 import { simulateAirQuality, updateAirQualityLimits, getAirQualityReport } from "../lib/sensors"
+import { useTranslation } from "react-i18next";
+
 
 const SIMULATE_KEY = "air-quality-simulate"
 
@@ -48,6 +50,7 @@ export default function AirQualityDashboard() {
   const indexOfFirstSensor = indexOfLastSensor - sensorsPerPage
   const currentSensors = sensors.slice(indexOfFirstSensor, indexOfLastSensor)
   const totalPages = Math.ceil(sensors.length / sensorsPerPage)
+  const { t } = useTranslation();
 
   const handleEditClick = () => {
     if (!selectedSensorId) return
@@ -107,13 +110,13 @@ export default function AirQualityDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-foreground flex items-center gap-3">
-            <Wind className="w-8 h-8 text-primary" /> Air Quality Dashboard
+            <Wind className="w-8 h-8 text-primary" /> {t('AirDashboardTitle')}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">Real-time particle, IQA, and pollution monitoring.</p>
+          <p className="text-muted-foreground mt-1 text-sm">{t('AirDashboardDesc')}</p>
         </div>
         {alertsGenerated > 0 && (
           <div className="flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-xl font-bold text-sm border border-destructive/20 cursor-default shadow-sm">
-            <AlertTriangle className="w-4 h-4" /> {alertsGenerated} Active Alert{alertsGenerated !== 1 ? "s" : ""}
+            <AlertTriangle className="w-4 h-4" /> {alertsGenerated} {t('AirDashboardAler')} {alertsGenerated !== 1 ? "s" : ""}
           </div>
         )}
       </div>
@@ -191,7 +194,7 @@ export default function AirQualityDashboard() {
                         <span className={`text-[10px] font-black uppercase tracking-wider ${statusColor}`}>{status}</span>
                       </div>
                       <div className="mt-4">
-                        <p className="text-2xl font-black text-foreground">{sensor.iqa} IQA</p>
+                        <p className="text-2xl font-black text-foreground">{sensor.iqa} {t('AirDashboardIQA')}</p>
                         <p className="text-[10px] text-muted-foreground uppercase font-bold mt-1">ID: {sensor.id}</p>
                       </div>
                     </Card>
@@ -214,7 +217,7 @@ export default function AirQualityDashboard() {
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
-              <span className="text-sm font-bold w-20 text-center">Page {currentPage}</span>
+              <span className="text-sm font-bold w-20 text-center">{t('AirDashboardPage')} {currentPage}</span>
               <button
                 onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                 disabled={currentPage === totalPages || totalPages === 0}
@@ -232,7 +235,7 @@ export default function AirQualityDashboard() {
                 disabled={!selectedSensorId}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm font-bold hover:bg-secondary/80 hover:shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all cursor-pointer"
               >
-                <Settings className="w-4 h-4" /> Edit
+                <Settings className="w-4 h-4" /> {t('AirDashboardEdit')}
               </button>
               <button
                 onClick={handleExport}
@@ -257,12 +260,12 @@ export default function AirQualityDashboard() {
               </div>
               <div>
                 <h3 className="font-black text-lg">Sensor {selectedSensorId}</h3>
-                <p className="text-sm text-muted-foreground">Adjust trigger boundaries (IQA).</p>
+                <p className="text-sm text-muted-foreground">{t('AirDashboardAdjust')}</p>
               </div>
             </div>
             <div className="space-y-4 mb-8">
               <div>
-                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">Lower Limit (IQA)</label>
+                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">{t('AirDashboardLower')}</label>
                 <input
                   type="number"
                   value={lowerLimitInput}
@@ -272,7 +275,7 @@ export default function AirQualityDashboard() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">Upper Limit (IQA)</label>
+                <label className="block text-sm font-bold text-foreground mb-1.5 ml-1">{t('AirDashboardUpper')}</label>
                 <input
                   type="number"
                   value={upperLimitInput}
@@ -284,10 +287,10 @@ export default function AirQualityDashboard() {
             </div>
             <div className="flex gap-3">
               <button onClick={handleUpdateLimits} className="flex-1 bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all cursor-pointer">
-                Save
+                {t('AirDashboardSave')}
               </button>
               <button onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-muted text-foreground font-bold py-3 rounded-xl hover:bg-muted/80 active:scale-95 transition-all cursor-pointer">
-                Cancel
+                {t('AirDashboardCancel')}
               </button>
             </div>
           </Card>
@@ -299,15 +302,15 @@ export default function AirQualityDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
           <Card className="w-full max-w-sm p-6 border-border shadow-2xl animate-in zoom-in-95">
             <h3 className="font-black text-xl mb-4 flex items-center gap-2">
-              <Info className="w-5 h-5 text-primary" /> Air Quality Tips
+              <Info className="w-5 h-5 text-primary" /> {t('AirDashboardTips')}
             </h3>
             <ul className="space-y-3 mb-6 text-sm text-muted-foreground font-medium">
-              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> An IQA under 50 is excellent. Anything above 100 requires ventilation.</li>
-              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> High PM2.5 levels can damage sensitive server cooling systems over time.</li>
-              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> Ensure sensors are not blocked by furniture to get accurate readings.</li>
+              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> {t('AirDashboardTip1')}</li>
+              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> {t('AirDashboardTip2')}</li>
+              <li className="flex items-start gap-2"><Leaf className="w-4 h-4 mt-0.5 text-primary shrink-0" /> {t('AirDashboardTip3')}</li>
             </ul>
             <button onClick={() => setIsInfoModalOpen(false)} className="w-full bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all cursor-pointer">
-              Close
+              {t('AirDashboardClose')}
             </button>
           </Card>
         </div>

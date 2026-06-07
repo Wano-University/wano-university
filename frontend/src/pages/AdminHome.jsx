@@ -18,7 +18,7 @@ export default function AdminHome() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         <Card className="col-span-1 row-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <Link to={"/map"}>
+          <Link to={"/spaces"}>
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
               <MonitorSmartphone className="w-6 h-6 text-primary" />
             </div>
@@ -69,33 +69,39 @@ export default function AdminHome() {
         </Card>
 
         <Card className="col-span-1 row-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <CarFront className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">{t('Mobility')}</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {t('MobilityDesc')}
-          </p>
+          <Link to={"/parking"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <CarFront className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">{t('Mobility')}</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {t('MobilityDesc')}
+            </p>
+          </Link>
         </Card>
 
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Target className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">{t('Sensor')}</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {t('SensorDesc')}
-          </p>
+          <Link to={"/map"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Target className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">{t('Sensor')}</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {t('SensorDesc')}
+            </p>
+          </Link>
         </Card>
 
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <LayoutDashboard className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">{t('Dashboard')}</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {t('DashboardDesc')}
-          </p>
+          <Link to={"/energydashboard"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <LayoutDashboard className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">{t('Dashboard')}</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {t('DashboardDesc')}
+            </p>
+          </Link>
         </Card>
 
         <Card className="col-span-1 row-span-1 md:col-span-2 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
@@ -103,9 +109,9 @@ export default function AdminHome() {
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
               <Terminal className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-lg font-bold mb-3">Terminal</h3>
+            <h3 className="text-lg font-bold mb-3">{t('Terminal')}</h3>
             <p className="text-muted-foreground leading-relaxed text-sm">
-              Learn our System-Specific language in order to perform complex tasks efficiently.
+              {t('TerminalDesc')}
             </p>
           </Link>
         </Card>

@@ -26,13 +26,15 @@ export default function StaffHome() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 md:row-span-3 gap-6">
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Target className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">{t('StaffSensors')}</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {t('StaffView')}
-          </p>
+          <Link to={"/map"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Target className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">{t('StaffSensors')}</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {t('StaffView')}
+            </p>
+          </Link>
         </Card>
 
         <Card className="col-span-1 row-span-2 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer flex flex-col">
@@ -74,31 +76,37 @@ export default function StaffHome() {
           </Link>
         </Card>
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Fan className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">{t('StaffAirQual')}</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {t('StaffViewAir')}
-          </p>
+          <Link to={"/airqualitydashboard"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Fan className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">{t('StaffAirQual')}</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {t('StaffViewAir')}
+            </p>
+          </Link>
         </Card>
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Thermometer className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">{t('StaffTemp')}</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {t('StaffViewTemp')}
-          </p>
+          <Link to={"/temperaturedashboard"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Thermometer className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">{t('StaffTemp')}</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {t('StaffViewTemp')}
+            </p>
+          </Link>
         </Card>
         <Card className="col-span-1 row-span-1 md:col-span-1 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-            <Zap className="w-6 h-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold mb-3">{t('StaffEnergyCon')}n</h3>
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {t('StaffViewEnergyCon')}
-          </p>
+          <Link to={"/energydashboard"} className="flex flex-col h-full">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+              <Zap className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-bold mb-3">{t('StaffEnergyCon')}n</h3>
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {t('StaffViewEnergyCon')}
+            </p>
+          </Link>
         </Card>
         <Card className="col-span-1 row-span-1 md:col-span-2 p-6 shadow-lg border-border hover:shadow-xl hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer">
           <Link to={"/lssdocs"} className="flex flex-col h-full">

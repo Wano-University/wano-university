@@ -2,7 +2,7 @@ import prisma from '../config/db.js';
 
 export const registerSensor = async (req, res) => {
   try {
-    const { type, floor, space, upperLimit, lowerLimit, isActive, xCoordinates, yCoordinates } = req.body;
+    const { type, floor, space, upperLimit, lowerLimit, isActive, xCoordinates, yCoordinates, UnityMeasure } = req.body;
 
     const existingSensor = await prisma.sensor.findFirst({
       where: {
@@ -19,7 +19,7 @@ export const registerSensor = async (req, res) => {
     }
 
     const sensor = await prisma.sensor.create({
-      data: { type, floor, space, upperLimit, lowerLimit, isActive, xCoordinates, yCoordinates }
+      data: { type, floor, space, upperLimit, lowerLimit, isActive, xCoordinates, yCoordinates, UnityMeasure }
     });
 
     res.status(201).json(sensor);

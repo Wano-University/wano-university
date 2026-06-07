@@ -14,7 +14,7 @@ import { getImageUrl } from '@/lib/utils';
 import { useTranslation } from "react-i18next";
 
 
-const stripePromise = loadStripe(import.meta.env.STRIPE_SECRET_KEY || 'sk_test_xxxxxxxxxxxxxxxxx');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const getWorkdays = () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);

@@ -83,7 +83,7 @@ export const login = async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { login: login },
       include: { 
-        permissions: {
+        permissions :{
           include: {
             permission: true // ISTO FAZ O PRISMA TRAZER A DESCRIÇÃO!
           }
