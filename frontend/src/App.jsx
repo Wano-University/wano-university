@@ -31,7 +31,6 @@ import NoPerms from './pages/NoPerms';
 import MyReservations from './pages/MyReservations';
 import LssDocs from './pages/Lssdocs';
 import { TerminalProvider, TerminalPopup } from './components/TerminalPopup';
-import ValidateReservation from './pages/ValidateReservation';
 import './i18n';
 
 function RootLayout() {
