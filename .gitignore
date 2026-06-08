@@ -55,5 +55,5 @@ ehthumbs.db
 Thumbs.db
 
 backend/src/assets/*
+!backend/src/assets/.gitkeep
 backend/prisma/migrations/*
-
