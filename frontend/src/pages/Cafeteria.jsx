@@ -13,8 +13,8 @@ import CheckoutForm from '../components/CheckoutForm';
 import { getImageUrl } from '@/lib/utils';
 import { useTranslation } from "react-i18next";
 
-  const userString = localStorage.getItem('user');
-  const currentUser = userString ? JSON.parse(userString) : null;
+const userString = localStorage.getItem('user');
+const currentUser = userString ? JSON.parse(userString) : null;
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const getWorkdays = () => {
@@ -144,7 +144,7 @@ export default function Cafeteria() {
 
   return (
     <section className="py-24 max-w-7xl mx-auto px-6 space-y-6 bg-background font-sans relative">
-      <div className="flex items-center justify-between border-b border-border pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border pb-4 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
             <Utensils className="w-6 h-6" />
@@ -155,32 +155,34 @@ export default function Cafeteria() {
           </div>
         </div>
 
-        {(currentUser?.type === 'ADMIN' || currentUser?.type === 'STAFF') && (
-          <Link
-            to="/menuconfig"
-            className="text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-full hover:shadow-xl hover:bg-primary/90 transition-all inline-block"
-          >
-            {t('BtEditMenu')}
-          </Link>
-        )}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          {(currentUser?.type === 'ADMIN' || currentUser?.type === 'STAFF') && (
+            <Link
+              to="/menuconfig"
+              className="text-center text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-full hover:shadow-xl hover:bg-primary/90 transition-all inline-block"
+            >
+              {t('BtEditMenu')}
+            </Link>
+          )}
 
-        <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
-          <button
-            onClick={() => {
-              setActiveTab('meals');
-              const today = new Date().getDay();
-              setSelectedDate((today >= 1 && today <= 5) ? workdays[today - 1] : workdays[0]);
-            }}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
-          >
-            {t('CafeteriaMeals')}
-          </button>
-          <button
-            onClick={() => setActiveTab('desserts')}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
-          >
-            {t('CafeteriaDesserts')}
-          </button>
+          <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
+            <button
+              onClick={() => {
+                setActiveTab('meals');
+                const today = new Date().getDay();
+                setSelectedDate((today >= 1 && today <= 5) ? workdays[today - 1] : workdays[0]);
+              }}
+              className={`flex-1 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
+            >
+              {t('CafeteriaMeals')}
+            </button>
+            <button
+              onClick={() => setActiveTab('desserts')}
+              className={`flex-1 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
+            >
+              {t('CafeteriaDesserts')}
+            </button>
+          </div>
         </div>
       </div>
 

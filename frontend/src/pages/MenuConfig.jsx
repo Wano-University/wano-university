@@ -200,7 +200,7 @@ export default function MenuConfig() {
 
   return (
     <section className="py-24 max-w-7xl mx-auto px-6 space-y-6 bg-background font-sans relative">
-      <div className="flex items-center justify-between border-b border-border pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border pb-4 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
             <Utensils className="w-6 h-6" />
@@ -211,37 +211,39 @@ export default function MenuConfig() {
           </div>
         </div>
 
-        {/* Admin buttons */}
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={handleSaveMenuSchedule}
-            disabled={isSaving}
-            className="text-xs font-bold uppercase tracking-widest bg-secondary text-secondary-foreground px-6 py-2.5 rounded-full hover:shadow-xl transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
-          >
-            <Save className="w-4 h-4" /> {isSaving ? 'Saving...' : 'Save Schedule'}
-          </button>
-          <Link
-            to="/cafeteria"
-            className="text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-6 py-2.5 rounded-full hover:shadow-xl hover:bg-primary/90 transition-all inline-block"
-          >
-            {t('MenuConfigY')}
-          </Link>
-        </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          {/* Admin buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={handleSaveMenuSchedule}
+              disabled={isSaving}
+              className="text-center text-xs font-bold uppercase tracking-widest bg-secondary text-secondary-foreground px-6 py-2.5 rounded-full hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" /> {isSaving ? 'Saving...' : 'Save Schedule'}
+            </button>
+            <Link
+              to="/cafeteria"
+              className="text-center text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-6 py-2.5 rounded-full hover:shadow-xl hover:bg-primary/90 transition-all inline-block"
+            >
+              {t('MenuConfigY')}
+            </Link>
+          </div>
 
-        {/* Change between tabs */}
-        <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
-          <button
-            onClick={() => setActiveTab('meals')}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
-          >
-            {t('MenuConfigMeals')}
-          </button>
-          <button
-            onClick={() => setActiveTab('desserts')}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
-          >
-            {t('MenuConfigDesserts')}
-          </button>
+          {/* Change between tabs */}
+          <div className="bg-muted p-1 rounded-xl flex gap-1 border border-border">
+            <button
+              onClick={() => setActiveTab('meals')}
+              className={`flex-1 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'meals' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
+            >
+              {t('MenuConfigMeals')}
+            </button>
+            <button
+              onClick={() => setActiveTab('desserts')}
+              className={`flex-1 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'desserts' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground cursor-pointer'}`}
+            >
+              {t('MenuConfigDesserts')}
+            </button>
+          </div>
         </div>
       </div>
 

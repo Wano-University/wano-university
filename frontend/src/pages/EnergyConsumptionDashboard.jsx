@@ -177,12 +177,12 @@ export default function EnergyConsumptionDashboard() {
 
         {/* 1. Tabs */}
         <div className="order-1 lg:col-start-1 lg:col-span-7 lg:row-start-1">
-          <div className="flex gap-2 p-1 bg-card border border-border rounded-2xl shadow-sm">
+          <div className="flex flex-col sm:flex-row gap-2 p-1 bg-card border border-border rounded-2xl shadow-sm">
             {SENSOR_TABS.map(({ key, label, icon: Icon, path }) => (
               <button
                 key={key}
                 onClick={() => navigate(path)}
-                className={`flex flex-1 items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${activeTab === key
+                className={`flex flex-1 items-center justify-center gap-2 px-2 sm:px-4 py-3 sm:py-2 rounded-xl text-xs sm:text-sm text-center font-bold transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${activeTab === key
                   ? "bg-primary text-primary-foreground shadow-md"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}

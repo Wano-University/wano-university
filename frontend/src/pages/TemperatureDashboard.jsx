@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next"
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ChartTooltip, Filler);
 
-// FIX 2: Defined both SWR Keys
 const SIMULATE_KEY = "temperature-simulate"
 const TREND_KEY = "temperature-trend"
 
@@ -21,7 +20,6 @@ const SENSOR_TABS = [
   { key: "air", label: "DashboardTitleAir", icon: Wind, path: "/airqualitydashboard" },
 ]
 
-// FIX 3: Replaced the generic "fetcher" with the two specific fetchers
 const fetchSensors = async () => {
   const result = await simulateTemperature();
   return {
@@ -54,7 +52,6 @@ export default function TemperatureDashboard() {
 
   const sensorsPerPage = 6
 
-  // FIX 4: Changed `data?.x` to `sensorData?.x` and `trendData`
   const sensors = sensorData?.sensors ?? []
   const stats = sensorData?.stats ?? []
   const chartData = trendData ?? []
@@ -169,12 +166,12 @@ export default function TemperatureDashboard() {
 
         {/* 1. Tabs */}
         <div className="order-1 lg:col-start-1 lg:col-span-7 lg:row-start-1">
-          <div className="flex gap-2 p-1 bg-card border border-border rounded-2xl shadow-sm">
+          <div className="flex flex-col sm:flex-row gap-2 p-1 bg-card border border-border rounded-2xl shadow-sm">
             {SENSOR_TABS.map(({ key, label, icon: Icon, path }) => (
               <button
                 key={key}
                 onClick={() => navigate(path)}
-                className={`flex flex-1 items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${activeTab === key
+                className={`flex flex-1 items-center justify-center gap-2 px-2 sm:px-4 py-3 sm:py-2 rounded-xl text-xs sm:text-sm text-center font-bold transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${activeTab === key
                   ? "bg-primary text-primary-foreground shadow-md"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
