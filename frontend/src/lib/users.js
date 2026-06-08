@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_FASTAPI_URL || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 
 export const handleApiResponse = async (response) => {
@@ -6,7 +6,7 @@ export const handleApiResponse = async (response) => {
     console.error(`Erro na API: ${response.status}`);
     return null;
   }
-  
+
   return await response.json();
 };
 
@@ -65,7 +65,7 @@ export const updateUserData = async (userId, data) => {
     },
     body: JSON.stringify(data),
   });
-  
+
   if (!response.ok) throw new Error("Erro ao atualizar dados");
   return await response.json();
 };

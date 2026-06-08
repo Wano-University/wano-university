@@ -1,7 +1,7 @@
 import prisma from '../config/db.js';
 
 const VALID_SPACES = [
-  { floor: 'FLOOR_1', x: 477, y: 828},
+  { floor: 'FLOOR_1', x: 477, y: 828 },
   { floor: 'FLOOR_1', x: 151, y: 576 },
   { floor: 'FLOOR_1', x: 284, y: 400 },
   { floor: 'FLOOR_1', x: 725, y: 128 },
@@ -28,7 +28,10 @@ const VALID_SPACES = [
 
 export const getResourcesByFloor = async (req, res) => {
   try {
-    const resources = await prisma.resource.findMany();
+    const { floor } = req.params;
+    const resources = await prisma.resource.findMany({
+      where: { floor }
+    });
     res.json(resources);
   } catch (err) {
     console.error(err);
@@ -90,7 +93,7 @@ export const registerResource = async (req, res) => {
 
 const getReservations = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
     const resource = await prisma.resource.findUnique({
       where: { id: parseInt(id) },
       include: { reservations: true }
@@ -119,7 +122,7 @@ export const getAccesses = async (req, res) => {
 export const getResources = async (req, res) => {
   try {
     const resources = await prisma.resource.findMany({
-      include: { sensor: true, reservations: true, accesses: true }
+      include: { reservations: true, accesses: true }
     });
     res.status(200).json(resources);
   } catch (error) {
@@ -131,7 +134,7 @@ export const getResources = async (req, res) => {
 export const resourceStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { isAvailable } = req.body; 
+    const { isAvailable } = req.body;
 
     const updatedResource = await prisma.resource.update({
       where: { id: parseInt(id) },
