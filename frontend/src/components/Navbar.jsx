@@ -142,7 +142,7 @@ export default function Navbar() {
                 <Link to="/map" className={mobileLinkStyle}>{t('NavbarSensors')}</Link>
                 <Link to="/temperaturedashboard" className={mobileLinkStyle}>{t('NavbarTemperature')}</Link>
                 <Link to="/airqualitydashboard" className={mobileLinkStyle}>{t('NavbarAir')}</Link>
-                <Link to="/energydashboard" classname={mobileLinkStyle}>{t('NavbarEnergy')}</Link>
+                <Link to="/energydashboard" className={mobileLinkStyle}>{t('NavbarEnergy')}</Link>
               </>
             )}
 
