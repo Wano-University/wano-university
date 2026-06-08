@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url  	    = env("DATABASE_URL")
 }
 
 model User {
@@ -20,7 +21,7 @@ model User {
   accesses     Access[]
   purchases    Purchase[]
   reservations Reservation[]
-  permissions UsersOnPermissions[] 
+  permissions UsersOnPermissions[]
 }
 
 model Permission {
