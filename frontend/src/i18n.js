@@ -172,7 +172,7 @@ i18n.use(initReactI18next).init({
         DashboardTitleTemp: "Temperature",
         DashboardTitleAir: "Air Quality",
 
-        MenuConfigTitle: "Grande Line Cafeteria Menu",
+        MenuConfigTitle: "Grand Line Cafeteria Menu",
         MenuConfigDesc: "Configure plates of the week",
         MenuConfigY: "Finish Editing",
         MenuConfigMeals: "Meals",
@@ -368,7 +368,7 @@ i18n.use(initReactI18next).init({
         AdminUNoU: "No users found",
         AdminUPerms: "Permissions",
         AdminUEdit: "Edit Data",
-                
+
         AlertTitle: "Sensor Alerts",
         AlertExceed: "Sensors currently exceeding limits.",
         AlertActive: "No Active Alerts",
@@ -402,7 +402,7 @@ i18n.use(initReactI18next).init({
         EquipEdit: "Edit",
         EquiptDelete: "Delete",
         EquipReserve: "Reserve",
-        EquiptBookEquip: "Book Equipment", 
+        EquiptBookEquip: "Book Equipment",
         EquipEquip: "Equipment",
         EquipManage: "Manage technical specifications and availability.",
         EquipName: "Equipment Name",
@@ -495,7 +495,7 @@ i18n.use(initReactI18next).init({
         PRegisterActive: "Register & Activate",
         PSpaceUn: "Space Unregistered",
         PNRegist: "This space is not registered for parking.",
-        
+
       }
     },
 
@@ -666,7 +666,7 @@ i18n.use(initReactI18next).init({
         DashboardTitleTemp: "Temperatura",
         DashboardTitleAir: "Qualidade do Ar",
 
-        MenuConfigTitle: "Ementa da Cafetaria Grande Line",
+        MenuConfigTitle: "Ementa da Cafetaria Grand Line",
         MenuConfigDesc: "Configure os pratos da semana",
         MenuConfigY: "Concluir Edição",
         MenuConfigMeals: "Pratos",

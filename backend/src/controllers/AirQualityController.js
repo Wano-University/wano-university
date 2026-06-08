@@ -48,7 +48,6 @@ export const runAirQualitySimulation = async (req, res) => {
       orderBy: { id: 'asc' }
     });
 
-    // Auto-seed lab environment if empty
     if (sensors.length < 6) {
       const needed = 6 - sensors.length;
       const newSensors = Array.from({ length: needed }).map((_, index) => ({
@@ -56,7 +55,8 @@ export const runAirQualitySimulation = async (req, res) => {
         isActive: true,
         space: `Air Quality Zone ${index + 1}`,
         xCoordinates: 0.0,
-        yCoordinates: 0.0
+        yCoordinates: 0.0,
+        UnityMeasure: "IQA" // <-- Add this line
       }));
       await prisma.sensor.createMany({ data: newSensors });
       sensors = await prisma.sensor.findMany({ where: { type: "AIR_QUALITY", isActive: true }, orderBy: { id: 'asc' } });
