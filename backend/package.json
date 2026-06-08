@@ -1,7 +1,7 @@
 {
   "type": "module",
   "devDependencies": {
-    "prisma": "^6.19.3"
+    "prisma": "^7.8.0"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
@@ -18,5 +18,8 @@
     "recharts": "^3.8.1",
     "stripe": "^22.2.0",
     "swr": "^2.4.1"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }
